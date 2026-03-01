@@ -89,6 +89,13 @@ def gold_table(name, gold_schema):
     """Return schema-qualified Gold table name."""
     return f"{gold_schema}.{name}"
 
+def fill_null_columns(df, columns, default=0):
+    """Fill nulls in the given columns with a default value."""
+    for c in columns:
+        if c in df.columns:
+            df = df.withColumn(c, coalesce(col(c), lit(default)))
+    return df
+
 # Create Gold schemas
 for schema in GOLD_SCHEMAS:
     spark.sql(f"CREATE SCHEMA IF NOT EXISTS {schema}")
@@ -326,12 +333,10 @@ if df_books is not None and df_orders is not None:
     )
 
     # Fill nulls for books with no sales
-    for c in ["TotalUnitsSold", "TotalRevenue", "UniqueCustomers", "TotalOrders",
-              "AvgOrderQuantity", "TotalUnitsReturned", "TotalRefunds", "ReturnCount"]:
-        if c in df_books_enriched.columns:
-            df_books_enriched = df_books_enriched.withColumn(
-                c, coalesce(col(c), lit(0))
-            )
+    df_books_enriched = fill_null_columns(df_books_enriched, [
+        "TotalUnitsSold", "TotalRevenue", "UniqueCustomers", "TotalOrders",
+        "AvgOrderQuantity", "TotalUnitsReturned", "TotalRefunds", "ReturnCount"
+    ])
 
     df_books_enriched.write.mode("overwrite").format("delta").saveAsTable(gold_table("DimBooks", "dim"))
     print(f"  ✓ DimBooks enriched: {df_books_enriched.count()} rows")
@@ -467,12 +472,10 @@ if df_customers is not None and df_orders is not None:
     )
 
     # Fill nulls
-    for c in ["LifetimeRevenue", "TotalOrders", "TotalUnitsPurchased",
-              "UniqueTitles", "AvgOrderValue", "TotalRefunds", "ReturnCount"]:
-        if c in df_customers_enriched.columns:
-            df_customers_enriched = df_customers_enriched.withColumn(
-                c, coalesce(col(c), lit(0))
-            )
+    df_customers_enriched = fill_null_columns(df_customers_enriched, [
+        "LifetimeRevenue", "TotalOrders", "TotalUnitsPurchased",
+        "UniqueTitles", "AvgOrderValue", "TotalRefunds", "ReturnCount"
+    ])
 
     df_customers_enriched.write.mode("overwrite").format("delta").saveAsTable(gold_table("DimCustomers", "dim"))
     print(f"  ✓ DimCustomers enriched: {df_customers_enriched.count()} rows")

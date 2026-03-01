@@ -30,7 +30,8 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import (
     col, lit, when, coalesce, concat, concat_ws, upper, lower, trim,
     to_date, year, month, dayofmonth, current_timestamp,
-    udf, explode, struct, array, broadcast, round as spark_round
+    udf, explode, struct, array, broadcast, round as spark_round,
+    first as spark_first
 )
 from pyspark.sql.types import (
     StructType, StructField, StringType, IntegerType, DoubleType,
@@ -65,6 +66,31 @@ def web_table(name):
 
 # Create web schema
 spark.sql(f"CREATE SCHEMA IF NOT EXISTS {WEB_SCHEMA}")
+
+# ── Reusable transform helpers ──
+def get_monthly_rates(df_rates):
+    """Aggregate exchange rates to one rate per currency per month."""
+    return df_rates.groupBy("TargetCurrency", "RateMonth", "RateYear").agg(
+        spark_first("ExchangeRate").alias("ExchangeRate")
+    )
+
+def convert_to_usd(amount_col_name, currency_col_name, rate_col_name="ExchangeRate"):
+    """Return a Column expression that converts an amount to USD using the exchange rate."""
+    return (
+        when(col(currency_col_name) == "USD", col(amount_col_name))
+        .otherwise(
+            when(col(rate_col_name).isNotNull(),
+                 spark_round(col(amount_col_name) / col(rate_col_name), 2))
+            .otherwise(col(amount_col_name))
+        )
+    )
+
+def exchange_rate_to_usd(currency_col_name, rate_col_name="ExchangeRate"):
+    """Return a Column expression for the ExchangeRateToUSD column."""
+    return (
+        when(col(currency_col_name) == "USD", lit(1.0))
+        .otherwise(coalesce(col(rate_col_name), lit(1.0)))
+    )
 
 print("=== Horizon Books: Web Data Enrichment ===")
 print(f"Spark version: {spark.version}")
@@ -571,11 +597,8 @@ try:
         "_txn_year", year(col("TransactionDate"))
     )
 
-    # Get one rate per currency per month (pick first rate row for each month)
-    from pyspark.sql.functions import first as spark_first
-    monthly_rates = df_rates.groupBy("TargetCurrency", "RateMonth", "RateYear").agg(
-        spark_first("ExchangeRate").alias("ExchangeRate")
-    )
+    # Get one rate per currency per month
+    monthly_rates = get_monthly_rates(df_rates)
 
     # Join: transactions currency → rate for that month
     df_fin_normalized = df_fin_with_month.join(
@@ -588,18 +611,8 @@ try:
 
     # Calculate USD-normalized amounts
     df_fin_normalized = (df_fin_normalized
-        .withColumn("ExchangeRateToUSD",
-            when(col("Currency") == "USD", lit(1.0))
-            .otherwise(coalesce(col("ExchangeRate"), lit(1.0)))
-        )
-        .withColumn("AmountUSD",
-            when(col("Currency") == "USD", col("Amount"))
-            .otherwise(
-                when(col("ExchangeRate").isNotNull(),
-                     spark_round(col("Amount") / col("ExchangeRate"), 2))
-                .otherwise(col("Amount"))
-            )
-        )
+        .withColumn("ExchangeRateToUSD", exchange_rate_to_usd("Currency"))
+        .withColumn("AmountUSD", convert_to_usd("Amount", "Currency"))
         .drop("TargetCurrency", "RateMonth", "RateYear", "ExchangeRate",
                "_txn_month", "_txn_year")
     )
@@ -651,10 +664,7 @@ try:
     )
 
     # Get monthly rates
-    from pyspark.sql.functions import first as spark_first
-    monthly_rates = df_rates.groupBy("TargetCurrency", "RateMonth", "RateYear").agg(
-        spark_first("ExchangeRate").alias("ExchangeRate")
-    )
+    monthly_rates = get_monthly_rates(df_rates)
 
     # Add month/year for join
     df_orders_curr = df_orders_curr.withColumn(
@@ -674,26 +684,9 @@ try:
 
     # Calculate USD amounts
     df_orders_norm = (df_orders_norm
-        .withColumn("ExchangeRateToUSD",
-            when(col("OrderCurrency") == "USD", lit(1.0))
-            .otherwise(coalesce(col("ExchangeRate"), lit(1.0)))
-        )
-        .withColumn("TotalAmountUSD",
-            when(col("OrderCurrency") == "USD", col("TotalAmount"))
-            .otherwise(
-                when(col("ExchangeRate").isNotNull(),
-                     spark_round(col("TotalAmount") / col("ExchangeRate"), 2))
-                .otherwise(col("TotalAmount"))
-            )
-        )
-        .withColumn("UnitPriceUSD",
-            when(col("OrderCurrency") == "USD", col("UnitPrice"))
-            .otherwise(
-                when(col("ExchangeRate").isNotNull(),
-                     spark_round(col("UnitPrice") / col("ExchangeRate"), 2))
-                .otherwise(col("UnitPrice"))
-            )
-        )
+        .withColumn("ExchangeRateToUSD", exchange_rate_to_usd("OrderCurrency"))
+        .withColumn("TotalAmountUSD", convert_to_usd("TotalAmount", "OrderCurrency"))
+        .withColumn("UnitPriceUSD", convert_to_usd("UnitPrice", "OrderCurrency"))
         .drop("TargetCurrency", "RateMonth", "RateYear", "ExchangeRate",
                "_ord_month", "_ord_year", "CustomerCurrency")
     )

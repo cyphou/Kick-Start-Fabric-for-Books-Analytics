@@ -83,6 +83,47 @@ def _write_forecast_table(pdf_result, schema, table_name):
     ).saveAsTable(full_name)
     return df_result.count()
 
+def backtest_mape(ts, forecast_fn, holdout=3):
+    """Back-test MAPE on the last `holdout` months (in-sample)."""
+    if len(ts) < holdout * 2:
+        return None
+    try:
+        bt_fcast, _, _, _ = forecast_fn(ts.iloc[:-holdout], holdout)
+        return compute_mape(ts.iloc[-holdout:].values, bt_fcast)
+    except Exception:
+        return None
+
+def write_and_summarize(all_results, schema, table_name, model_info,
+                        cell_start, cell_results, dim_label=""):
+    """Create DataFrame, write to Delta, and print summary."""
+    if not all_results:
+        print(f"  ⚠ No data available for {table_name}")
+        cell_results[table_name] = {"status": "SKIP", "rows": 0}
+        return
+
+    pdf_result = pd.DataFrame(all_results)
+    pdf_result["ForecastMonth"] = pd.to_datetime(pdf_result["ForecastMonth"]).dt.date
+    pdf_result["_generated_at"] = FORECAST_GENERATED_AT
+
+    row_count = _write_forecast_table(pdf_result, schema, table_name)
+
+    n_actual = sum(1 for r in all_results if r["RecordType"] == "Actual")
+    n_fcast  = sum(1 for r in all_results if r["RecordType"] == "Forecast")
+    elapsed = time.time() - cell_start
+    print(f"  ✓ {table_name}: {row_count} rows "
+          f"({n_actual} actuals + {n_fcast} forecasts) [{elapsed:.1f}s]")
+    for mi in model_info:
+        mape_str = f"MAPE={mi.get('MAPE_3m')}%" if mi.get('MAPE_3m') else "MAPE=N/A"
+        label = mi.get(dim_label, "") if dim_label else ""
+        extra = ""
+        if "CurrentStock" in mi:
+            extra = f", stock={mi['CurrentStock']:,.0f}"
+        if dim_label == "WarehouseID":
+            print(f"    WH-{label:<17} {mi['Model']:25s} ({mi['Months']}m, {mape_str}{extra})")
+        elif label:
+            print(f"    {str(label):20s} {mi['Model']:25s} ({mi['Months']}m, {mape_str})")
+    cell_results[table_name] = {"status": "OK", "rows": row_count, "elapsed": elapsed}
+
 # Ensure analytics schema exists
 spark.sql("CREATE SCHEMA IF NOT EXISTS analytics")
 
@@ -227,17 +268,8 @@ try:
 
         fcast, lower, upper, model_name = holt_winters_forecast(ts, FORECAST_HORIZON)
 
-        # Back-test MAPE on last 3 months (in-sample)
-        if len(ts) >= 6:
-            train = ts.iloc[:-3]
-            test  = ts.iloc[-3:]
-            try:
-                bt_fcast, _, _, _ = holt_winters_forecast(train, 3)
-                mape = compute_mape(test.values, bt_fcast)
-            except Exception:
-                mape = None
-        else:
-            mape = None
+        # Back-test MAPE
+        mape = backtest_mape(ts, holt_winters_forecast)
 
         model_info.append({"Channel": ch, "Model": model_name, "Months": len(ts),
                            "MAPE_3m": round(mape, 2) if mape else None})
@@ -274,10 +306,6 @@ try:
             })
 
     if all_results:
-        pdf_result = pd.DataFrame(all_results)
-        pdf_result["ForecastMonth"] = pd.to_datetime(pdf_result["ForecastMonth"]).dt.date
-        pdf_result["_generated_at"] = FORECAST_GENERATED_AT
-
         schema = StructType([
             StructField("ForecastMonth", DateType()),
             StructField("Channel", StringType()),
@@ -291,22 +319,8 @@ try:
             StructField("ForecastModel", StringType()),
             StructField("_generated_at", TimestampType())
         ])
-        df_result = spark.createDataFrame(pdf_result, schema=schema)
-        df_result.write.mode("overwrite").format("delta").option(
-            "overwriteSchema", "true"
-        ).saveAsTable(
-            gold_table("ForecastSalesRevenue", "analytics")
-        )
-
-        n_actual = len([r for r in all_results if r["RecordType"] == "Actual"])
-        n_fcast  = len([r for r in all_results if r["RecordType"] == "Forecast"])
-        elapsed = time.time() - _cell2_start
-        print(f"  ✓ ForecastSalesRevenue: {len(all_results)} rows "
-              f"({n_actual} actuals + {n_fcast} forecasts) [{elapsed:.1f}s]")
-        for mi in model_info:
-            mape_str = f"MAPE={mi['MAPE_3m']}%" if mi['MAPE_3m'] else "MAPE=N/A"
-            print(f"    {mi['Channel']:20s} {mi['Model']:25s} ({mi['Months']}m, {mape_str})")
-        _cell_results["ForecastSalesRevenue"] = {"status": "OK", "rows": len(all_results), "elapsed": elapsed}
+        write_and_summarize(all_results, schema, "ForecastSalesRevenue",
+                            model_info, _cell2_start, _cell_results, "Channel")
     else:
         print("  ⚠ No data available for sales forecast")
         _cell_results["ForecastSalesRevenue"] = {"status": "SKIP", "rows": 0}
@@ -382,14 +396,7 @@ try:
         fcast_r, lower_r, upper_r, _       = holt_winters_forecast(ts_rev, FORECAST_HORIZON)
 
         # Back-test
-        if len(ts_units) >= 6:
-            try:
-                bt_f, _, _, _ = holt_winters_forecast(ts_units.iloc[:-3], 3)
-                mape = compute_mape(ts_units.iloc[-3:].values, bt_f)
-            except Exception:
-                mape = None
-        else:
-            mape = None
+        mape = backtest_mape(ts_units, holt_winters_forecast)
 
         model_info.append({"Genre": genre, "Model": model_u, "Months": len(ts_units),
                            "MAPE_3m": round(mape, 2) if mape else None})
@@ -424,10 +431,6 @@ try:
             })
 
     if all_results:
-        pdf_result = pd.DataFrame(all_results)
-        pdf_result["ForecastMonth"] = pd.to_datetime(pdf_result["ForecastMonth"]).dt.date
-        pdf_result["_generated_at"] = FORECAST_GENERATED_AT
-
         schema = StructType([
             StructField("ForecastMonth", DateType()),
             StructField("Genre", StringType()),
@@ -440,22 +443,8 @@ try:
             StructField("ForecastModel", StringType()),
             StructField("_generated_at", TimestampType())
         ])
-        df_result = spark.createDataFrame(pdf_result, schema=schema)
-        df_result.write.mode("overwrite").format("delta").option(
-            "overwriteSchema", "true"
-        ).saveAsTable(
-            gold_table("ForecastGenreDemand", "analytics")
-        )
-
-        n_actual = len([r for r in all_results if r["RecordType"] == "Actual"])
-        n_fcast  = len([r for r in all_results if r["RecordType"] == "Forecast"])
-        elapsed = time.time() - _cell3_start
-        print(f"  ✓ ForecastGenreDemand: {len(all_results)} rows "
-              f"({n_actual} actuals + {n_fcast} forecasts) [{elapsed:.1f}s]")
-        for mi in model_info:
-            mape_str = f"MAPE={mi['MAPE_3m']}%" if mi['MAPE_3m'] else "MAPE=N/A"
-            print(f"    {mi['Genre']:20s} {mi['Model']:25s} ({mi['Months']}m, {mape_str})")
-        _cell_results["ForecastGenreDemand"] = {"status": "OK", "rows": len(all_results), "elapsed": elapsed}
+        write_and_summarize(all_results, schema, "ForecastGenreDemand",
+                            model_info, _cell3_start, _cell_results, "Genre")
     else:
         print("  ⚠ No genre data available for forecasting")
         _cell_results["ForecastGenreDemand"] = {"status": "SKIP", "rows": 0}
@@ -582,10 +571,6 @@ try:
             })
 
     if all_results:
-        pdf_result = pd.DataFrame(all_results)
-        pdf_result["ForecastMonth"] = pd.to_datetime(pdf_result["ForecastMonth"]).dt.date
-        pdf_result["_generated_at"] = FORECAST_GENERATED_AT
-
         schema = StructType([
             StructField("ForecastMonth", DateType()),
             StructField("PLCategory", StringType()),
@@ -598,22 +583,8 @@ try:
             StructField("ForecastModel", StringType()),
             StructField("_generated_at", TimestampType())
         ])
-        df_result = spark.createDataFrame(pdf_result, schema=schema)
-        df_result.write.mode("overwrite").format("delta").option(
-            "overwriteSchema", "true"
-        ).saveAsTable(
-            gold_table("ForecastFinancial", "analytics")
-        )
-
-        n_actual = len([r for r in all_results if r["RecordType"] == "Actual"])
-        n_fcast  = len([r for r in all_results if r["RecordType"] == "Forecast"])
-        elapsed = time.time() - _cell4_start
-        print(f"  ✓ ForecastFinancial: {len(all_results)} rows "
-              f"({n_actual} actuals + {n_fcast} forecasts) [{elapsed:.1f}s]")
-        for mi in model_info:
-            mape_str = f"MAPE={mi['MAPE_3m']}%" if mi['MAPE_3m'] else "MAPE=N/A"
-            print(f"    {mi['Category']:20s} {mi['Model']:25s} ({mi['Months']}m, {mape_str})")
-        _cell_results["ForecastFinancial"] = {"status": "OK", "rows": len(all_results), "elapsed": elapsed}
+        write_and_summarize(all_results, schema, "ForecastFinancial",
+                            model_info, _cell4_start, _cell_results, "Category")
     else:
         print("  ⚠ No financial data available for forecasting")
         _cell_results["ForecastFinancial"] = {"status": "SKIP", "rows": 0}
@@ -687,14 +658,7 @@ try:
         fcast, lower, upper, model_name = holt_winters_forecast(ts, FORECAST_HORIZON)
 
         # Back-test
-        if len(ts) >= 6:
-            try:
-                bt_f, _, _, _ = holt_winters_forecast(ts.iloc[:-3], 3)
-                mape = compute_mape(ts.iloc[-3:].values, bt_f)
-            except Exception:
-                mape = None
-        else:
-            mape = None
+        mape = backtest_mape(ts, holt_winters_forecast)
 
         current_stock = stock_map.get(int(wh), 0)
 
@@ -748,10 +712,6 @@ try:
             })
 
     if all_results:
-        pdf_result = pd.DataFrame(all_results)
-        pdf_result["ForecastMonth"] = pd.to_datetime(pdf_result["ForecastMonth"]).dt.date
-        pdf_result["_generated_at"] = FORECAST_GENERATED_AT
-
         schema = StructType([
             StructField("ForecastMonth", DateType()),
             StructField("WarehouseID", IntegerType()),
@@ -767,23 +727,8 @@ try:
             StructField("StockCoverMonths", DoubleType()),
             StructField("_generated_at", TimestampType())
         ])
-        df_result = spark.createDataFrame(pdf_result, schema=schema)
-        df_result.write.mode("overwrite").format("delta").option(
-            "overwriteSchema", "true"
-        ).saveAsTable(
-            gold_table("ForecastInventoryDemand", "analytics")
-        )
-
-        n_actual = len([r for r in all_results if r["RecordType"] == "Actual"])
-        n_fcast  = len([r for r in all_results if r["RecordType"] == "Forecast"])
-        elapsed = time.time() - _cell5_start
-        print(f"  ✓ ForecastInventoryDemand: {len(all_results)} rows "
-              f"({n_actual} actuals + {n_fcast} forecasts) [{elapsed:.1f}s]")
-        for mi in model_info:
-            mape_str = f"MAPE={mi['MAPE_3m']}%" if mi['MAPE_3m'] else "MAPE=N/A"
-            stock_str = f"stock={mi['CurrentStock']:,.0f}"
-            print(f"    WH-{mi['WarehouseID']:<17d} {mi['Model']:25s} ({mi['Months']}m, {mape_str}, {stock_str})")
-        _cell_results["ForecastInventoryDemand"] = {"status": "OK", "rows": len(all_results), "elapsed": elapsed}
+        write_and_summarize(all_results, schema, "ForecastInventoryDemand",
+                            model_info, _cell5_start, _cell_results, "WarehouseID")
     else:
         print("  ⚠ No warehouse data available for forecasting")
         _cell_results["ForecastInventoryDemand"] = {"status": "SKIP", "rows": 0}
@@ -975,21 +920,16 @@ try:
             StructField("ForecastModel", StringType()),
             StructField("_generated_at", TimestampType())
         ])
-        df_result = spark.createDataFrame(pdf_result, schema=schema)
-        df_result.write.mode("overwrite").format("delta").option(
-            "overwriteSchema", "true"
-        ).saveAsTable(
-            gold_table("ForecastWorkforce", "analytics")
-        )
+        row_count = _write_forecast_table(pdf_result, schema, "ForecastWorkforce")
 
-        n_actual = len([r for r in all_results if r["RecordType"] == "Actual"])
-        n_fcast  = len([r for r in all_results if r["RecordType"] == "Forecast"])
+        n_actual = sum(1 for r in all_results if r["RecordType"] == "Actual")
+        n_fcast  = sum(1 for r in all_results if r["RecordType"] == "Forecast")
         elapsed = time.time() - _cell6_start
-        print(f"  ✓ ForecastWorkforce: {len(all_results)} rows "
+        print(f"  ✓ ForecastWorkforce: {row_count} rows "
               f"({n_actual} actuals + {n_fcast} forecasts) [{elapsed:.1f}s]")
         for ms in model_summary:
             print(f"    {ms}")
-        _cell_results["ForecastWorkforce"] = {"status": "OK", "rows": len(all_results), "elapsed": elapsed}
+        _cell_results["ForecastWorkforce"] = {"status": "OK", "rows": row_count, "elapsed": elapsed}
     else:
         print("  ⚠ No workforce data available for forecasting")
         _cell_results["ForecastWorkforce"] = {"status": "SKIP", "rows": 0}

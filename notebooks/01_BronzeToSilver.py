@@ -70,6 +70,22 @@ def log_quality(table_name, metric, value):
         quality_report[table_name] = {}
     quality_report[table_name][metric] = value
 
+# ── Reusable transform helpers ──
+def standardize_boolean(df, col_name, default=True):
+    """Standardize a boolean column from string values (TRUE/YES/1/Y → True, etc.)."""
+    return df.withColumn(
+        col_name,
+        when(upper(col(col_name).cast("string")).isin("TRUE", "YES", "1", "Y"), lit(True))
+        .when(upper(col(col_name).cast("string")).isin("FALSE", "NO", "0", "N"), lit(False))
+        .otherwise(lit(default))
+    )
+
+def compute_date_key(date_col_name):
+    """Return a DateKey expression (YYYYMMDD integer) from a date column."""
+    return (year(col(date_col_name)) * 10000 +
+            month(col(date_col_name)) * 100 +
+            dayofmonth(col(date_col_name))).cast(IntegerType())
+
 print("=== Horizon Books: Bronze → Silver Transformation ===")
 print(f"Spark version: {spark.version}")
 print(f"Source: {BRONZE_LH} tables (loaded by Dataflows)")
@@ -495,12 +511,7 @@ print("\n✓ All 9 dimension tables ingested")
 # -----------------------------------------------------------
 
 # --- DimAccounts: Standardize boolean values ---
-df_accounts = df_accounts.withColumn(
-    "IsActive",
-    when(upper(col("IsActive").cast("string")).isin("TRUE", "YES", "1", "Y"), lit(True))
-    .when(upper(col("IsActive").cast("string")).isin("FALSE", "NO", "0", "N"), lit(False))
-    .otherwise(lit(True))  # Default to active
-)
+df_accounts = standardize_boolean(df_accounts, "IsActive")
 print("DimAccounts: Standardized IsActive boolean")
 
 # --- DimBooks: Parse dates and validate prices ---
@@ -546,12 +557,8 @@ df_geography = (df_geography
 print("DimGeography: Validated coordinates, standardized booleans")
 
 # --- DimCustomers: Validate emails, standardize booleans ---
+df_customers = standardize_boolean(df_customers, "IsActive")
 df_customers = (df_customers
-    .withColumn("IsActive",
-        when(upper(col("IsActive").cast("string")).isin("TRUE", "YES", "1", "Y"), lit(True))
-        .when(upper(col("IsActive").cast("string")).isin("FALSE", "NO", "0", "N"), lit(False))
-        .otherwise(lit(True))
-    )
     .withColumn("ContactEmail", lower(trim(col("ContactEmail"))))
     .withColumn("AccountOpenDate", to_date(col("AccountOpenDate"), "yyyy-MM-dd"))
     .withColumn("CreditLimit",
@@ -562,14 +569,10 @@ df_customers = (df_customers
 print("DimCustomers: Validated emails, dates, credit limits, booleans")
 
 # --- DimEmployees: Parse dates, standardize emails and booleans ---
+df_employees = standardize_boolean(df_employees, "IsActive")
 df_employees = (df_employees
     .withColumn("HireDate", to_date(col("HireDate"), "yyyy-MM-dd"))
     .withColumn("Email", lower(trim(col("Email"))))
-    .withColumn("IsActive",
-        when(upper(col("IsActive").cast("string")).isin("TRUE", "YES", "1", "Y"), lit(True))
-        .when(upper(col("IsActive").cast("string")).isin("FALSE", "NO", "0", "N"), lit(False))
-        .otherwise(lit(True))
-    )
 )
 print("DimEmployees: Parsed dates, standardized emails and booleans")
 
@@ -584,12 +587,8 @@ df_warehouses = (df_warehouses
         .when(col("CurrentUtilization") > 1.0, lit(1.0))
         .otherwise(col("CurrentUtilization"))
     )
-    .withColumn("IsActive",
-        when(upper(col("IsActive").cast("string")).isin("TRUE", "YES", "1", "Y"), lit(True))
-        .when(upper(col("IsActive").cast("string")).isin("FALSE", "NO", "0", "N"), lit(False))
-        .otherwise(lit(True))
-    )
 )
+df_warehouses = standardize_boolean(df_warehouses, "IsActive")
 print("DimWarehouses: Validated utilization percentages, standardized booleans")
 
 # METADATA ********************
@@ -639,11 +638,7 @@ df_fin_txn = (df_fin_txn
     .withColumn("TransactionDate", to_date(col("TransactionDate"), "yyyy-MM-dd"))
     .withColumn("Currency", upper(trim(coalesce(col("Currency"), lit("USD")))))
     .withColumn("TransactionType", initcap(col("TransactionType")))
-    .withColumn("DateKey",
-        (year(col("TransactionDate")) * 10000 +
-         month(col("TransactionDate")) * 100 +
-         dayofmonth(col("TransactionDate"))).cast(IntegerType())
-    )
+    .withColumn("DateKey", compute_date_key("TransactionDate"))
 )
 print("FactFinancialTransactions: Parsed dates, added DateKey, standardized currency")
 
@@ -665,11 +660,7 @@ df_orders = (df_orders
     .withColumn("OrderDate", to_date(col("OrderDate"), "yyyy-MM-dd"))
     .withColumn("ShipDate", to_date(col("ShipDate"), "yyyy-MM-dd"))
     .withColumn("DeliveryDate", to_date(col("DeliveryDate"), "yyyy-MM-dd"))
-    .withColumn("DateKey",
-        (year(col("OrderDate")) * 10000 +
-         month(col("OrderDate")) * 100 +
-         dayofmonth(col("OrderDate"))).cast(IntegerType())
-    )
+    .withColumn("DateKey", compute_date_key("OrderDate"))
     .withColumn("OrderStatus", initcap(col("OrderStatus")))
     .withColumn("Channel", initcap(col("Channel")))
     # Recalculate TotalAmount = Quantity * UnitPrice * (1 - Discount)
@@ -709,11 +700,7 @@ print("FactOrders: Parsed dates, added DateKey/FulfillmentDays/DeliveryDays, val
 
 df_inventory = (df_inventory
     .withColumn("SnapshotDate", to_date(col("SnapshotDate"), "yyyy-MM-dd"))
-    .withColumn("DateKey",
-        (year(col("SnapshotDate")) * 10000 +
-         month(col("SnapshotDate")) * 100 +
-         dayofmonth(col("SnapshotDate"))).cast(IntegerType())
-    )
+    .withColumn("DateKey", compute_date_key("SnapshotDate"))
     .withColumn("Status", initcap(col("Status")))
     # Validate: QuantityAvailable should roughly equal OnHand - Reserved
     .withColumn("QuantityAvailable",
@@ -736,11 +723,7 @@ print("FactInventory: Parsed dates, validated quantities, added NeedsReorder fla
 # --- FactReturns: Parse dates, validate refund amounts ---
 df_returns = (df_returns
     .withColumn("ReturnDate", to_date(col("ReturnDate"), "yyyy-MM-dd"))
-    .withColumn("DateKey",
-        (year(col("ReturnDate")) * 10000 +
-         month(col("ReturnDate")) * 100 +
-         dayofmonth(col("ReturnDate"))).cast(IntegerType())
-    )
+    .withColumn("DateKey", compute_date_key("ReturnDate"))
     .withColumn("Reason", initcap(col("Reason")))
     .withColumn("ReturnStatus", initcap(col("ReturnStatus")))
     .withColumn("Condition", initcap(col("Condition")))
@@ -757,11 +740,7 @@ df_payroll = (df_payroll
     .withColumn("PayPeriodStart", to_date(col("PayPeriodStart"), "yyyy-MM-dd"))
     .withColumn("PayPeriodEnd", to_date(col("PayPeriodEnd"), "yyyy-MM-dd"))
     .withColumn("PayDate", to_date(col("PayDate"), "yyyy-MM-dd"))
-    .withColumn("DateKey",
-        (year(col("PayDate")) * 10000 +
-         month(col("PayDate")) * 100 +
-         dayofmonth(col("PayDate"))).cast(IntegerType())
-    )
+    .withColumn("DateKey", compute_date_key("PayDate"))
     # Gross = Base + Bonus + Overtime
     .withColumn("GrossPay",
         coalesce(col("BaseSalary"), lit(0.0)) +
@@ -783,11 +762,7 @@ print("FactPayroll: Parsed dates, added GrossPay/DeductionRate, validated calcul
 # --- FactPerformanceReviews: Parse dates, validate scores ---
 df_reviews = (df_reviews
     .withColumn("ReviewDate", to_date(col("ReviewDate"), "yyyy-MM-dd"))
-    .withColumn("DateKey",
-        (year(col("ReviewDate")) * 10000 +
-         month(col("ReviewDate")) * 100 +
-         dayofmonth(col("ReviewDate"))).cast(IntegerType())
-    )
+    .withColumn("DateKey", compute_date_key("ReviewDate"))
     .withColumn("PerformanceRating", initcap(col("PerformanceRating")))
     .withColumn("OverallScore",
         when(col("OverallScore") < 0, lit(0.0))
@@ -801,11 +776,7 @@ print("FactPerformanceReviews: Parsed dates, validated scores")
 df_recruitment = (df_recruitment
     .withColumn("OpenDate", to_date(col("OpenDate"), "yyyy-MM-dd"))
     .withColumn("CloseDate", to_date(col("CloseDate"), "yyyy-MM-dd"))
-    .withColumn("DateKey",
-        (year(col("OpenDate")) * 10000 +
-         month(col("OpenDate")) * 100 +
-         dayofmonth(col("OpenDate"))).cast(IntegerType())
-    )
+    .withColumn("DateKey", compute_date_key("OpenDate"))
     .withColumn("Status", initcap(col("Status")))
     .withColumn("TimeToFillDays",
         coalesce(
