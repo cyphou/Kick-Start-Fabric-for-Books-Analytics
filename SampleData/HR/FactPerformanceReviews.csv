@@ -44,3 +44,81 @@ REV-042,EMP-044,2024-12-10,EMP-004,Meets Expectations,74,French literary transla
 REV-043,EMP-045,2024-12-10,EMP-007,Exceeds Expectations,88,Cloud infrastructure cost reduction 20%,On-call rotation leadership,4.4
 REV-044,EMP-046,2024-12-10,EMP-005,Meets Expectations,80,Audience engagement and content quality,Video content production,3.8
 REV-045,EMP-049,2024-12-10,EMP-006,Meets Expectations,78,Picking accuracy and speed,Safety protocol adherence,3.7
+REV-046,EMP-001,2025-06-15,EMP-003,Exceeds Expectations,93,Talent acquisition and retention,Timeline management,4.1
+REV-047,EMP-002,2025-06-15,EMP-003,Outstanding,98,Warehouse efficiency,Data-driven decision making,5.0
+REV-048,EMP-004,2025-06-15,EMP-003,Meets Expectations,83,Employee relations and compliance,ROI measurement,3.8
+REV-049,EMP-005,2025-06-15,EMP-003,Outstanding,92,Employee relations and compliance,ROI measurement,5.0
+REV-050,EMP-006,2025-06-15,EMP-003,Exceeds Expectations,91,Supply chain optimization,Process standardization,4.3
+REV-051,EMP-007,2025-06-15,EMP-003,Exceeds Expectations,88,Team collaboration and mentorship,Delegation to direct reports,4.5
+REV-052,EMP-008,2025-06-15,EMP-001,Meets Expectations,72,Data pipeline reliability,ROI measurement,3.5
+REV-053,EMP-009,2025-06-15,EMP-006,Meets Expectations,82,Warehouse efficiency,Succession planning,3.2
+REV-054,EMP-010,2025-06-15,EMP-006,Outstanding,100,Supply chain optimization,Compensation benchmarking,4.9
+REV-055,EMP-011,2025-06-15,EMP-001,Needs Improvement,60,Team collaboration and mentorship,ROI measurement,2.9
+REV-056,EMP-012,2025-06-15,EMP-011,Exceeds Expectations,93,Order processing speed,Data-driven decision making,4.2
+REV-057,EMP-017,2025-06-15,EMP-001,Outstanding,100,Team collaboration and mentorship,Work-life balance,5.0
+REV-058,EMP-022,2025-06-15,EMP-004,Outstanding,94,Data pipeline reliability,Knowledge sharing,4.8
+REV-059,EMP-026,2025-06-15,EMP-005,Meets Expectations,70,Talent acquisition and retention,Compensation benchmarking,3.7
+REV-060,EMP-031,2025-06-15,EMP-007,Exceeds Expectations,86,Brand awareness campaigns,Data-driven decision making,4.0
+REV-061,EMP-034,2025-06-15,EMP-008,Exceeds Expectations,85,Cloud infrastructure optimization,Process standardization,4.1
+REV-062,EMP-041,2025-06-15,EMP-011,Outstanding,99,Platform stability and uptime,Knowledge sharing,4.8
+REV-063,EMP-042,2025-06-15,EMP-041,Meets Expectations,68,Customer retention and loyalty,Work-life balance,3.3
+REV-064,EMP-043,2025-06-15,EMP-041,Meets Expectations,68,Team collaboration and mentorship,Forecasting accuracy,3.8
+REV-065,EMP-047,2025-06-15,EMP-005,Meets Expectations,74,Cloud infrastructure optimization,Succession planning,3.7
+REV-066,EMP-050,2025-06-15,EMP-007,Exceeds Expectations,82,Cloud infrastructure optimization,Succession planning,4.6
+REV-067,EMP-044,2025-06-15,EMP-004,Meets Expectations,83,Order processing speed,Process standardization,3.7
+REV-068,EMP-045,2025-06-15,EMP-007,Outstanding,95,Order processing speed,Forecasting accuracy,4.6
+REV-069,EMP-046,2025-06-15,EMP-005,Exceeds Expectations,87,Revenue growth and key accounts,Timeline management,4.5
+REV-070,EMP-048,2025-06-15,EMP-041,Exceeds Expectations,95,Customer retention and loyalty,ROI measurement,4.5
+REV-071,EMP-049,2025-06-15,EMP-006,Exceeds Expectations,85,Inventory accuracy improvement,User training documentation,4.1
+REV-072,EMP-001,2025-12-10,EMP-003,Exceeds Expectations,94,Talent acquisition and retention,ROI measurement,4.1
+REV-073,EMP-002,2025-12-10,EMP-003,Meets Expectations,69,Supply chain optimization,ROI measurement,3.8
+REV-074,EMP-004,2025-12-10,EMP-003,Meets Expectations,82,Supply chain optimization,Stakeholder communication,3.5
+REV-075,EMP-005,2025-12-10,EMP-003,Outstanding,99,Revenue growth and key accounts,Automation strategy,4.6
+REV-076,EMP-006,2025-12-10,EMP-003,Meets Expectations,83,Employee relations and compliance,Timeline management,3.8
+REV-077,EMP-007,2025-12-10,EMP-003,Meets Expectations,72,Team collaboration and mentorship,Succession planning,3.3
+REV-078,EMP-008,2025-12-10,EMP-001,Exceeds Expectations,88,Team collaboration and mentorship,Compensation benchmarking,4.3
+REV-079,EMP-009,2025-12-10,EMP-006,Exceeds Expectations,87,Cloud infrastructure optimization,Documentation practices,4.7
+REV-080,EMP-010,2025-12-10,EMP-006,Outstanding,100,Financial accuracy and reporting,Succession planning,4.7
+REV-081,EMP-011,2025-12-10,EMP-001,Meets Expectations,74,Team collaboration and mentorship,Forecasting accuracy,3.3
+REV-082,EMP-012,2025-12-10,EMP-011,Meets Expectations,72,Employee relations and compliance,Stakeholder communication,3.9
+REV-083,EMP-017,2025-12-10,EMP-001,Exceeds Expectations,92,Platform stability and uptime,Diversity recruitment,4.2
+REV-084,EMP-022,2025-12-10,EMP-004,Meets Expectations,81,Financial accuracy and reporting,Forecasting accuracy,3.7
+REV-085,EMP-026,2025-12-10,EMP-005,Meets Expectations,81,Content creation and engagement,ROI measurement,3.8
+REV-086,EMP-031,2025-12-10,EMP-007,Outstanding,94,Revenue growth and key accounts,User training documentation,4.6
+REV-087,EMP-034,2025-12-10,EMP-008,Exceeds Expectations,94,IT infrastructure and security,International logistics,4.1
+REV-088,EMP-041,2025-12-10,EMP-011,Outstanding,92,IT infrastructure and security,User training documentation,4.9
+REV-089,EMP-042,2025-12-10,EMP-041,Meets Expectations,69,Cloud infrastructure optimization,ROI measurement,3.5
+REV-090,EMP-043,2025-12-10,EMP-041,Meets Expectations,75,Financial accuracy and reporting,Data-driven decision making,3.7
+REV-091,EMP-047,2025-12-10,EMP-005,Exceeds Expectations,94,IT infrastructure and security,Work-life balance,4.6
+REV-092,EMP-050,2025-12-10,EMP-007,Meets Expectations,80,Talent acquisition and retention,Work-life balance,3.5
+REV-093,EMP-044,2025-12-10,EMP-004,Outstanding,96,Cloud infrastructure optimization,Compensation benchmarking,4.7
+REV-094,EMP-045,2025-12-10,EMP-007,Meets Expectations,79,Financial accuracy and reporting,User training documentation,3.7
+REV-095,EMP-046,2025-12-10,EMP-005,Meets Expectations,74,Employee relations and compliance,Cross-team collaboration,3.4
+REV-096,EMP-048,2025-12-10,EMP-041,Exceeds Expectations,84,Platform stability and uptime,Data-driven decision making,4.5
+REV-097,EMP-049,2025-12-10,EMP-006,Outstanding,96,International market penetration,Timeline management,4.8
+REV-098,EMP-001,2026-06-15,EMP-003,Meets Expectations,76,Cloud infrastructure optimization,Documentation practices,3.2
+REV-099,EMP-002,2026-06-15,EMP-003,Outstanding,97,Team collaboration and mentorship,Forecasting accuracy,4.8
+REV-100,EMP-004,2026-06-15,EMP-003,Exceeds Expectations,91,Digital channel growth,Succession planning,4.4
+REV-101,EMP-005,2026-06-15,EMP-003,Exceeds Expectations,84,Content creation and engagement,Timeline management,4.4
+REV-102,EMP-006,2026-06-15,EMP-003,Exceeds Expectations,90,Order processing speed,Compensation benchmarking,4.3
+REV-103,EMP-007,2026-06-15,EMP-003,Meets Expectations,78,IT infrastructure and security,User training documentation,3.4
+REV-104,EMP-008,2026-06-15,EMP-001,Needs Improvement,69,Financial accuracy and reporting,Delegation to direct reports,2.9
+REV-105,EMP-009,2026-06-15,EMP-006,Outstanding,97,Team collaboration and mentorship,Compensation benchmarking,4.8
+REV-106,EMP-010,2026-06-15,EMP-006,Needs Improvement,60,Platform stability and uptime,Data-driven decision making,2.8
+REV-107,EMP-011,2026-06-15,EMP-001,Exceeds Expectations,93,Content creation and engagement,Diversity recruitment,4.2
+REV-108,EMP-012,2026-06-15,EMP-011,Exceeds Expectations,90,Revenue growth and key accounts,Forecasting accuracy,4.3
+REV-109,EMP-017,2026-06-15,EMP-001,Meets Expectations,74,Digital channel growth,ROI measurement,3.4
+REV-110,EMP-022,2026-06-15,EMP-004,Exceeds Expectations,94,Strategic vision and leadership,Cross-team collaboration,4.4
+REV-111,EMP-026,2026-06-15,EMP-005,Exceeds Expectations,92,Customer retention and loyalty,ROI measurement,4.5
+REV-112,EMP-031,2026-06-15,EMP-007,Exceeds Expectations,95,Customer retention and loyalty,Cross-team collaboration,4.5
+REV-113,EMP-034,2026-06-15,EMP-008,Meets Expectations,72,Talent acquisition and retention,Work-life balance,3.2
+REV-114,EMP-041,2026-06-15,EMP-011,Outstanding,92,Warehouse efficiency,Cross-team collaboration,4.7
+REV-115,EMP-042,2026-06-15,EMP-041,Meets Expectations,75,Customer retention and loyalty,Data-driven decision making,3.8
+REV-116,EMP-043,2026-06-15,EMP-041,Exceeds Expectations,88,Strategic vision and leadership,Data-driven decision making,4.3
+REV-117,EMP-047,2026-06-15,EMP-005,Meets Expectations,68,Team collaboration and mentorship,Cross-team collaboration,3.6
+REV-118,EMP-050,2026-06-15,EMP-007,Meets Expectations,69,Digital channel growth,Diversity recruitment,3.7
+REV-119,EMP-044,2026-06-15,EMP-004,Meets Expectations,71,IT infrastructure and security,Cross-team collaboration,3.4
+REV-120,EMP-045,2026-06-15,EMP-007,Exceeds Expectations,89,Strategic vision and leadership,Knowledge sharing,4.3
+REV-121,EMP-046,2026-06-15,EMP-005,Exceeds Expectations,85,Inventory accuracy improvement,Forecasting accuracy,4.1
+REV-122,EMP-048,2026-06-15,EMP-041,Needs Improvement,54,Order processing speed,Delegation to direct reports,2.7
+REV-123,EMP-049,2026-06-15,EMP-006,Meets Expectations,72,Strategic vision and leadership,Data-driven decision making,3.3

@@ -138,11 +138,11 @@ for t in tables_to_read:
 from datetime import date
 
 print("\n" + "="*60)
-print("  Generating DimDate (2022-01-01 to 2025-12-31)")
+print("  Generating DimDate (2022-01-01 to 2027-12-31)")
 print("="*60)
 
 start_date = date(2022, 1, 1)
-end_date = date(2025, 12, 31)
+end_date = date(2027, 12, 31)
 
 # Generate date sequence
 date_df = spark.sql(
@@ -203,13 +203,13 @@ dim_date = date_df.select(
         )
     ).alias("FiscalQuarterLabel"),
 
-    # Relative flags (updated at runtime): e.g., relative to 2024-12-31
+    # Relative flags — dynamic at runtime via current_date()
     when(
-        (year("FullDate") == 2024) & (month("FullDate") == month(lit("2024-12-31"))),
+        (year("FullDate") == year(current_date())) & (month("FullDate") == month(current_date())),
         lit(True)
     ).otherwise(lit(False)).alias("IsCurrentMonth"),
 
-    when(year("FullDate") == 2024, lit(True)).otherwise(lit(False)).alias("IsCurrentYear"),
+    when(year("FullDate") == year(current_date()), lit(True)).otherwise(lit(False)).alias("IsCurrentYear"),
 )
 
 dim_date.write.mode("overwrite").format("delta").saveAsTable(gold_table("DimDate", "dim"))
@@ -417,10 +417,10 @@ if df_customers is not None and df_orders is not None:
                  datediff(coalesce(col("LastOrderDate"), current_date()), col("FirstOrderDate"))
             ).otherwise(lit(0))
         )
-        # Recency (days since last order vs. 2024-12-31)
+        # Recency (days since last order vs. current date)
         .withColumn("DaysSinceLastOrder",
             when(col("LastOrderDate").isNotNull(),
-                 datediff(lit("2024-12-31"), col("LastOrderDate"))
+                 datediff(current_date(), col("LastOrderDate"))
             ).otherwise(lit(999))
         )
         # Customer segment by value
@@ -563,7 +563,7 @@ if df_employees is not None:
     df_emp_enriched = (df_emp_enriched
         .withColumn("TenureYears",
             when(col("HireDate").isNotNull(),
-                 spark_round(months_between(lit("2024-12-31"), col("HireDate")) / 12, 1)
+                 spark_round(months_between(current_date(), col("HireDate")) / 12, 1)
             ).otherwise(lit(0.0))
         )
         .withColumn("TenureBand",

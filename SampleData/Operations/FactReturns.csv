@@ -39,3 +39,33 @@ RET-037,ORD-0200,BK-040,CUST-001,2024-12-22,120,Season End Return,Processed,1858
 RET-038,ORD-0145,BK-034,CUST-026,2024-09-20,15,Damaged Pages,Processed,284.85,Damaged,Written Off
 RET-039,ORD-0150,BK-029,CUST-028,2024-10-10,25,Overstock,Processed,349.75,Good,Restocked
 RET-040,ORD-0135,BK-045,CUST-035,2024-08-30,10,Quality Issue,Processed,174.90,Good,Restocked
+RET-041,ORD-0476,BK-036,CUST-027,2026-04-23,22,Overstock,Processed,357.37,Good,Restocked
+RET-042,ORD-0481,BK-012,CUST-012,2026-05-21,39,Overstock,Processed,787.56,Good,Restocked
+RET-043,ORD-0244,BK-023,CUST-050,2025-04-13,153,Shelf Space Reallocation,Processed,2053.46,Good,Restocked
+RET-044,ORD-0357,BK-020,CUST-010,2025-11-05,171,Shelf Space Reallocation,Processed,3300.97,Good,Restocked
+RET-045,ORD-0308,BK-019,CUST-004,2025-07-28,139,Overstock,Processed,1729.95,Good,Restocked
+RET-046,ORD-0377,BK-014,CUST-015,2025-11-28,352,Slow Seller,Processed,7357.39,Good,Restocked
+RET-047,ORD-0309,BK-017,CUST-009,2025-08-20,19,Season End Return,Processed,378.30,Good,Restocked
+RET-048,ORD-0412,BK-021,CUST-009,2026-01-26,39,Slow Seller,Processed,890.53,Good,Restocked
+RET-049,ORD-0463,BK-024,CUST-045,2026-03-07,357,Season End Return,Processed,5438.42,Good,Restocked
+RET-050,ORD-0273,BK-005,CUST-024,2025-07-06,160,Overstock,Processed,2783.28,Good,Restocked
+RET-051,ORD-0283,BK-023,CUST-047,2025-05-22,21,Season End Return,Processed,286.33,Good,Restocked
+RET-052,ORD-0295,BK-044,CUST-030,2025-08-07,33,Shelf Space Reallocation,Processed,474.00,Good,Restocked
+RET-053,ORD-0314,BK-009,CUST-033,2025-08-07,157,Shelf Space Reallocation,Processed,3200.27,Good,Restocked
+RET-054,ORD-0330,BK-013,CUST-042,2025-10-01,43,Shelf Space Reallocation,Processed,870.26,Good,Restocked
+RET-055,ORD-0300,BK-006,CUST-002,2025-07-25,224,Damaged Covers,Processed,4650.67,Damaged,Written Off
+RET-056,ORD-0259,BK-034,CUST-035,2025-06-12,52,Overstock,Processed,783.13,Good,Restocked
+RET-057,ORD-0293,BK-030,CUST-024,2025-07-20,256,Season End Return,Processed,5399.22,Good,Restocked
+RET-058,ORD-0491,BK-007,CUST-037,2026-05-17,14,Season End Return,Processed,179.06,Good,Restocked
+RET-059,ORD-0228,BK-036,CUST-036,2025-04-12,22,Quality Issue,Processed,481.40,Damaged,Written Off
+RET-060,ORD-0482,BK-023,CUST-045,2026-05-08,67,Quality Issue,Processed,952.65,Damaged,Written Off
+RET-061,ORD-0437,BK-037,CUST-034,2026-02-02,168,Overstock,Processed,2974.31,Good,Restocked
+RET-062,ORD-0238,BK-009,CUST-014,2025-04-08,67,Slow Seller,Processed,1120.35,Good,Restocked
+RET-063,ORD-0349,BK-008,CUST-023,2025-11-05,55,Season End Return,Processed,1089.43,Good,Restocked
+RET-064,ORD-0235,BK-040,CUST-011,2025-03-27,28,Damaged Covers,Processed,678.00,Damaged,Written Off
+RET-065,ORD-0329,BK-009,CUST-044,2025-09-05,135,Shelf Space Reallocation,Processed,2248.16,Good,Restocked
+RET-066,ORD-0251,BK-006,CUST-022,2025-06-05,44,Damaged in Transit,Processed,1031.76,Damaged,Written Off
+RET-067,ORD-0302,BK-026,CUST-044,2025-08-14,29,Overstock,Processed,437.18,Good,Restocked
+RET-068,ORD-0498,BK-011,CUST-042,2026-05-25,16,Damaged in Transit,Processed,184.64,Damaged,Written Off
+RET-069,ORD-0450,BK-009,CUST-001,2026-02-19,5,Season End Return,Processed,87.02,Good,Restocked
+RET-070,ORD-0370,BK-010,CUST-046,2025-10-27,126,Slow Seller,Processed,2477.90,Good,Restocked

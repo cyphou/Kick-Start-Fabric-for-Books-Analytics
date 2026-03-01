@@ -133,7 +133,7 @@ def safe_request(url, retries=3, delay=1.0, timeout=15):
 # Cell 2: Fetch exchange rates from Frankfurter API
 # -----------------------------------------------------------
 # https://frankfurter.app — free, no API key required
-# Fetches monthly average rates for FY2024 for currencies used
+# Fetches monthly average rates for FY2024-FY2026 for currencies used
 # by Horizon Books' international customers
 
 print("\n" + "="*60)
@@ -144,29 +144,34 @@ print("="*60)
 target_currencies = ["EUR", "GBP", "JPY", "MXN", "CAD", "AUD", "BRL", "INR",
                      "ZAR", "KES", "NGN", "EGP", "CNY", "KRW", "SGD", "AED"]
 
-# Fetch monthly rates for 2024
+# Fetch monthly rates for 2024-2026
 exchange_rows = []
 rate_fetch_success = True
 
-for m in range(1, 13):
-    date_str = f"2024-{m:02d}-01"
-    url = f"https://frankfurter.app/{date_str}?from=USD&to={','.join(target_currencies)}"
-    data = safe_request(url)
-    if data and "rates" in data:
-        for currency, rate in data["rates"].items():
-            exchange_rows.append({
-                "RateDate": date_str,
-                "BaseCurrency": "USD",
-                "TargetCurrency": currency,
-                "ExchangeRate": float(rate),
-                "RateMonth": m,
-                "RateYear": 2024
-            })
-        print(f"  ✓ {date_str}: {len(data['rates'])} currencies")
-    else:
-        print(f"  ⚠ Could not fetch rates for {date_str}")
-        rate_fetch_success = False
-    time.sleep(0.3)  # Rate limit courtesy
+from datetime import date as _date
+_today = _date.today()
+
+for yr in [2024, 2025, 2026]:
+    end_month = 12 if yr < _today.year else min(12, _today.month)
+    for m in range(1, end_month + 1):
+        date_str = f"{yr}-{m:02d}-01"
+        url = f"https://frankfurter.app/{date_str}?from=USD&to={','.join(target_currencies)}"
+        data = safe_request(url)
+        if data and "rates" in data:
+            for currency, rate in data["rates"].items():
+                exchange_rows.append({
+                    "RateDate": date_str,
+                    "BaseCurrency": "USD",
+                    "TargetCurrency": currency,
+                    "ExchangeRate": float(rate),
+                    "RateMonth": m,
+                    "RateYear": yr
+                })
+            print(f"  ✓ {date_str}: {len(data['rates'])} currencies")
+        else:
+            print(f"  ⚠ Could not fetch rates for {date_str}")
+            rate_fetch_success = False
+        time.sleep(0.3)  # Rate limit courtesy
 
 if exchange_rows:
     schema_rates = StructType([
@@ -197,9 +202,10 @@ else:
         ("USD", "AED", 3.67)
     ]
     fallback_rows = []
-    for m in range(1, 13):
-        for base, target, rate in fallback_rates:
-            fallback_rows.append((f"2024-{m:02d}-01", base, target, rate, m, 2024))
+    for yr in [2024, 2025, 2026]:
+        for m in range(1, 13):
+            for base, target, rate in fallback_rates:
+                fallback_rows.append((f"{yr}-{m:02d}-01", base, target, rate, m, yr))
     schema_fb = StructType([
         StructField("RateDate", StringType()), StructField("BaseCurrency", StringType()),
         StructField("TargetCurrency", StringType()), StructField("ExchangeRate", DoubleType()),
@@ -245,7 +251,7 @@ country_codes = {
 
 holiday_rows = []
 for country_name, code in country_codes.items():
-    for yr in [2024, 2025]:
+    for yr in [2024, 2025, 2026]:
         url = f"https://date.nager.at/api/v3/PublicHolidays/{yr}/{code}"
         data = safe_request(url, delay=0.5)
         if data and isinstance(data, list):

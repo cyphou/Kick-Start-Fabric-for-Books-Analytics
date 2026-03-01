@@ -8,7 +8,7 @@
 
 **Company:** Horizon Books Publishing & Distribution  
 **Industry:** Book Publishing, Distribution, and Retail  
-**Data Year:** FY2024 (January - December 2024)  
+**Data Years:** FY2024–FY2026 (January 2024 – June 2026)  
 **Fabric Components:** 3 Lakehouses (Medallion with schemas), Spark Environment, 4 Spark Notebooks, Semantic Model, Power BI Report, Data Agent
 
 ### Business Domains Covered
@@ -17,15 +17,17 @@
 |---|---|---|
 | **Finance** | P&L, Budget vs Actual, GL Transactions | Revenue, COGS, Royalties, Marketing, OpEx |
 | **HR** | Workforce, Compensation, Recruitment | 50 employees, 7 departments, payroll, reviews |
-| **Operations** | Books, Orders, Inventory, Returns, Geography | 45 titles, 30 authors, 50 customers, 200 orders |
+| **Operations** | Books, Orders, Inventory, Returns, Geography | 45 titles, 30 authors, 50 customers, 548 orders |
 
 ### The Story
 Horizon Books is a mid-size publisher with 6 imprints, operating from New York (HQ) 
 and Chicago (warehouse), with international sales operations in London, Tokyo, Frankfurt, 
 and Mexico City. The company serves 50 customers across 20+ countries globally. 
-FY2024's flagship title "Winter's Promise" by Catherine Harper 
-drove record Q4 sales. The company publishes across Fiction (Literary, Sci-Fi, Fantasy, 
-Mystery, Thriller, Romance) and Non-Fiction (Tech, Lifestyle, Health, Education).
+FY2024’s flagship title "Winter's Promise" by Catherine Harper 
+drove record Q4 sales, and the momentum continued into FY2025-FY2026 with 
+new releases like "Starfall Legacy" and "The Data Detective". The company 
+publishes across Fiction (Literary, Sci-Fi, Fantasy, Mystery, Thriller, 
+Romance) and Non-Fiction (Tech, Lifestyle, Health, Education).
 
 ---
 
@@ -222,8 +224,8 @@ The 4-notebook pipeline implements a medallion architecture with web data enrich
 | **04_Forecasting** | GoldLH | GoldLH fact tables | GoldLH (analytics schema) | Holt-Winters time-series forecasting: sales revenue by channel, genre demand, financial P&L, inventory demand, workforce planning (6-month horizon, 95% confidence) |
 
 **Web APIs used** (all free, no authentication required):
-- **frankfurter.app** — Monthly exchange rates (16 currencies, FY2024)
-- **date.nager.at** — Public holidays for 29 countries (2024-2025)
+- **frankfurter.app** — Monthly exchange rates (16 currencies, FY2024–FY2026)
+- **date.nager.at** — Public holidays for 29 countries (2024–2026)
 - **restcountries.com** — Country indicators (population, area, Gini index, languages)
 - **openlibrary.org** — Book metadata by ISBN (subjects, cover URLs, publisher)
 
@@ -449,23 +451,23 @@ FullDemoFabricBookUseCase/
 │   ├── Finance/
 │   │   ├── DimAccounts.csv            ← Chart of Accounts (28 rows)
 │   │   ├── DimCostCenters.csv         ← Cost Centers (7 rows)
-│   │   ├── FactFinancialTransactions.csv  ← GL Transactions (225 rows)
-│   │   └── FactBudget.csv             ← Budget vs Actual (132 rows, monthly)
+│   │   ├── FactFinancialTransactions.csv  ← GL Transactions (952 rows, FY2024–FY2026)
+│   │   └── FactBudget.csv             ← Budget vs Actual (330 rows, monthly)
 │   ├── HR/
 │   │   ├── DimEmployees.csv           ← Employees (50 rows, incl. international)
 │   │   ├── DimDepartments.csv         ← Departments (7 rows)
-│   │   ├── FactPayroll.csv            ← Payroll Records (143 rows)
-│   │   ├── FactPerformanceReviews.csv ← Reviews (45 rows, mid-year + year-end)
-│   │   └── FactRecruitment.csv        ← Recruitment (24 rows)
+│   │   ├── FactPayroll.csv            ← Payroll Records (611 rows)
+│   │   ├── FactPerformanceReviews.csv ← Reviews (123 rows, mid-year + year-end)
+│   │   └── FactRecruitment.csv        ← Recruitment (40 rows)
 │   └── Operations/
 │       ├── DimBooks.csv               ← Book Catalog (45 rows)
 │       ├── DimAuthors.csv             ← Authors (30 rows, international)
 │       ├── DimCustomers.csv           ← Customers (50 rows, global)
 │       ├── DimGeography.csv           ← Geography (70 rows, 29 countries)
 │       ├── DimWarehouses.csv          ← Warehouses (3 rows)
-│       ├── FactOrders.csv             ← Sales Orders (200 rows)
-│       ├── FactInventory.csv          ← Inventory Snapshots (70 rows)
-│       └── FactReturns.csv            ← Returns (40 rows)
+│       ├── FactOrders.csv             ← Sales Orders (548 rows)
+│       ├── FactInventory.csv          ← Inventory Snapshots (280 rows)
+│       └── FactReturns.csv            ← Returns (70 rows)
 │
 ├── Lakehouse/
 │   ├── CreateTables.sql               ← DDL + Views
@@ -500,28 +502,30 @@ FullDemoFabricBookUseCase/
 ## 📊 Key Demo Talking Points
 
 ### Finance Story
-- **Total FY2024 Revenue:** ~$1M+ across all channels
-- **Holiday Impact:** Q4 revenue is 2-3x higher than Q1 due to "Winter's Promise" 
-- **Budget Overperformance:** Revenue exceeded budget by ~40-80% in Q4
+- **Total Revenue (FY2024–FY2026):** ~$3M+ across all channels (growing ~8–10% YoY)
+- **Holiday Impact:** Q4 revenue is 2–3x higher than Q1 due to "Winter’s Promise" and seasonal demand
+- **Budget Overperformance:** Revenue exceeded budget by ~40–80% in Q4 FY2024
 - **Cost Control:** COGS stayed under budget; marketing spend increased for bestsellers
-- **Rights Revenue:** Growing foreign rights deals ($90K) diversify revenue
+- **Rights Revenue:** Growing foreign rights deals ($90K+ in FY2024) diversify revenue
+- **Multi-Year Trends:** FY2025 shows sustained growth with new title launches; FY2026 H1 data available
 
 ### Operations Story
-- **Bestseller:** "Winter's Promise" dominated Q4 with 50,000+ print run
+- **Bestseller:** "Winter's Promise" dominated Q4 FY2024 with 50,000+ print run
+- **New Releases:** FY2025 launches include "Starfall Legacy" (Fantasy) and "The Data Detective" (Tech)
 - **Channel Mix:** Amazon/online is the largest channel (~40%), growing digital share
-- **Inventory Crisis:** "Winter's Promise" hit Critical status in December (15 days supply)
-- **Returns:** Industry-typical ~5-8% return rate, mainly overstock (not quality issues)
-- **Fulfillment:** 93%+ on-time delivery rate, avg 3-4 day fulfillment
+- **Order Volume:** 548 orders across FY2024–FY2026 (growing ~8% YoY)
+- **Returns:** Industry-typical ~5–8% return rate, mainly overstock (not quality issues)
+- **Fulfillment:** 93%+ on-time delivery rate, avg 3–4 day fulfillment
 - **International:** 30+ international customers across Europe, Asia-Pacific, LATAM, and Africa
 - **Geographic Reach:** Customers in 20+ countries, growing EMEA and APAC presence
 
 ### HR Story
 - **Growing Team:** 50 employees across 7 departments, including international staff
 - **Global Presence:** Staff in London, Tokyo, Frankfurt, Mexico City, and remote
-- **Growth Mode:** 7 open positions indicate expansion
-- **Strong Performance:** 60%+ employees rated "Exceeds" or "Outstanding"
+- **Growth Mode:** Active recruitment pipeline (40 requisitions, 8 filled in FY2025)
+- **Strong Performance:** 60%+ employees rated “Exceeds” or “Outstanding”
 - **Competitive Pay:** Average tenure 4+ years suggests good retention
-- **Tech Hiring Challenge:** Cloud Engineer took 80 days to fill
+- **Multi-Year Payroll:** 611 payroll records spanning FY2024–FY2026
 
 ---
 
@@ -529,7 +533,7 @@ FullDemoFabricBookUseCase/
 
 ### Scenario 1: Executive Briefing (5 min)
 Start on Executive Dashboard → highlight Q4 surge → drill into Winter's Promise → 
-show budget overperformance → mention headcount growth
+show budget overperformance → mention headcount growth → compare FY2024 vs FY2025 trends
 
 ### Scenario 2: Finance Deep Dive (10 min)
 P&L waterfall → Budget vs Actual by quarter → Cost analysis by category → 
@@ -544,8 +548,8 @@ Workforce overview → Department distribution → Compensation analysis →
 Performance dashboard → Recruitment pipeline → Revenue per employee
 
 ### Scenario 5: AI-Powered Insights (5 min)
-Open Data Agent → Ask "What's our FY2024 revenue?" → Ask "Any inventory alerts?" → 
-Ask "Compare Q3 vs Q4" → Show how business users can self-serve analytics
+Open Data Agent → Ask "What's our total revenue across FY2024–FY2026?" → Ask "Any inventory alerts?" → 
+Ask "Compare FY2024 vs FY2025" → Show how business users can self-serve analytics
 
 ---
 
@@ -614,6 +618,7 @@ See details in [`deploy/HorizonBooks_TaskFlow.json`](deploy/HorizonBooks_TaskFlo
 ## �📝 Notes
 
 - All data is **fictional** and created for demo purposes
+- Data spans **FY2024 (full year), FY2025 (full year), and FY2026 (H1 through June)**
 - Financial figures are representative of a mid-size publisher
 - Author names and book titles are entirely fictional
 - Customer names reference real retailers for realism but all data is synthetic
@@ -626,7 +631,7 @@ Some CSV columns have non-obvious formats that affect type casting in Dataflows:
 
 | Column | File(s) | Format | M Type | Notes |
 |--------|---------|--------|--------|-------|
-| `FiscalYear` | FactFinancialTransactions, FactBudget | `FY2024` | `type text` | Has "FY" prefix — not a pure integer |
+| `FiscalYear` | FactFinancialTransactions, FactBudget | `FY2024`–`FY2026` | `type text` | Has "FY" prefix — not a pure integer |
 | `FiscalMonth` | FactFinancialTransactions, FactBudget | numeric | `Int64.Type` | Integer month number (1–12) |
 | `PerformanceRating` | FactPerformanceReviews | `Exceeds Expectations` | `type text` | Categorical label, not numeric |
 | `GoalsMet` | FactPerformanceReviews | text | `type text` | Text descriptor |

@@ -273,21 +273,21 @@ Describe "Non-Regression Baselines" -Tag "NonRegression" {
         $expectedRows = @(
             @{ Domain = "Finance";    File = "DimAccounts.csv";                Rows = 26 },
             @{ Domain = "Finance";    File = "DimCostCenters.csv";             Rows = 7 },
-            @{ Domain = "Finance";    File = "FactBudget.csv";                 Rows = 132 },
-            @{ Domain = "Finance";    File = "FactFinancialTransactions.csv";  Rows = 225 },
+            @{ Domain = "Finance";    File = "FactBudget.csv";                 Rows = 330 },
+            @{ Domain = "Finance";    File = "FactFinancialTransactions.csv";  Rows = 952 },
             @{ Domain = "HR";         File = "DimDepartments.csv";             Rows = 7 },
             @{ Domain = "HR";         File = "DimEmployees.csv";               Rows = 50 },
-            @{ Domain = "HR";         File = "FactPayroll.csv";                Rows = 143 },
-            @{ Domain = "HR";         File = "FactPerformanceReviews.csv";     Rows = 45 },
-            @{ Domain = "HR";         File = "FactRecruitment.csv";            Rows = 24 },
+            @{ Domain = "HR";         File = "FactPayroll.csv";                Rows = 611 },
+            @{ Domain = "HR";         File = "FactPerformanceReviews.csv";     Rows = 123 },
+            @{ Domain = "HR";         File = "FactRecruitment.csv";            Rows = 40 },
             @{ Domain = "Operations"; File = "DimAuthors.csv";                 Rows = 30 },
             @{ Domain = "Operations"; File = "DimBooks.csv";                   Rows = 45 },
             @{ Domain = "Operations"; File = "DimCustomers.csv";               Rows = 50 },
             @{ Domain = "Operations"; File = "DimGeography.csv";               Rows = 70 },
             @{ Domain = "Operations"; File = "DimWarehouses.csv";              Rows = 3 },
-            @{ Domain = "Operations"; File = "FactInventory.csv";              Rows = 70 },
-            @{ Domain = "Operations"; File = "FactOrders.csv";                 Rows = 200 },
-            @{ Domain = "Operations"; File = "FactReturns.csv";                Rows = 40 }
+            @{ Domain = "Operations"; File = "FactInventory.csv";              Rows = 280 },
+            @{ Domain = "Operations"; File = "FactOrders.csv";                 Rows = 548 },
+            @{ Domain = "Operations"; File = "FactReturns.csv";                Rows = 70 }
         )
         It "<Domain>/<File> has <Rows> data rows" -ForEach $expectedRows {
             $path = Join-Path $dataDir "$Domain\$File"

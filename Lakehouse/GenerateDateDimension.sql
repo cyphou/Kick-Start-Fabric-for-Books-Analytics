@@ -1,9 +1,9 @@
 -- ============================================================================
 -- Horizon Books - Date Dimension Generator
--- Run this AFTER creating tables to populate DimDate with 2023-2025 range
+-- Run this AFTER creating tables to populate DimDate with 2023-2027 range
 -- ============================================================================
 
--- Generate dates from 2023-01-01 to 2025-12-31
+-- Generate dates from 2023-01-01 to 2027-12-31
 INSERT INTO DimDate
 SELECT
     CAST(DATE_FORMAT(d.date_val, 'yyyyMMdd') AS INT) AS DateKey,
@@ -23,7 +23,7 @@ SELECT
 FROM (
     SELECT EXPLODE(SEQUENCE(
         TO_DATE('2023-01-01'), 
-        TO_DATE('2025-12-31'), 
+        TO_DATE('2027-12-31'), 
         INTERVAL 1 DAY
     )) AS date_val
 ) d;
