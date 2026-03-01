@@ -134,7 +134,7 @@ Describe "Project Structure" -Tag "Unit" {
     }
 
     Context "Definitions Folder" {
-        $expectedDirs = @("dataflows", "notebooks", "pipeline", "lakehouses", "report", "dataagent")
+        $expectedDirs = @("dataflows", "notebooks", "pipeline", "lakehouses", "report", "dataagent", "environment")
         It "definitions/<folder> exists: <_>" -ForEach $expectedDirs {
             Join-Path $defDir $_ | Should -Exist
         }
@@ -303,9 +303,9 @@ Describe "Non-Regression Baselines" -Tag "NonRegression" {
     }
 
     Context "Manifest Item Count" {
-        It "items-manifest.json defines exactly 14 items" {
+        It "items-manifest.json defines exactly 15 items" {
             $manifest = Get-Content (Join-Path $defDir "items-manifest.json") -Raw | ConvertFrom-Json
-            $manifest.items.Count | Should -Be 14
+            $manifest.items.Count | Should -Be 15
         }
     }
 
@@ -325,9 +325,9 @@ Describe "Non-Regression Baselines" -Tag "NonRegression" {
     }
 
     Context "Workspace Folder Count" {
-        It "Manifest defines exactly 5 workspace folders" {
+        It "Manifest defines exactly 6 workspace folders" {
             $manifest = Get-Content (Join-Path $defDir "items-manifest.json") -Raw | ConvertFrom-Json
-            $manifest.workspaceFolders.Count | Should -Be 5
+            $manifest.workspaceFolders.Count | Should -Be 6
         }
     }
 }
@@ -520,8 +520,8 @@ Describe "Definition File Validation" -Tag "Definition" {
         It "Has items array" {
             $manifest.items | Should -Not -BeNullOrEmpty
         }
-        It "Has deploymentOrder array with 14 entries" {
-            $manifest.deploymentOrder.Count | Should -Be 14
+        It "Has deploymentOrder array with 15 entries" {
+            $manifest.deploymentOrder.Count | Should -Be 15
         }
         It "deploymentOrder matches items displayNames" {
             $itemNames = $manifest.items | ForEach-Object { $_.displayName } | Sort-Object
@@ -564,7 +564,7 @@ Describe "Definition File Validation" -Tag "Definition" {
         It "Workspace folder names are numbered 1-5" {
             $names = $manifest.workspaceFolders.displayName | Sort-Object
             $names[0] | Should -Match '^1\.'
-            $names[4] | Should -Match '^5\.'
+            $names[-1] | Should -Match '^5\.'
         }
         It "All manifest items are assigned to exactly one workspace folder" {
             $folderItems = $manifest.workspaceFolders | ForEach-Object { $_.items } | ForEach-Object { $_ }
@@ -1008,11 +1008,12 @@ Describe "Cross-Artifact Consistency" -Tag "NonRegression" {
     }
 
     Context "Manifest Deployment Order Starts with Lakehouses" {
-        It "First 3 items in deploymentOrder are the 3 Lakehouses" {
+        It "First items in deploymentOrder are the Spark Environment and 3 Lakehouses" {
             $manifest = Get-Content (Join-Path $defDir "items-manifest.json") -Raw | ConvertFrom-Json
-            $manifest.deploymentOrder[0] | Should -Be "BronzeLH"
-            $manifest.deploymentOrder[1] | Should -Be "SilverLH"
-            $manifest.deploymentOrder[2] | Should -Be "GoldLH"
+            $manifest.deploymentOrder[0] | Should -Be "HorizonBooks_SparkEnv"
+            $manifest.deploymentOrder[1] | Should -Be "BronzeLH"
+            $manifest.deploymentOrder[2] | Should -Be "SilverLH"
+            $manifest.deploymentOrder[3] | Should -Be "GoldLH"
         }
     }
 
@@ -1067,6 +1068,7 @@ Describe "Token Pattern Integrity" -Tag "Definition" {
                 '{{NB01_ID}}', '{{NB02_ID}}', '{{NB03_ID}}', '{{NB04_ID}}',
                 '{{DF_FINANCE_ID}}', '{{DF_HR_ID}}', '{{DF_OPERATIONS_ID}}',
                 '{{PIPELINE_ID}}', '{{SEMANTIC_MODEL_ID}}', '{{REPORT_ID}}', '{{DATA_AGENT_ID}}',
+                '{{SPARK_ENV_ID}}',
                 '{{SQL_ENDPOINT}}', '{{LAKEHOUSE_NAME}}', '{{DATAFLOW_NAME}}',
                 '{{BRONZE_LH_NAME}}', '{{SILVER_LH_NAME}}', '{{GOLD_LH_NAME}}'
             )

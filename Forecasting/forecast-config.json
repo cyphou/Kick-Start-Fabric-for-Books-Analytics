@@ -1,0 +1,68 @@
+{
+  "forecastConfig": {
+    "description": "Configuration for Horizon Books forecasting models (Notebook 04)",
+    "parameters": {
+      "forecastHorizon": 6,
+      "confidenceLevel": 0.95,
+      "minHistoryMonths": 12,
+      "seasonalPeriods": 12
+    },
+    "models": [
+      {
+        "name": "SalesRevenue",
+        "outputTable": "ForecastSalesRevenue",
+        "outputSchema": "analytics",
+        "method": "HoltWinters",
+        "seasonal": "additive",
+        "grainColumns": ["Channel"],
+        "valueColumn": "TotalRevenue",
+        "dateColumn": "OrderMonth"
+      },
+      {
+        "name": "GenreDemand",
+        "outputTable": "ForecastGenreDemand",
+        "outputSchema": "analytics",
+        "method": "HoltWinters",
+        "seasonal": "additive",
+        "grainColumns": ["Genre"],
+        "valueColumn": "MonthlyQuantity",
+        "dateColumn": "OrderMonth"
+      },
+      {
+        "name": "Financial",
+        "outputTable": "ForecastFinancial",
+        "outputSchema": "analytics",
+        "method": "HoltWinters",
+        "seasonal": "additive",
+        "grainColumns": ["AccountType"],
+        "valueColumn": "MonthlyAmount",
+        "dateColumn": "TransactionMonth"
+      },
+      {
+        "name": "InventoryDemand",
+        "outputTable": "ForecastInventoryDemand",
+        "outputSchema": "analytics",
+        "method": "HoltWinters",
+        "seasonal": "additive",
+        "grainColumns": ["BookID", "WarehouseID"],
+        "valueColumn": "QuantityOnHand",
+        "dateColumn": "SnapshotDate"
+      },
+      {
+        "name": "Workforce",
+        "outputTable": "ForecastWorkforce",
+        "outputSchema": "analytics",
+        "method": "HoltWinters",
+        "seasonal": "additive",
+        "grainColumns": ["Department"],
+        "valueColumn": "MonthlyNetPay",
+        "dateColumn": "PayPeriodMonth"
+      }
+    ],
+    "outputSettings": {
+      "writeMode": "overwrite",
+      "format": "delta",
+      "overwriteSchema": true
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "displayName": "HorizonBooks_SparkEnv",
+  "description": "Shared Spark environment for all Horizon Books notebooks. Includes statsmodels for forecasting (NB04), requests for web enrichment (NB02), and standard data science libraries.",
+  "runtimeVersion": "1.3",
+  "sparkProperties": {
+    "spark.sql.adaptive.enabled": "true",
+    "spark.sql.adaptive.coalescePartitions.enabled": "true",
+    "spark.sql.parquet.int96RebaseModeInWrite": "CORRECTED",
+    "spark.sql.parquet.datetimeRebaseModeInWrite": "CORRECTED",
+    "spark.sql.shuffle.partitions": "auto",
+    "spark.databricks.delta.optimizeWrite.enabled": "true",
+    "spark.databricks.delta.autoCompact.enabled": "true"
+  },
+  "computeConfiguration": {
+    "instancePool": "starterPool",
+    "driverCores": 4,
+    "driverMemory": "28g",
+    "executorCores": 4,
+    "executorMemory": "28g",
+    "dynamicExecutorAllocation": {
+      "enabled": true,
+      "minExecutors": 1,
+      "maxExecutors": 4
+    }
+  }
+}

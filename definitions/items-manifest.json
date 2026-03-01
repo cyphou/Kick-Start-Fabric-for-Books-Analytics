@@ -35,6 +35,17 @@
       }
     },
     {
+      "displayName": "HorizonBooks_SparkEnv",
+      "type": "Environment",
+      "description": "Shared Spark environment for all notebooks. Includes statsmodels, pandas, numpy, requests, scipy.",
+      "token": "{{SPARK_ENV_ID}}",
+      "definitionParts": [
+        { "path": "environment-definition.json", "source": "definitions/environment/environment-definition.json" },
+        { "path": "public-libraries.json", "source": "definitions/environment/public-libraries.json" },
+        { "path": "requirements.txt", "source": "definitions/environment/requirements.txt" }
+      ]
+    },
+    {
       "displayName": "HorizonBooks_01_BronzeToSilver",
       "type": "Notebook",
       "description": "PySpark: Reads Bronze tables (loaded by Dataflows), writes schema-organized Delta to SilverLH",
@@ -44,7 +55,8 @@
         { "path": "notebook-content.py" }
       ],
       "metadataTemplate": "definitions/notebooks/nb01-lakehouse-metadata.json",
-      "defaultLakehouse": "{{BRONZE_LH_ID}}"
+      "defaultLakehouse": "{{BRONZE_LH_ID}}",
+      "environment": "{{SPARK_ENV_ID}}"
     },
     {
       "displayName": "HorizonBooks_02_WebEnrichment",
@@ -56,7 +68,8 @@
         { "path": "notebook-content.py" }
       ],
       "metadataTemplate": "definitions/notebooks/nb02-lakehouse-metadata.json",
-      "defaultLakehouse": "{{SILVER_LH_ID}}"
+      "defaultLakehouse": "{{SILVER_LH_ID}}",
+      "environment": "{{SPARK_ENV_ID}}"
     },
     {
       "displayName": "HorizonBooks_03_SilverToGold",
@@ -68,7 +81,8 @@
         { "path": "notebook-content.py" }
       ],
       "metadataTemplate": "definitions/notebooks/nb03-lakehouse-metadata.json",
-      "defaultLakehouse": "{{GOLD_LH_ID}}"
+      "defaultLakehouse": "{{GOLD_LH_ID}}",
+      "environment": "{{SPARK_ENV_ID}}"
     },
     {
       "displayName": "HorizonBooks_04_Forecasting",
@@ -80,7 +94,8 @@
         { "path": "notebook-content.py" }
       ],
       "metadataTemplate": "definitions/notebooks/nb04-lakehouse-metadata.json",
-      "defaultLakehouse": "{{GOLD_LH_ID}}"
+      "defaultLakehouse": "{{GOLD_LH_ID}}",
+      "environment": "{{SPARK_ENV_ID}}"
     },
     {
       "displayName": "HorizonBooks_DF_Finance",
@@ -162,6 +177,7 @@
     }
   ],
   "deploymentOrder": [
+    "HorizonBooks_SparkEnv",
     "BronzeLH",
     "SilverLH",
     "GoldLH",
@@ -180,7 +196,8 @@
   "workspaceFolders": [
     { "displayName": "1. Data Ingestion",   "items": ["BronzeLH", "HorizonBooks_DF_Finance", "HorizonBooks_DF_HR", "HorizonBooks_DF_Operations"] },
     { "displayName": "2. Transformation",    "items": ["SilverLH", "HorizonBooks_01_BronzeToSilver", "HorizonBooks_02_WebEnrichment"] },
-    { "displayName": "3. Gold Layer",        "items": ["GoldLH", "HorizonBooks_03_SilverToGold", "HorizonBooks_04_Forecasting"] },
+    { "displayName": "3. Gold Layer",        "items": ["GoldLH", "HorizonBooks_03_SilverToGold"] },
+    { "displayName": "3b. Forecasting",       "items": ["HorizonBooks_04_Forecasting", "HorizonBooks_SparkEnv"] },
     { "displayName": "4. Orchestration",     "items": ["PL_HorizonBooks_Orchestration"] },
     { "displayName": "5. Analytics",         "items": ["HorizonBooksAnalytics", "Horizon Books Publishing Analytics", "HorizonBooks DataAgent"] }
   ]
