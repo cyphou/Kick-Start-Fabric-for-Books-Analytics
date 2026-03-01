@@ -1,0 +1,79 @@
+{
+  "displayName": "HorizonBooks DataAgent",
+  "type": "DataAgent",
+  "description": "Natural-language data exploration agent for Horizon Books Publishing & Distribution. Covers Finance (P&L, Budget), HR (Workforce, Payroll, Recruitment), and Operations (Orders, Inventory, Returns) across 15+ international markets.",
+  "requirements": {
+    "minimumCapacity": "F64",
+    "note": "Data Agents require Fabric capacity F64 or higher (not supported on trial)"
+  },
+  "dataSource": {
+    "type": "SemanticModel",
+    "displayName": "HorizonBooksAnalytics",
+    "token": "{{SEMANTIC_MODEL_ID}}",
+    "enableAllTables": true,
+    "enableAllMeasures": true
+  },
+  "agentInstructions": "You are the Horizon Books Analytics Agent, an AI assistant specialized in the book publishing and distribution business for Horizon Books Publishing.\n\nCOMPANY CONTEXT:\n- Horizon Books is a mid-size book publisher and distributor based in New York\n- We operate multiple imprints: Horizon Literary, Starlight Press, Moonlight Mysteries, Rosewood Books, Horizon Living, and Horizon Technical\n- Our fiscal year runs January-December (FY2024 is calendar year 2024)\n- We sell through retail (Barnes & Noble, etc.), online (Amazon), mass market (Target, Walmart, Costco), digital (Apple Books, Kobo), international, and libraries\n- Our main warehouse is in Chicago with distribution centers across the US\n- We have international sales operations with staff in London, Tokyo, Frankfurt, and Mexico City\n- Our customers span 20+ countries across North America, Europe, Asia-Pacific, Latin America, and Africa\n\nDATA DOMAINS:\n1. FINANCE: Revenue, costs, P&L, budget vs actual, royalties, marketing spend\n2. OPERATIONS: Book catalog, orders, inventory, returns, customers, distribution\n3. HR: Employees, departments, payroll, performance reviews, recruitment\n4. GEOGRAPHIC: Customer and employee locations worldwide, regional analysis, international markets\n\nKEY BUSINESS RULES:\n- Book revenue comes from three channels: Physical (Hardcover/Paperback), E-Book, Audiobook\n- Discounts to retailers typically range from 40-50% off list price\n- Author royalties are typically 8-15% of net revenue\n- Returns are common in book publishing (industry avg ~25-30%)\n- \"Winter's Promise\" (BK-017) is our FY2024 flagship bestseller\n- \"The Phoenix Protocol\" (BK-013) is our summer blockbuster\n- Holiday Q4 is our peak sales season\n\nRESPONSE GUIDELINES:\n- Always provide specific numbers with proper formatting ($X.XX for currency, X.X% for percentages)\n- When showing book performance, include both units and revenue\n- For financial questions, specify the time period (quarter/year)\n- Proactively highlight notable trends or anomalies\n- When discussing inventory, flag any low stock or critical items\n- For HR questions, respect privacy - don't share individual salary details unless specifically an HR user\n- Compare metrics to industry benchmarks when relevant\n- If the user asks a vague question, provide an executive summary with key highlights",
+  "semanticModelMapping": {
+    "tables": [
+      { "table": "DimDate", "description": "Calendar dimension", "keyColumns": ["FullDate", "Year", "Quarter", "Month"] },
+      { "table": "DimBooks", "description": "Book catalog", "keyColumns": ["BookID", "Title", "Genre", "ListPrice", "ImprintName"] },
+      { "table": "DimAuthors", "description": "Author information", "keyColumns": ["AuthorID", "Name", "RoyaltyRate", "Genre"] },
+      { "table": "DimCustomers", "description": "Retailers & channels", "keyColumns": ["CustomerID", "Name", "Type", "Region"] },
+      { "table": "DimEmployees", "description": "Employee master", "keyColumns": ["EmployeeID", "Name", "Department", "JobTitle"] },
+      { "table": "DimDepartments", "description": "Department info", "keyColumns": ["DepartmentID", "Name", "HeadCount", "Budget"] },
+      { "table": "DimAccounts", "description": "Chart of accounts", "keyColumns": ["AccountID", "Name", "Type", "Category"] },
+      { "table": "DimCostCenters", "description": "Cost centers", "keyColumns": ["CostCenterID", "Name", "Department"] },
+      { "table": "DimWarehouses", "description": "Warehouse locations", "keyColumns": ["WarehouseID", "Name", "Capacity"] },
+      { "table": "DimGeography", "description": "Geographic dimension", "keyColumns": ["GeoID", "City", "Country", "Continent", "Lat/Long"] },
+      { "table": "FactFinancialTransactions", "description": "GL entries", "keyColumns": ["Date", "Account", "Amount", "BookID"] },
+      { "table": "FactBudget", "description": "Budget vs actual", "keyColumns": ["Quarter", "Account", "Budget", "Actual", "Variance"] },
+      { "table": "FactOrders", "description": "Sales orders", "keyColumns": ["Date", "Customer", "Book", "Qty", "Amount", "Channel"] },
+      { "table": "FactInventory", "description": "Inventory snapshots", "keyColumns": ["Book", "Warehouse", "QtyOnHand", "DaysOfSupply"] },
+      { "table": "FactReturns", "description": "Book returns", "keyColumns": ["Book", "Customer", "Qty", "Reason", "Refund"] },
+      { "table": "FactPayroll", "description": "Payroll records", "keyColumns": ["Employee", "Period", "Salary", "Bonus", "NetPay"] },
+      { "table": "FactPerformanceReviews", "description": "Performance data", "keyColumns": ["Employee", "Rating", "Score"] },
+      { "table": "FactRecruitment", "description": "Hiring pipeline", "keyColumns": ["Department", "Title", "Status", "TimeToFill"] }
+    ],
+    "keyMeasures": [
+      "Total Revenue", "Book/E-Book/Audiobook Revenue", "Digital Revenue Share",
+      "Gross Profit", "Gross Margin %", "Operating Margin %",
+      "Budget Variance", "Budget Attainment",
+      "Total Orders", "Avg Order Value", "Units Sold",
+      "Inventory Value", "Days of Supply", "Low Stock Items",
+      "Return Rate", "Total Refunds",
+      "Headcount", "Avg Salary", "Avg Performance Score", "Open Positions", "Time to Fill",
+      "International Revenue", "International Revenue %", "Countries Served", "Revenue per Country", "Employee Locations"
+    ]
+  },
+  "starterQuestions": [
+    "What is our total revenue for FY2024?",
+    "Which book sold the most copies this year?",
+    "How are we tracking against budget?",
+    "What's our gross margin by quarter?",
+    "Show me the top 5 customers by revenue",
+    "Are there any inventory items running low?",
+    "How many open positions do we have?",
+    "What is our digital revenue share trend?",
+    "What's our international revenue breakdown by continent?",
+    "Show me employee distribution across locations"
+  ],
+  "testingChecklist": [
+    { "query": "What is total revenue?", "expected": "~$1M+ for FY2024" },
+    { "query": "Top selling book?", "expected": "Winter's Promise (BK-017)" },
+    { "query": "Budget variance by quarter?", "expected": "Q4 overperformance" },
+    { "query": "How many employees?", "expected": "~48-50 active" },
+    { "query": "Inventory alerts?", "expected": "Winter's Promise and Phoenix Protocol Endgame low/critical" },
+    { "query": "Revenue by channel?", "expected": "Online/Retail/Digital breakdown" },
+    { "query": "Department headcount?", "expected": "7 departments" },
+    { "query": "International sales breakdown?", "expected": "Revenue by continent/country" },
+    { "query": "How many countries do we operate in?", "expected": "20+ countries" }
+  ],
+  "configurationFile": "DataAgent/DataAgentConfiguration.md",
+  "tokens": {
+    "id": "{{DATA_AGENT_ID}}",
+    "semanticModelId": "{{SEMANTIC_MODEL_ID}}"
+  },
+  "deployedBy": "Deploy-DataAgent.ps1 (called by Deploy-Full.ps1 Step 8)",
+  "workspaceFolder": "5. Analytics"
+}

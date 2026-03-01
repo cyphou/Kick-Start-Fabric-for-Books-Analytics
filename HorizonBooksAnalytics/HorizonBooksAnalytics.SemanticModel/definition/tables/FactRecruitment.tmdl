@@ -1,0 +1,147 @@
+table FactRecruitment
+	lineageTag: 20000008-0001-0001-0001-000000000001
+
+	measure 'Open Positions' = CALCULATE(COUNTROWS(FactRecruitment),FactRecruitment[Status] = "Open")
+		formatString: #,0
+		displayFolder: HR \ Recruitment
+		lineageTag: 20000008-0001-0001-0001-100000000001
+
+	measure 'Avg Time to Fill' = CALCULATE(AVERAGE(FactRecruitment[TimeToFillDays]),FactRecruitment[Status] = "Filled")
+		formatString: 0.0
+		displayFolder: HR \ Recruitment
+		lineageTag: 20000008-0001-0001-0001-100000000002
+
+	measure 'Offer Acceptance Rate' = DIVIDE(SUM(FactRecruitment[OfferAccepted]),SUM(FactRecruitment[OffersExtended]),0)
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: HR \ Recruitment
+		lineageTag: 20000008-0001-0001-0001-100000000003
+
+	measure 'Application to Interview Rate' = DIVIDE(SUM(FactRecruitment[Interviewed]),SUM(FactRecruitment[ApplicationsReceived]),0)
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: HR \ Recruitment
+		lineageTag: 20000008-0001-0001-0001-100000000004
+
+	measure 'Cost per Hire' = DIVIDE(CALCULATE(ABS(SUM(FactFinancialTransactions[Amount])), DimAccounts[AccountID] = 1050),CALCULATE(COUNTROWS(FactRecruitment), FactRecruitment[Status] = "Filled"),0)
+		formatString: $#,0.00
+		displayFolder: HR \ Recruitment
+		lineageTag: 20000008-0001-0001-0001-100000000005
+
+	column RequisitionID
+		dataType: string
+		summarizeBy: none
+		sourceColumn: RequisitionID
+		lineageTag: 20000008-0001-0001-0001-200000000001
+
+		annotation SummarizationSetBy = Automatic
+
+	column DepartmentID
+		dataType: string
+		summarizeBy: none
+		sourceColumn: DepartmentID
+		lineageTag: 20000008-0001-0001-0001-200000000002
+
+		annotation SummarizationSetBy = Automatic
+
+	column JobTitle
+		dataType: string
+		summarizeBy: none
+		sourceColumn: JobTitle
+		lineageTag: 20000008-0001-0001-0001-200000000003
+
+		annotation SummarizationSetBy = Automatic
+
+	column OpenDate
+		dataType: dateTime
+		summarizeBy: none
+		sourceColumn: OpenDate
+		lineageTag: 20000008-0001-0001-0001-200000000004
+
+		annotation SummarizationSetBy = Automatic
+
+	column CloseDate
+		dataType: dateTime
+		summarizeBy: none
+		sourceColumn: CloseDate
+		lineageTag: 20000008-0001-0001-0001-200000000005
+
+		annotation SummarizationSetBy = Automatic
+
+	column Status
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Status
+		lineageTag: 20000008-0001-0001-0001-200000000006
+
+		annotation SummarizationSetBy = Automatic
+
+	column ApplicationsReceived
+		dataType: int64
+		summarizeBy: sum
+		sourceColumn: ApplicationsReceived
+		lineageTag: 20000008-0001-0001-0001-200000000007
+
+		annotation SummarizationSetBy = Automatic
+
+	column Interviewed
+		dataType: int64
+		summarizeBy: sum
+		sourceColumn: Interviewed
+		lineageTag: 20000008-0001-0001-0001-200000000008
+
+		annotation SummarizationSetBy = Automatic
+
+	column OffersExtended
+		dataType: int64
+		summarizeBy: sum
+		sourceColumn: OffersExtended
+		lineageTag: 20000008-0001-0001-0001-200000000009
+
+		annotation SummarizationSetBy = Automatic
+
+	column OfferAccepted
+		dataType: int64
+		summarizeBy: sum
+		sourceColumn: OfferAccepted
+		lineageTag: 20000008-0001-0001-0001-200000000010
+
+		annotation SummarizationSetBy = Automatic
+
+	column HiringManagerID
+		dataType: string
+		summarizeBy: none
+		sourceColumn: HiringManagerID
+		lineageTag: 20000008-0001-0001-0001-200000000011
+
+		annotation SummarizationSetBy = Automatic
+
+	column SalaryRangeMin
+		dataType: double
+		summarizeBy: sum
+		sourceColumn: SalaryRangeMin
+		lineageTag: 20000008-0001-0001-0001-200000000012
+
+		annotation SummarizationSetBy = Automatic
+
+	column SalaryRangeMax
+		dataType: double
+		summarizeBy: sum
+		sourceColumn: SalaryRangeMax
+		lineageTag: 20000008-0001-0001-0001-200000000013
+
+		annotation SummarizationSetBy = Automatic
+
+	column TimeToFillDays
+		dataType: int64
+		summarizeBy: sum
+		sourceColumn: TimeToFillDays
+		lineageTag: 20000008-0001-0001-0001-200000000014
+
+		annotation SummarizationSetBy = Automatic
+
+	partition FactRecruitment = entity
+		mode: directLake
+		schemaName: fact
+		entityName: FactRecruitment
+		expressionSource: DatabaseQuery
+
+	annotation PBI_ResultType = Table

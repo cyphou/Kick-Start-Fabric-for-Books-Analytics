@@ -1,0 +1,119 @@
+﻿<#
+.SYNOPSIS
+    Deploys a Data Agent for Horizon Books Publishing natural-language exploration.
+
+.DESCRIPTION
+    Creates a Data Agent item in Microsoft Fabric that connects to the Horizon Books
+    semantic model. Requires F64+ capacity (not supported on trial).
+
+.PARAMETER WorkspaceId
+    The GUID of the Fabric workspace.
+
+.PARAMETER AgentName
+    Name for the Data Agent. Defaults to HorizonBooks DataAgent.
+
+.EXAMPLE
+    .\Deploy-DataAgent.ps1 -WorkspaceId "your-workspace-guid"
+#>
+
+[CmdletBinding()]
+param(
+    [Parameter(Mandatory = $true)]
+    [string]$WorkspaceId,
+
+    [Parameter(Mandatory = $false)]
+    [string]$AgentName = "HorizonBooks DataAgent"
+)
+
+$ErrorActionPreference = "Stop"
+$FabricApiBase = "https://api.fabric.microsoft.com/v1"
+
+function Get-FabricToken {
+    try {
+        $token = Get-AzAccessToken -ResourceUrl "https://api.fabric.microsoft.com"
+        return $token.Token
+    }
+    catch {
+        Write-Error "Failed to get Fabric API token. Run 'Connect-AzAccount' first."
+        throw
+    }
+}
+
+function Write-Info { param([string]$Message) Write-Host "  [INFO] $Message" -ForegroundColor Gray }
+function Write-Success { param([string]$Message) Write-Host "  [OK]   $Message" -ForegroundColor Green }
+function Write-Warn { param([string]$Message) Write-Host "  [WARN] $Message" -ForegroundColor Yellow }
+
+Write-Host ""
+Write-Host "  Deploying Data Agent: $AgentName" -ForegroundColor Cyan
+Write-Host ""
+
+$fabricToken = Get-FabricToken
+
+# Create Data Agent item
+$agentBody = @{
+    displayName = $AgentName
+    type        = "DataAgent"
+    description = "Natural-language data exploration agent for Horizon Books Publishing & Distribution. Covers Finance (P&L, Budget), HR (Workforce, Payroll, Recruitment), and Operations (Orders, Inventory, Returns) across 15+ international markets."
+} | ConvertTo-Json -Depth 5
+
+$agentId = $null
+try {
+    Write-Info "Creating Data Agent item..."
+    $headers = @{ "Authorization" = "Bearer $fabricToken"; "Content-Type" = "application/json" }
+    $resp = Invoke-WebRequest -Method Post `
+        -Uri "$FabricApiBase/workspaces/$WorkspaceId/items" `
+        -Headers $headers -Body $agentBody -UseBasicParsing
+
+    if ($resp.StatusCode -eq 201) {
+        $agent = $resp.Content | ConvertFrom-Json
+        $agentId = $agent.id
+        Write-Success "Data Agent created: $agentId"
+    }
+    elseif ($resp.StatusCode -eq 202) {
+        $opUrl = $resp.Headers["Location"]
+        if ($opUrl) {
+            for ($p = 1; $p -le 12; $p++) {
+                Start-Sleep -Seconds 5
+                $poll = Invoke-RestMethod -Uri $opUrl -Headers @{Authorization = "Bearer $fabricToken"}
+                Write-Info "  LRO: $($poll.status) ($($p*5)s)"
+                if ($poll.status -eq "Succeeded") { break }
+                if ($poll.status -eq "Failed") { Write-Warn "LRO failed"; break }
+            }
+        }
+        Start-Sleep -Seconds 3
+        $items = (Invoke-RestMethod -Uri "$FabricApiBase/workspaces/$WorkspaceId/items?type=DataAgent" `
+            -Headers @{Authorization = "Bearer $fabricToken"}).value
+        $found = $items | Where-Object { $_.displayName -eq $AgentName } | Select-Object -First 1
+        if ($found) { $agentId = $found.id; Write-Success "Data Agent created: $agentId" }
+    }
+}
+catch {
+    $errBody = ""
+    try {
+        $sr = New-Object System.IO.StreamReader($_.Exception.Response.GetResponseStream())
+        $errBody = $sr.ReadToEnd(); $sr.Close()
+    } catch {}
+    $errMsg = "$($_.Exception.Message) $errBody"
+    if ($errMsg -like "*ItemDisplayNameAlreadyInUse*" -or $errMsg -like "*already in use*") {
+        Write-Warn "Data Agent '$AgentName' already exists."
+        $items = (Invoke-RestMethod -Uri "$FabricApiBase/workspaces/$WorkspaceId/items?type=DataAgent" `
+            -Headers @{Authorization = "Bearer $fabricToken"}).value
+        $found = $items | Where-Object { $_.displayName -eq $AgentName } | Select-Object -First 1
+        if ($found) { $agentId = $found.id; Write-Info "Using existing: $agentId" }
+    }
+    else {
+        Write-Warn "Data Agent creation failed: $errMsg"
+        Write-Warn "Data Agents require Fabric capacity F64+."
+    }
+}
+
+if ($agentId) {
+    Write-Host ""
+    Write-Host "  Data Agent deployed successfully!" -ForegroundColor Green
+    Write-Host "  Next steps:" -ForegroundColor Yellow
+    Write-Host "    1. Open the Data Agent in Fabric portal" -ForegroundColor Yellow
+    Write-Host "    2. Add 'HorizonBooksModel' as the data source" -ForegroundColor Yellow
+    Write-Host "    3. Configure AI instructions from DataAgent/DataAgentConfiguration.md" -ForegroundColor Yellow
+    Write-Host "    4. Add starter questions for each domain" -ForegroundColor Yellow
+    Write-Host ""
+}

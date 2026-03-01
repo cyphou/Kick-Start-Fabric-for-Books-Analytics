@@ -1,0 +1,51 @@
+{
+  "displayName": "SilverLH",
+  "type": "Lakehouse",
+  "description": "Horizon Books Silver layer - schemas: finance, hr, operations, web",
+  "creationPayload": {
+    "enableSchemas": true
+  },
+  "layer": "Silver",
+  "purpose": "Cleaned and schema-organized Delta tables. NB01 reads Bronze CSVs and writes here with proper data types, deduplication, and null handling.",
+  "schemas": {
+    "finance": "DimAccounts, DimCostCenters, FactFinancialTransactions, FactBudget",
+    "hr": "DimEmployees, DimDepartments, FactPayroll, FactPerformanceReviews, FactRecruitment",
+    "operations": "DimBooks, DimAuthors, DimCustomers, DimGeography, DimWarehouses, FactOrders, FactInventory, FactReturns",
+    "web": "External web-enrichment tables (NB02)"
+  },
+  "expectedTables": {
+    "finance": [
+      "DimAccounts",
+      "DimCostCenters",
+      "FactFinancialTransactions",
+      "FactBudget"
+    ],
+    "hr": [
+      "DimEmployees",
+      "DimDepartments",
+      "FactPayroll",
+      "FactPerformanceReviews",
+      "FactRecruitment"
+    ],
+    "operations": [
+      "DimBooks",
+      "DimAuthors",
+      "DimCustomers",
+      "DimGeography",
+      "DimWarehouses",
+      "FactOrders",
+      "FactInventory",
+      "FactReturns"
+    ],
+    "web": [
+      "WebEnrichmentData"
+    ]
+  },
+  "tokens": {
+    "id": "{{SILVER_LH_ID}}",
+    "name": "{{SILVER_LH_NAME}}"
+  },
+  "deployedBy": "Deploy-Full.ps1 Step 1",
+  "populatedBy": "NB01 (BronzeToSilver), NB02 (WebEnrichment)",
+  "workspaceFolder": "2. Transformation"
+}

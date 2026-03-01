@@ -1,0 +1,69 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.5.0/schema.json",
+  "name": "f5b2c3d4e5f6a7b8c9d5",
+  "position": {
+    "x": 0,
+    "y": 380,
+    "width": 1280,
+    "height": 170
+  },
+  "visual": {
+    "visualType": "clusteredColumnChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "FactRecruitment"
+                    }
+                  },
+                  "Property": "JobTitle"
+                }
+              },
+              "queryRef": "FactRecruitment.JobTitle",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "FactRecruitment"
+                    }
+                  },
+                  "Property": "SalaryRangeMax"
+                }
+              },
+              "queryRef": "FactRecruitment.SalaryRangeMax",
+              "active": true
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Salary Range by Position'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

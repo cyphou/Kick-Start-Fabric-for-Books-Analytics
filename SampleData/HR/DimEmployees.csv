@@ -1,0 +1,51 @@
+EmployeeID,FirstName,LastName,Email,HireDate,DepartmentID,JobTitle,ManagerID,EmploymentType,Location,GeoID,IsActive
+EMP-001,Sarah,Mitchell,s.mitchell@horizonbooks.com,2015-03-15,DEPT-01,VP of Sales,,Full-Time,New York,GEO-001,TRUE
+EMP-002,David,Chen,d.chen@horizonbooks.com,2016-07-01,DEPT-02,VP of Production,,Full-Time,New York,GEO-001,TRUE
+EMP-003,Maria,Garcia,m.garcia@horizonbooks.com,2014-01-10,DEPT-03,VP of Editorial,,Full-Time,New York,GEO-001,TRUE
+EMP-004,James,Wilson,j.wilson@horizonbooks.com,2017-09-20,DEPT-04,VP of Marketing,,Full-Time,New York,GEO-001,TRUE
+EMP-005,Lisa,Brown,l.brown@horizonbooks.com,2016-11-05,DEPT-05,VP of Operations,,Full-Time,Chicago,GEO-003,TRUE
+EMP-006,Robert,Taylor,r.taylor@horizonbooks.com,2018-02-14,DEPT-06,VP of Human Resources,,Full-Time,New York,GEO-001,TRUE
+EMP-007,Anna,Kowalski,a.kowalski@horizonbooks.com,2019-06-01,DEPT-07,VP of Technology,,Full-Time,New York,GEO-001,TRUE
+EMP-008,Michael,Johnson,m.johnson@horizonbooks.com,2019-04-10,DEPT-01,Senior Sales Manager,EMP-001,Full-Time,New York,GEO-001,TRUE
+EMP-009,Jennifer,Lee,j.lee@horizonbooks.com,2020-01-15,DEPT-01,Sales Representative,EMP-008,Full-Time,New York,GEO-001,TRUE
+EMP-010,Thomas,Anderson,t.anderson@horizonbooks.com,2020-06-22,DEPT-01,Sales Representative,EMP-008,Full-Time,Los Angeles,GEO-002,TRUE
+EMP-011,Emily,Davis,e.davis@horizonbooks.com,2019-08-30,DEPT-01,Key Account Manager,EMP-001,Full-Time,New York,GEO-001,TRUE
+EMP-012,Daniel,Martinez,d.martinez@horizonbooks.com,2021-03-01,DEPT-01,E-Commerce Manager,EMP-001,Full-Time,New York,GEO-001,TRUE
+EMP-013,Rachel,Thompson,r.thompson@horizonbooks.com,2018-05-14,DEPT-02,Production Manager,EMP-002,Full-Time,New York,GEO-001,TRUE
+EMP-014,Kevin,Nguyen,k.nguyen@horizonbooks.com,2020-09-07,DEPT-02,Print Coordinator,EMP-013,Full-Time,Chicago,GEO-003,TRUE
+EMP-015,Sophie,Williams,s.williams@horizonbooks.com,2021-01-20,DEPT-02,Digital Production Specialist,EMP-013,Full-Time,New York,GEO-001,TRUE
+EMP-016,Christopher,Moore,c.moore@horizonbooks.com,2019-11-11,DEPT-02,Quality Control Lead,EMP-002,Full-Time,Chicago,GEO-003,TRUE
+EMP-017,Amanda,Jackson,a.jackson@horizonbooks.com,2017-04-03,DEPT-03,Senior Editor,EMP-003,Full-Time,New York,GEO-001,TRUE
+EMP-018,Brandon,White,b.white@horizonbooks.com,2019-07-15,DEPT-03,Associate Editor,EMP-017,Full-Time,New York,GEO-001,TRUE
+EMP-019,Laura,Harris,l.harris@horizonbooks.com,2020-02-28,DEPT-03,Copy Editor,EMP-017,Full-Time,Remote,,TRUE
+EMP-020,Ryan,Clark,r.clark@horizonbooks.com,2021-05-10,DEPT-03,Rights & Permissions Manager,EMP-003,Full-Time,New York,GEO-001,TRUE
+EMP-021,Samantha,Lewis,s.lewis@horizonbooks.com,2020-08-17,DEPT-03,Editorial Assistant,EMP-017,Full-Time,New York,GEO-001,TRUE
+EMP-022,Nathan,Robinson,n.robinson@horizonbooks.com,2018-10-22,DEPT-04,Marketing Manager,EMP-004,Full-Time,New York,GEO-001,TRUE
+EMP-023,Olivia,Walker,o.walker@horizonbooks.com,2021-02-14,DEPT-04,Social Media Specialist,EMP-022,Full-Time,New York,GEO-001,TRUE
+EMP-024,Andrew,Hall,a.hall@horizonbooks.com,2020-04-06,DEPT-04,Publicist,EMP-004,Full-Time,New York,GEO-001,TRUE
+EMP-025,Grace,Allen,g.allen@horizonbooks.com,2022-01-10,DEPT-04,Marketing Coordinator,EMP-022,Full-Time,New York,GEO-001,TRUE
+EMP-026,Patrick,Young,p.young@horizonbooks.com,2019-03-18,DEPT-05,Warehouse Manager,EMP-005,Full-Time,Chicago,GEO-003,TRUE
+EMP-027,Michelle,King,m.king@horizonbooks.com,2020-07-25,DEPT-05,Logistics Coordinator,EMP-026,Full-Time,Chicago,GEO-003,TRUE
+EMP-028,Steven,Wright,s.wright@horizonbooks.com,2021-06-14,DEPT-05,Shipping Specialist,EMP-026,Full-Time,Chicago,GEO-003,TRUE
+EMP-029,Jessica,Lopez,j.lopez@horizonbooks.com,2020-11-30,DEPT-05,Inventory Analyst,EMP-005,Full-Time,Chicago,GEO-003,TRUE
+EMP-030,Eric,Green,e.green@horizonbooks.com,2022-03-07,DEPT-05,Distribution Associate,EMP-026,Part-Time,Chicago,GEO-003,TRUE
+EMP-031,Hannah,Adams,h.adams@horizonbooks.com,2021-04-19,DEPT-06,HR Manager,EMP-006,Full-Time,New York,GEO-001,TRUE
+EMP-032,Tyler,Nelson,t.nelson@horizonbooks.com,2022-08-15,DEPT-06,Recruiter,EMP-031,Full-Time,New York,GEO-001,TRUE
+EMP-033,Megan,Campbell,m.campbell@horizonbooks.com,2021-09-01,DEPT-06,Payroll Specialist,EMP-031,Full-Time,New York,GEO-001,TRUE
+EMP-034,Jason,Mitchell,j.mitchell@horizonbooks.com,2020-05-20,DEPT-07,Senior Developer,EMP-007,Full-Time,New York,GEO-001,TRUE
+EMP-035,Diana,Perez,d.perez@horizonbooks.com,2021-07-12,DEPT-07,IT Support Specialist,EMP-007,Full-Time,Remote,,TRUE
+EMP-036,Mark,Rivera,m.rivera@horizonbooks.com,2022-02-28,DEPT-07,Data Analyst,EMP-007,Full-Time,New York,GEO-001,TRUE
+EMP-037,Chloe,Turner,c.turner@horizonbooks.com,2023-01-09,DEPT-01,Sales Intern,EMP-008,Intern,New York,GEO-001,FALSE
+EMP-038,William,Phillips,w.phillips@horizonbooks.com,2019-12-01,DEPT-03,Senior Editor - Children,EMP-003,Full-Time,New York,GEO-001,TRUE
+EMP-039,Natalie,Evans,n.evans@horizonbooks.com,2022-06-20,DEPT-04,Content Writer,EMP-022,Contract,Remote,,TRUE
+EMP-040,Carlos,Ramirez,c.ramirez@horizonbooks.com,2023-03-15,DEPT-05,Warehouse Associate,EMP-026,Full-Time,Chicago,GEO-003,TRUE
+EMP-041,Pierre,Lefebvre,p.lefebvre@horizonbooks.com,2023-06-01,DEPT-01,International Sales Manager,EMP-001,Full-Time,London,GEO-033,TRUE
+EMP-042,Keiko,Yamamoto,k.yamamoto@horizonbooks.com,2023-08-15,DEPT-01,APAC Sales Representative,EMP-041,Full-Time,Tokyo,GEO-051,TRUE
+EMP-043,Marcus,Schreiber,m.schreiber@horizonbooks.com,2024-01-10,DEPT-01,EMEA Sales Representative,EMP-041,Full-Time,Frankfurt,GEO-039,TRUE
+EMP-044,Isabelle,Fournier,i.fournier@horizonbooks.com,2024-03-01,DEPT-03,Associate Editor - French Translations,EMP-003,Full-Time,New York,GEO-001,TRUE
+EMP-045,Rajesh,Patel,r.patel@horizonbooks.com,2024-02-15,DEPT-07,Cloud Engineer,EMP-007,Full-Time,Remote,,TRUE
+EMP-046,Angela,Russo,a.russo@horizonbooks.com,2024-04-01,DEPT-04,Digital Marketing Specialist,EMP-022,Full-Time,New York,GEO-001,TRUE
+EMP-047,Derek,Sullivan,d.sullivan@horizonbooks.com,2024-05-15,DEPT-02,Audio Production Engineer,EMP-013,Full-Time,New York,GEO-001,TRUE
+EMP-048,Sofia,Mendoza,s.mendoza@horizonbooks.com,2024-06-01,DEPT-01,LATAM Sales Representative,EMP-041,Full-Time,Mexico City,GEO-057,TRUE
+EMP-049,Liam,O'Brien,l.obrien@horizonbooks.com,2024-07-01,DEPT-05,Warehouse Associate,EMP-026,Full-Time,Chicago,GEO-003,TRUE
+EMP-050,Priya,Krishnan,p.krishnan@horizonbooks.com,2024-08-01,DEPT-07,Data Engineer,EMP-007,Full-Time,Remote,,TRUE

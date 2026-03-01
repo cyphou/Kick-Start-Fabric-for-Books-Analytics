@@ -1,0 +1,91 @@
+{
+  "name": "HorizonBooks Analytics Pipeline",
+  "description": "End-to-end data pipeline for HorizonBooks: ingestion via DataFlow Gen2, staging in Lakehouse/Warehouse, transformation through Spark notebooks (Bronze→Silver→Gold), orchestration via Data Pipeline, and analytics via Semantic Model.",
+  "tasks": [
+    {
+      "id": "task-01",
+      "name": "Ingest CSV Data",
+      "description": "Load Finance, HR, and Operations CSV data into staging using DataFlow Gen2 (DF_Finance, DF_HR, DF_Operations).",
+      "taskType": "Get data"
+    },
+    {
+      "id": "task-02",
+      "name": "Stage Raw Data",
+      "description": "Store ingested data in StagingLH (Lakehouse) and StagingWH (Warehouse) for Bronze layer processing.",
+      "taskType": "Store data"
+    },
+    {
+      "id": "task-03",
+      "name": "Transform Bronze to Silver",
+      "description": "Clean, validate, and transform raw data from Bronze to Silver layer using NB01_BronzeToSilver notebook.",
+      "taskType": "Prepare data"
+    },
+    {
+      "id": "task-04",
+      "name": "Enrich with Web Data",
+      "description": "Enrich Silver data with external web sources (book covers, ISBNs) using NB02_WebEnrichment notebook.",
+      "taskType": "Prepare data"
+    },
+    {
+      "id": "task-05",
+      "name": "Transform Silver to Gold",
+      "description": "Build star schema (Facts + Dimensions) in Gold layer using NB03_SilverToGold notebook.",
+      "taskType": "Prepare data"
+    },
+    {
+      "id": "task-06",
+      "name": "Store Gold Analytics Data",
+      "description": "Persist final star schema tables in HorizonBooksLH Lakehouse for analytics consumption.",
+      "taskType": "Store data"
+    },
+    {
+      "id": "task-07",
+      "name": "Orchestrate Pipeline",
+      "description": "Coordinate end-to-end execution: DataFlows → Notebooks (NB01→NB02→NB03) via HorizonBooks Data Pipeline.",
+      "taskType": "General"
+    },
+    {
+      "id": "task-08",
+      "name": "Visualize & Analyze",
+      "description": "Semantic Model (HorizonBooksAnalytics) exposing star schema for Power BI reporting and analysis.",
+      "taskType": "Visualize data"
+    }
+  ],
+  "connectors": [
+    {
+      "id": "conn-01",
+      "startTaskId": "task-01",
+      "endTaskId": "task-02"
+    },
+    {
+      "id": "conn-02",
+      "startTaskId": "task-02",
+      "endTaskId": "task-03"
+    },
+    {
+      "id": "conn-03",
+      "startTaskId": "task-03",
+      "endTaskId": "task-04"
+    },
+    {
+      "id": "conn-04",
+      "startTaskId": "task-04",
+      "endTaskId": "task-05"
+    },
+    {
+      "id": "conn-05",
+      "startTaskId": "task-05",
+      "endTaskId": "task-06"
+    },
+    {
+      "id": "conn-06",
+      "startTaskId": "task-06",
+      "endTaskId": "task-08"
+    },
+    {
+      "id": "conn-07",
+      "startTaskId": "task-07",
+      "endTaskId": "task-01"
+    }
+  ]
+}

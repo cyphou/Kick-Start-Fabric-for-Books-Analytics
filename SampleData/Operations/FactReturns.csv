@@ -1,0 +1,41 @@
+ReturnID,OrderID,BookID,CustomerID,ReturnDate,Quantity,Reason,ReturnStatus,RefundAmount,Condition,RestockStatus
+RET-001,ORD-0003,BK-001,CUST-008,2024-02-05,30,Overstock,Processed,225.00,Good,Restocked
+RET-002,ORD-0010,BK-003,CUST-001,2024-02-20,40,Damaged in Transit,Processed,271.76,Damaged,Written Off
+RET-003,ORD-0005,BK-002,CUST-002,2024-03-01,80,Overstock,Processed,1231.56,Good,Restocked
+RET-004,ORD-0013,BK-004,CUST-002,2024-03-15,50,Slow Seller,Processed,824.67,Good,Restocked
+RET-005,ORD-0022,BK-006,CUST-001,2024-04-10,60,Shelf Space Reallocation,Processed,1043.64,Good,Restocked
+RET-006,ORD-0028,BK-007,CUST-017,2024-04-25,100,Overstock,Processed,1039.48,Good,Restocked
+RET-007,ORD-0037,BK-010,CUST-001,2024-05-20,50,Damaged Covers,Processed,809.70,Damaged,Written Off
+RET-008,ORD-0042,BK-011,CUST-001,2024-06-10,30,Slow Seller,Processed,287.82,Good,Restocked
+RET-009,ORD-0044,BK-012,CUST-001,2024-06-28,40,Overstock,Processed,671.76,Good,Restocked
+RET-010,ORD-0047,BK-013,CUST-001,2024-07-25,80,Shelf Space Reallocation,Processed,1391.52,Good,Restocked
+RET-011,ORD-0048,BK-013,CUST-017,2024-07-30,120,Overstock,Processed,1806.89,Good,Restocked
+RET-012,ORD-0053,BK-014,CUST-018,2024-08-10,35,Damaged Pages,Processed,600.41,Damaged,Written Off
+RET-013,ORD-0055,BK-015,CUST-001,2024-08-25,50,Slow Seller,Processed,809.70,Good,Restocked
+RET-014,ORD-0063,BK-017,CUST-017,2024-10-05,150,Overstock,Processed,2181.22,Good,Restocked
+RET-015,ORD-0064,BK-017,CUST-016,2024-10-15,100,Overstock,Processed,1456.48,Good,Restocked
+RET-016,ORD-0069,BK-017,CUST-018,2024-10-25,80,Damaged in Transit,Processed,1163.52,Damaged,Written Off
+RET-017,ORD-0083,BK-017,CUST-017,2024-12-05,200,Overstock,Processed,2908.96,Good,Restocked
+RET-018,ORD-0084,BK-017,CUST-016,2024-12-10,100,Shelf Space Reallocation,Processed,1454.48,Good,Restocked
+RET-019,ORD-0080,BK-020,CUST-001,2024-12-15,40,Overstock,Processed,551.76,Good,Restocked
+RET-020,ORD-0089,BK-017,CUST-018,2024-12-20,250,Season End Return,Processed,3637.20,Good,Restocked
+RET-021,ORD-0105,BK-026,CUST-003,2024-04-20,25,Slow Seller,Processed,412.25,Good,Restocked
+RET-022,ORD-0112,BK-028,CUST-005,2024-05-15,20,Overstock,Processed,319.60,Good,Restocked
+RET-023,ORD-0118,BK-030,CUST-001,2024-06-05,60,Shelf Space Reallocation,Processed,1043.40,Good,Restocked
+RET-024,ORD-0125,BK-033,CUST-017,2024-07-10,40,Overstock,Processed,639.60,Good,Restocked
+RET-025,ORD-0130,BK-027,CUST-021,2024-07-20,30,Damaged in Transit,Processed,488.70,Damaged,Written Off
+RET-026,ORD-0140,BK-035,CUST-002,2024-08-15,15,Quality Issue,Processed,299.85,Damaged,Written Off
+RET-027,ORD-0148,BK-036,CUST-023,2024-09-05,50,Overstock,Processed,599.50,Good,Restocked
+RET-028,ORD-0155,BK-040,CUST-001,2024-10-20,100,Overstock,Processed,1549.00,Good,Restocked
+RET-029,ORD-0160,BK-040,CUST-017,2024-11-05,80,Shelf Space Reallocation,Processed,1239.20,Good,Restocked
+RET-030,ORD-0165,BK-037,CUST-025,2024-11-10,35,Overstock,Processed,593.25,Good,Restocked
+RET-031,ORD-0170,BK-040,CUST-022,2024-11-20,60,Overstock,Processed,929.40,Good,Restocked
+RET-032,ORD-0175,BK-038,CUST-030,2024-11-25,20,Damaged Covers,Processed,339.80,Damaged,Written Off
+RET-033,ORD-0180,BK-040,CUST-016,2024-12-05,150,Season End Return,Processed,2323.50,Good,Restocked
+RET-034,ORD-0185,BK-032,CUST-024,2024-12-10,25,Slow Seller,Processed,499.75,Good,Restocked
+RET-035,ORD-0190,BK-017,CUST-029,2024-12-15,200,Season End Return,Processed,2909.00,Good,Restocked
+RET-036,ORD-0195,BK-043,CUST-031,2024-12-18,30,Overstock,Processed,508.50,Good,Restocked
+RET-037,ORD-0200,BK-040,CUST-001,2024-12-22,120,Season End Return,Processed,1858.80,Good,Restocked
+RET-038,ORD-0145,BK-034,CUST-026,2024-09-20,15,Damaged Pages,Processed,284.85,Damaged,Written Off
+RET-039,ORD-0150,BK-029,CUST-028,2024-10-10,25,Overstock,Processed,349.75,Good,Restocked
+RET-040,ORD-0135,BK-045,CUST-035,2024-08-30,10,Quality Issue,Processed,174.90,Good,Restocked

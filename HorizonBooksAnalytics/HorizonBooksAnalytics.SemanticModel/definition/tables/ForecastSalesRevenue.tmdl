@@ -1,0 +1,114 @@
+table ForecastSalesRevenue
+	lineageTag: 30000001-0001-0001-0001-000000000001
+
+	measure 'Forecast Revenue' = IF(HASONEVALUE(ForecastSalesRevenue[RecordType]), SUM(ForecastSalesRevenue[Revenue]), BLANK())
+		formatString: $#,0;($#,0)
+		displayFolder: Forecasting \ Sales
+		lineageTag: 30000001-0001-0001-0001-100000000001
+
+	measure 'Revenue Lower Bound' = IF(HASONEVALUE(ForecastSalesRevenue[RecordType]), SUM(ForecastSalesRevenue[LowerBound]), BLANK())
+		formatString: $#,0;($#,0)
+		displayFolder: Forecasting \ Sales
+		lineageTag: 30000001-0001-0001-0001-100000000002
+
+	measure 'Revenue Upper Bound' = IF(HASONEVALUE(ForecastSalesRevenue[RecordType]), SUM(ForecastSalesRevenue[UpperBound]), BLANK())
+		formatString: $#,0;($#,0)
+		displayFolder: Forecasting \ Sales
+		lineageTag: 30000001-0001-0001-0001-100000000003
+
+	measure 'Forecast vs Actual Revenue' =
+		VAR _forecast = CALCULATE(SUM(ForecastSalesRevenue[Revenue]), ForecastSalesRevenue[RecordType] = "Forecast")
+		VAR _actual = CALCULATE(SUM(ForecastSalesRevenue[Revenue]), ForecastSalesRevenue[RecordType] = "Actual")
+		RETURN IF(_actual <> 0, DIVIDE(_forecast - _actual, _actual, 0), BLANK())
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Forecasting \ Sales
+		lineageTag: 30000001-0001-0001-0001-100000000004
+
+	column ForecastMonth
+		dataType: dateTime
+		formatString: yyyy-MM-dd
+		summarizeBy: none
+		sourceColumn: ForecastMonth
+		lineageTag: 30000001-0001-0001-0001-200000000001
+
+		annotation SummarizationSetBy = Automatic
+
+	column Channel
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Channel
+		lineageTag: 30000001-0001-0001-0001-200000000002
+
+		annotation SummarizationSetBy = Automatic
+
+	column Revenue
+		dataType: double
+		summarizeBy: sum
+		sourceColumn: Revenue
+		lineageTag: 30000001-0001-0001-0001-200000000003
+
+		annotation SummarizationSetBy = Automatic
+
+	column Orders
+		dataType: int64
+		summarizeBy: sum
+		sourceColumn: Orders
+		lineageTag: 30000001-0001-0001-0001-200000000004
+
+		annotation SummarizationSetBy = Automatic
+
+	column Customers
+		dataType: int64
+		summarizeBy: sum
+		sourceColumn: Customers
+		lineageTag: 30000001-0001-0001-0001-200000000005
+
+		annotation SummarizationSetBy = Automatic
+
+	column LowerBound
+		dataType: double
+		summarizeBy: sum
+		sourceColumn: LowerBound
+		lineageTag: 30000001-0001-0001-0001-200000000006
+
+		annotation SummarizationSetBy = Automatic
+
+	column UpperBound
+		dataType: double
+		summarizeBy: sum
+		sourceColumn: UpperBound
+		lineageTag: 30000001-0001-0001-0001-200000000007
+
+		annotation SummarizationSetBy = Automatic
+
+	column ForecastHorizon
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: ForecastHorizon
+		lineageTag: 30000001-0001-0001-0001-200000000008
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordType
+		dataType: string
+		summarizeBy: none
+		sourceColumn: RecordType
+		lineageTag: 30000001-0001-0001-0001-200000000009
+
+		annotation SummarizationSetBy = Automatic
+
+	column ForecastModel
+		dataType: string
+		summarizeBy: none
+		sourceColumn: ForecastModel
+		lineageTag: 30000001-0001-0001-0001-200000000010
+
+		annotation SummarizationSetBy = Automatic
+
+	partition ForecastSalesRevenue = entity
+		mode: directLake
+		schemaName: analytics
+		entityName: ForecastSalesRevenue
+		expressionSource: DatabaseQuery
+
+	annotation PBI_ResultType = Table

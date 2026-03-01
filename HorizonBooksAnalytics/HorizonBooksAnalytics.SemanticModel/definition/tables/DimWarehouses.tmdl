@@ -1,0 +1,109 @@
+table DimWarehouses
+	lineageTag: 1000000a-0001-0001-0001-000000000001
+
+	column WarehouseID
+		dataType: string
+		summarizeBy: none
+		sourceColumn: WarehouseID
+		lineageTag: 1000000a-0001-0001-0001-200000000001
+
+		annotation SummarizationSetBy = Automatic
+
+	column WarehouseName
+		dataType: string
+		summarizeBy: none
+		sourceColumn: WarehouseName
+		lineageTag: 1000000a-0001-0001-0001-200000000002
+
+		annotation SummarizationSetBy = Automatic
+
+	column Address
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Address
+		lineageTag: 1000000a-0001-0001-0001-200000000003
+
+		annotation SummarizationSetBy = Automatic
+
+	column City
+		dataType: string
+		summarizeBy: none
+		sourceColumn: City
+		lineageTag: 1000000a-0001-0001-0001-200000000004
+		dataCategory: City
+
+		annotation SummarizationSetBy = Automatic
+
+	column State
+		dataType: string
+		summarizeBy: none
+		sourceColumn: State
+		lineageTag: 1000000a-0001-0001-0001-200000000005
+		dataCategory: StateOrProvince
+
+		annotation SummarizationSetBy = Automatic
+
+	column Country
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Country
+		lineageTag: 1000000a-0001-0001-0001-200000000006
+		dataCategory: Country
+
+		annotation SummarizationSetBy = Automatic
+
+	column SquareFootage
+		dataType: int64
+		summarizeBy: sum
+		sourceColumn: SquareFootage
+		lineageTag: 1000000a-0001-0001-0001-200000000007
+
+		annotation SummarizationSetBy = Automatic
+
+	column MaxCapacityUnits
+		dataType: int64
+		summarizeBy: sum
+		sourceColumn: MaxCapacityUnits
+		lineageTag: 1000000a-0001-0001-0001-200000000008
+
+		annotation SummarizationSetBy = Automatic
+
+	column CurrentUtilization
+		dataType: double
+		summarizeBy: sum
+		sourceColumn: CurrentUtilization
+		lineageTag: 1000000a-0001-0001-0001-200000000009
+
+		annotation SummarizationSetBy = Automatic
+
+	column ManagerID
+		dataType: string
+		summarizeBy: none
+		sourceColumn: ManagerID
+		lineageTag: 1000000a-0001-0001-0001-200000000010
+
+		annotation SummarizationSetBy = Automatic
+
+	column MonthlyRent
+		dataType: double
+		summarizeBy: sum
+		sourceColumn: MonthlyRent
+		lineageTag: 1000000a-0001-0001-0001-200000000011
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsActive
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: IsActive
+		lineageTag: 1000000a-0001-0001-0001-200000000012
+
+		annotation SummarizationSetBy = Automatic
+
+	partition DimWarehouses = entity
+		mode: directLake
+		schemaName: dim
+		entityName: DimWarehouses
+		expressionSource: DatabaseQuery
+
+	annotation PBI_ResultType = Table

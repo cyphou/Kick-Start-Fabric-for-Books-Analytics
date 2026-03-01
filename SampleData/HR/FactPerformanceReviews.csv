@@ -1,0 +1,46 @@
+ReviewID,EmployeeID,ReviewDate,ReviewerID,PerformanceRating,GoalsMet,Strengths,AreasForImprovement,OverallScore
+REV-001,EMP-001,2024-06-15,EMP-003,Exceeds Expectations,90,Strategic vision and leadership,Delegation to direct reports,4.5
+REV-002,EMP-002,2024-06-15,EMP-003,Meets Expectations,80,Financial accuracy and reporting,Cross-team collaboration,3.8
+REV-003,EMP-004,2024-06-15,EMP-003,Exceeds Expectations,95,Manuscript quality and author relations,Digital content strategy,4.7
+REV-004,EMP-005,2024-06-15,EMP-003,Meets Expectations,75,Brand awareness campaigns,ROI measurement,3.5
+REV-005,EMP-006,2024-06-15,EMP-003,Meets Expectations,80,Warehouse efficiency,International logistics complexity,3.8
+REV-006,EMP-007,2024-06-15,EMP-003,Exceeds Expectations,88,IT infrastructure and security,User training documentation,4.4
+REV-007,EMP-008,2024-06-15,EMP-001,Exceeds Expectations,92,Talent acquisition and retention,Compensation benchmarking,4.6
+REV-008,EMP-009,2024-06-15,EMP-006,Meets Expectations,78,Order processing speed,Inventory discrepancy resolution,3.7
+REV-009,EMP-010,2024-06-15,EMP-006,Meets Expectations,82,Physical organization and accuracy,System process improvements,3.9
+REV-010,EMP-011,2024-06-15,EMP-001,Exceeds Expectations,94,Revenue growth and key accounts,Pipeline forecasting accuracy,4.7
+REV-011,EMP-012,2024-06-15,EMP-011,Meets Expectations,76,Customer relationship management,Upselling and cross-selling,3.6
+REV-012,EMP-017,2024-06-15,EMP-001,Exceeds Expectations,88,Digital channel growth,Data-driven pricing models,4.4
+REV-013,EMP-022,2024-06-15,EMP-004,Meets Expectations,80,Manuscript development skills,Timeline management,3.8
+REV-014,EMP-026,2024-06-15,EMP-005,Meets Expectations,74,Social media engagement,Analytics reporting depth,3.5
+REV-015,EMP-031,2024-06-15,EMP-007,Exceeds Expectations,90,Platform stability and uptime,Cloud migration planning,4.5
+REV-016,EMP-034,2024-06-15,EMP-008,Meets Expectations,78,Employee relations and compliance,Leadership development programs,3.7
+REV-017,EMP-041,2024-06-15,EMP-011,Exceeds Expectations,92,EMEA market penetration,Partner channel enablement,4.6
+REV-018,EMP-042,2024-06-15,EMP-041,Meets Expectations,80,Japanese market knowledge,CRM reporting discipline,3.8
+REV-019,EMP-043,2024-06-15,EMP-041,Meets Expectations,76,German retailer relationships,Forecasting accuracy,3.6
+REV-020,EMP-047,2024-06-15,EMP-005,Meets Expectations,72,Content creation speed,SEO best practices,3.4
+REV-021,EMP-001,2024-12-10,EMP-003,Exceeds Expectations,96,Winter's Promise launch execution and revenue growth,Work-life balance and burnout risk,4.8
+REV-022,EMP-002,2024-12-10,EMP-003,Exceeds Expectations,88,Budget management and cost control,Proactive financial scenario planning,4.4
+REV-023,EMP-004,2024-12-10,EMP-003,Exceeds Expectations,98,Author roster expansion and bestseller development,Workload distribution across editors,4.9
+REV-024,EMP-005,2024-12-10,EMP-003,Exceeds Expectations,85,Winter's Promise marketing campaign success,International marketing playbook,4.2
+REV-025,EMP-006,2024-12-10,EMP-003,Meets Expectations,82,On-time delivery rate improvement,Warehouse automation strategy,3.9
+REV-026,EMP-007,2024-12-10,EMP-003,Exceeds Expectations,90,Data platform modernization,Cybersecurity awareness training,4.5
+REV-027,EMP-008,2024-12-10,EMP-001,Exceeds Expectations,94,International hiring and remote work policies,Compensation equity across geographies,4.7
+REV-028,EMP-009,2024-12-10,EMP-006,Meets Expectations,80,Peak season order handling,Quality assurance consistency,3.8
+REV-029,EMP-010,2024-12-10,EMP-006,Exceeds Expectations,86,Inventory accuracy improvement to 99.2%,Proactive reorder recommendations,4.3
+REV-030,EMP-011,2024-12-10,EMP-001,Exceeds Expectations,97,Record revenue year and international expansion,Team development and succession planning,4.9
+REV-031,EMP-012,2024-12-10,EMP-011,Meets Expectations,82,Customer retention and loyalty,New business development,3.9
+REV-032,EMP-017,2024-12-10,EMP-001,Exceeds Expectations,92,E-commerce revenue +35% YoY,Marketplace diversification,4.6
+REV-033,EMP-022,2024-12-10,EMP-004,Exceeds Expectations,86,Three bestseller manuscripts delivered,Peer mentorship engagement,4.3
+REV-034,EMP-026,2024-12-10,EMP-005,Meets Expectations,78,Social following growth +28%,Conversion rate optimization,3.7
+REV-035,EMP-031,2024-12-10,EMP-007,Exceeds Expectations,94,99.9% platform uptime achieved,Disaster recovery testing,4.7
+REV-036,EMP-034,2024-12-10,EMP-008,Meets Expectations,80,Onboarding program overhaul,Diversity recruitment strategy,3.8
+REV-037,EMP-041,2024-12-10,EMP-011,Exceeds Expectations,96,EMEA revenue +45% and 12 new accounts,Team scaling and local hiring,4.8
+REV-038,EMP-042,2024-12-10,EMP-041,Exceeds Expectations,88,Kinokuniya partnership established,Market analysis documentation,4.4
+REV-039,EMP-043,2024-12-10,EMP-041,Meets Expectations,78,Thalia co-marketing campaign,Supply chain lead times in EU,3.7
+REV-040,EMP-048,2024-12-10,EMP-041,Meets Expectations,75,LATAM distributor onboarding,Language barrier and localization,3.5
+REV-041,EMP-050,2024-12-10,EMP-007,Meets Expectations,80,Data pipeline reliability,Documentation and knowledge sharing,3.8
+REV-042,EMP-044,2024-12-10,EMP-004,Meets Expectations,74,French literary translation quality,Turnaround time on manuscripts,3.5
+REV-043,EMP-045,2024-12-10,EMP-007,Exceeds Expectations,88,Cloud infrastructure cost reduction 20%,On-call rotation leadership,4.4
+REV-044,EMP-046,2024-12-10,EMP-005,Meets Expectations,80,Audience engagement and content quality,Video content production,3.8
+REV-045,EMP-049,2024-12-10,EMP-006,Meets Expectations,78,Picking accuracy and speed,Safety protocol adherence,3.7

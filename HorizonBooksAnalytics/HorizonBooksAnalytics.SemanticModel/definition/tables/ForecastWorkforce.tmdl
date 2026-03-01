@@ -1,0 +1,107 @@
+table ForecastWorkforce
+	lineageTag: 30000005-0001-0001-0001-000000000001
+
+	measure 'Forecast Workforce Value' = IF(HASONEVALUE(ForecastWorkforce[RecordType]), SUM(ForecastWorkforce[Value]), BLANK())
+		formatString: #,0
+		displayFolder: Forecasting \ Workforce
+		lineageTag: 30000005-0001-0001-0001-100000000001
+
+	measure 'Forecast Payroll' =
+		CALCULATE(
+			SUM(ForecastWorkforce[Value]),
+			ForecastWorkforce[Metric] = "TotalPayroll"
+		)
+		formatString: $#,0;($#,0)
+		displayFolder: Forecasting \ Workforce
+		lineageTag: 30000005-0001-0001-0001-100000000002
+
+	measure 'Forecast Headcount' =
+		CALCULATE(
+			SUM(ForecastWorkforce[Value]),
+			ForecastWorkforce[Metric] = "Headcount"
+		)
+		formatString: #,0
+		displayFolder: Forecasting \ Workforce
+		lineageTag: 30000005-0001-0001-0001-100000000003
+
+	measure 'Forecast Openings' =
+		CALCULATE(
+			SUM(ForecastWorkforce[Value]),
+			ForecastWorkforce[Metric] = "Openings"
+		)
+		formatString: #,0
+		displayFolder: Forecasting \ Workforce
+		lineageTag: 30000005-0001-0001-0001-100000000004
+
+	column ForecastMonth
+		dataType: dateTime
+		formatString: yyyy-MM-dd
+		summarizeBy: none
+		sourceColumn: ForecastMonth
+		lineageTag: 30000005-0001-0001-0001-200000000001
+
+		annotation SummarizationSetBy = Automatic
+
+	column Metric
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Metric
+		lineageTag: 30000005-0001-0001-0001-200000000002
+
+		annotation SummarizationSetBy = Automatic
+
+	column Value
+		dataType: double
+		summarizeBy: sum
+		sourceColumn: Value
+		lineageTag: 30000005-0001-0001-0001-200000000003
+
+		annotation SummarizationSetBy = Automatic
+
+	column LowerBound
+		dataType: double
+		summarizeBy: sum
+		sourceColumn: LowerBound
+		lineageTag: 30000005-0001-0001-0001-200000000004
+
+		annotation SummarizationSetBy = Automatic
+
+	column UpperBound
+		dataType: double
+		summarizeBy: sum
+		sourceColumn: UpperBound
+		lineageTag: 30000005-0001-0001-0001-200000000005
+
+		annotation SummarizationSetBy = Automatic
+
+	column ForecastHorizon
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: ForecastHorizon
+		lineageTag: 30000005-0001-0001-0001-200000000006
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordType
+		dataType: string
+		summarizeBy: none
+		sourceColumn: RecordType
+		lineageTag: 30000005-0001-0001-0001-200000000007
+
+		annotation SummarizationSetBy = Automatic
+
+	column ForecastModel
+		dataType: string
+		summarizeBy: none
+		sourceColumn: ForecastModel
+		lineageTag: 30000005-0001-0001-0001-200000000008
+
+		annotation SummarizationSetBy = Automatic
+
+	partition ForecastWorkforce = entity
+		mode: directLake
+		schemaName: analytics
+		entityName: ForecastWorkforce
+		expressionSource: DatabaseQuery
+
+	annotation PBI_ResultType = Table

@@ -1,0 +1,51 @@
+CustomerID,CustomerName,CustomerType,ContactEmail,City,State,Country,Region,GeoID,CreditLimit,PaymentTerms,IsActive,AccountOpenDate
+CUST-001,Barnes & Noble,Retailer,orders@bn.com,New York,NY,United States,Northeast,GEO-001,500000.00,Net 60,TRUE,2018-01-15
+CUST-002,Amazon Books,Online Retailer,vendor@amazon.com,Seattle,WA,United States,West,GEO-004,1000000.00,Net 30,TRUE,2017-03-01
+CUST-003,Books-A-Million,Retailer,purchasing@bam.com,Birmingham,AL,United States,Southeast,GEO-007,250000.00,Net 45,TRUE,2019-06-20
+CUST-004,Powell's Books,Independent,orders@powells.com,Portland,OR,United States,West,GEO-008,100000.00,Net 30,TRUE,2020-02-10
+CUST-005,Indigo Books,Retailer,vendor@indigo.ca,Toronto,,Canada,International,GEO-030,200000.00,Net 45,TRUE,2019-11-05
+CUST-006,Waterstones,Retailer,supply@waterstones.co.uk,London,,United Kingdom,International,GEO-033,300000.00,Net 60,TRUE,2020-04-15
+CUST-007,Book Depository,Online,orders@bookdepository.com,London,,United Kingdom,International,GEO-033,400000.00,Net 30,TRUE,2018-09-01
+CUST-008,Ingram Content Group,Distributor,partner@ingramcontent.com,Nashville,TN,United States,Southeast,GEO-005,750000.00,Net 45,TRUE,2017-01-01
+CUST-009,Baker & Taylor,Distributor,supply@baker-taylor.com,Charlotte,NC,United States,Southeast,GEO-006,600000.00,Net 45,TRUE,2017-06-15
+CUST-010,Midwest Library Services,Library Supplier,orders@midwestls.com,Bridgeton,MO,United States,Midwest,GEO-010,150000.00,Net 30,TRUE,2021-03-20
+CUST-011,Brodart Books,Library Supplier,acquisition@brodart.com,Williamsport,PA,United States,Northeast,GEO-011,120000.00,Net 30,TRUE,2021-07-01
+CUST-012,Scholastic (School Channel),Educational,k12orders@scholastic.com,New York,NY,United States,Northeast,GEO-001,350000.00,Net 60,TRUE,2019-01-10
+CUST-013,Harvard Book Store,Independent,orders@harvard.com,Cambridge,MA,United States,Northeast,GEO-012,60000.00,Net 30,TRUE,2022-05-15
+CUST-014,Strand Bookstore,Independent,buying@strandbooks.com,New York,NY,United States,Northeast,GEO-001,80000.00,Net 30,TRUE,2022-01-20
+CUST-015,Blackwell's,Retailer,trade@blackwells.co.uk,Oxford,,United Kingdom,International,GEO-034,180000.00,Net 45,TRUE,2021-09-10
+CUST-016,Target (Books Section),Mass Merchant,booksbuyer@target.com,Minneapolis,MN,United States,Midwest,GEO-009,400000.00,Net 60,TRUE,2020-08-01
+CUST-017,Walmart (Books),Mass Merchant,media@walmart.com,Bentonville,AR,United States,Southeast,GEO-014,500000.00,Net 60,TRUE,2020-06-15
+CUST-018,Costco Wholesale (Books),Mass Merchant,bookbuyer@costco.com,Issaquah,WA,United States,West,GEO-015,300000.00,Net 45,TRUE,2021-02-01
+CUST-019,Apple Books,Digital,publishers@apple.com,Cupertino,CA,United States,West,GEO-013,200000.00,Net 30,TRUE,2019-04-01
+CUST-020,Kobo/Rakuten,Digital,publishers@kobo.com,Toronto,,Canada,International,GEO-030,150000.00,Net 30,TRUE,2020-01-15
+CUST-021,Fnac,Retailer,livres@fnac.fr,Paris,,France,Europe,GEO-036,280000.00,Net 60,TRUE,2020-03-15
+CUST-022,Thalia,Retailer,einkauf@thalia.de,Frankfurt,,Germany,Europe,GEO-039,250000.00,Net 60,TRUE,2020-06-01
+CUST-023,Hugendubel,Retailer,lieferanten@hugendubel.de,Munich,,Germany,Europe,GEO-038,180000.00,Net 45,TRUE,2021-01-10
+CUST-024,La Casa del Libro,Retailer,compras@casadellibro.com,Madrid,,Spain,Europe,GEO-040,160000.00,Net 45,TRUE,2021-04-20
+CUST-025,Feltrinelli,Retailer,fornitori@feltrinelli.it,Milan,,Italy,Europe,GEO-043,200000.00,Net 60,TRUE,2020-09-01
+CUST-026,Kinokuniya,Retailer,import@kinokuniya.co.jp,Tokyo,,Japan,Asia-Pacific,GEO-051,350000.00,Net 45,TRUE,2019-05-15
+CUST-027,Maruzen Junkudo,Retailer,books@maruzen.co.jp,Osaka,,Japan,Asia-Pacific,GEO-052,120000.00,Net 45,TRUE,2021-08-01
+CUST-028,Dymocks,Retailer,buying@dymocks.com.au,Sydney,,Australia,Asia-Pacific,GEO-053,180000.00,Net 45,TRUE,2020-11-10
+CUST-029,Readings,Independent,orders@readings.com.au,Melbourne,,Australia,Asia-Pacific,GEO-054,65000.00,Net 30,TRUE,2022-02-15
+CUST-030,Livraria Cultura,Retailer,compras@livrariacultura.com.br,São Paulo,,Brazil,Latin America,GEO-055,140000.00,Net 60,TRUE,2021-06-20
+CUST-031,Gandhi Bookstores,Retailer,importaciones@gandhi.com.mx,Mexico City,,Mexico,Latin America,GEO-057,120000.00,Net 45,TRUE,2021-09-15
+CUST-032,Exclusive Books,Retailer,supply@exclusivebooks.co.za,Cape Town,,South Africa,Africa,GEO-063,90000.00,Net 45,TRUE,2022-01-10
+CUST-033,Amazon UK,Online Retailer,vendor-uk@amazon.co.uk,London,,United Kingdom,Europe,GEO-033,600000.00,Net 30,TRUE,2018-03-01
+CUST-034,Amazon DE,Online Retailer,vendor-de@amazon.de,Berlin,,Germany,Europe,GEO-037,450000.00,Net 30,TRUE,2019-01-15
+CUST-035,Amazon FR,Online Retailer,vendor-fr@amazon.fr,Paris,,France,Europe,GEO-036,350000.00,Net 30,TRUE,2019-06-01
+CUST-036,Google Play Books,Digital,publishers@google.com,San Francisco,CA,United States,West,GEO-017,200000.00,Net 30,TRUE,2019-08-01
+CUST-037,Audible,Digital,content@audible.com,Newark,NJ,United States,Northeast,GEO-016,500000.00,Net 30,TRUE,2018-06-15
+CUST-038,Libro.fm,Digital,publishers@libro.fm,Seattle,WA,United States,West,GEO-004,80000.00,Net 30,TRUE,2021-04-01
+CUST-039,BookPeople,Independent,buying@bookpeople.com,Austin,TX,United States,Southwest,GEO-020,55000.00,Net 30,TRUE,2022-07-15
+CUST-040,Tattered Cover,Independent,orders@tatteredcover.com,Denver,CO,United States,West,GEO-021,60000.00,Net 30,TRUE,2022-03-10
+CUST-041,Politics & Prose,Independent,orders@politics-prose.com,Washington,DC,United States,Northeast,GEO-024,50000.00,Net 30,TRUE,2022-05-01
+CUST-042,Vroman's Bookstore,Independent,buying@vromansbookstore.com,Los Angeles,CA,United States,West,GEO-002,45000.00,Net 30,TRUE,2023-01-15
+CUST-043,Chapters/Indigo Online,Online Retailer,ebooks@indigo.ca,Toronto,,Canada,International,GEO-030,250000.00,Net 30,TRUE,2020-07-01
+CUST-044,WHSmith,Retailer,bookbuying@whsmith.co.uk,London,,United Kingdom,Europe,GEO-033,220000.00,Net 45,TRUE,2021-02-15
+CUST-045,Bol.com,Online Retailer,publishers@bol.com,Amsterdam,,Netherlands,Europe,GEO-044,180000.00,Net 30,TRUE,2021-05-20
+CUST-046,Akademibokhandeln,Retailer,inkop@akademibokhandeln.se,Stockholm,,Sweden,Europe,GEO-045,100000.00,Net 45,TRUE,2022-03-01
+CUST-047,Saxo.com,Online,publishers@saxo.com,Copenhagen,,Denmark,Europe,GEO-046,85000.00,Net 30,TRUE,2022-06-15
+CUST-048,Easons,Retailer,supply@easons.ie,Dublin,,Ireland,Europe,GEO-048,110000.00,Net 45,TRUE,2021-11-01
+CUST-049,Kinokuniya Singapore,Retailer,import@kinokuniya.com.sg,Singapore,,Singapore,Asia-Pacific,GEO-061,150000.00,Net 45,TRUE,2020-08-15
+CUST-050,Kyobo Book Centre,Retailer,import@kyobobook.co.kr,Seoul,,South Korea,Asia-Pacific,GEO-062,130000.00,Net 45,TRUE,2021-10-01

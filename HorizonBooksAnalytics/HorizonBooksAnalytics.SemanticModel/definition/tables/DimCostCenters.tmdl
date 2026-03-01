@@ -1,0 +1,42 @@
+table DimCostCenters
+	lineageTag: 10000003-0001-0001-0001-000000000001
+
+	column CostCenterID
+		dataType: string
+		summarizeBy: none
+		sourceColumn: CostCenterID
+		lineageTag: 10000003-0001-0001-0001-200000000001
+
+		annotation SummarizationSetBy = Automatic
+
+	column CostCenterName
+		dataType: string
+		summarizeBy: none
+		sourceColumn: CostCenterName
+		lineageTag: 10000003-0001-0001-0001-200000000002
+
+		annotation SummarizationSetBy = Automatic
+
+	column Department
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Department
+		lineageTag: 10000003-0001-0001-0001-200000000003
+
+		annotation SummarizationSetBy = Automatic
+
+	column DivisionHead
+		dataType: string
+		summarizeBy: none
+		sourceColumn: DivisionHead
+		lineageTag: 10000003-0001-0001-0001-200000000004
+
+		annotation SummarizationSetBy = Automatic
+
+	partition DimCostCenters = entity
+		mode: directLake
+		schemaName: dim
+		entityName: DimCostCenters
+		expressionSource: DatabaseQuery
+
+	annotation PBI_ResultType = Table

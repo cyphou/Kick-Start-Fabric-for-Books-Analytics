@@ -1,0 +1,4 @@
+WarehouseID,WarehouseName,Address,City,State,Country,SquareFootage,MaxCapacityUnits,CurrentUtilization,ManagerID,MonthlyRent,IsActive
+WH-001,Horizon Main Distribution Center,1200 Industrial Blvd,Chicago,IL,USA,85000,500000,72,EMP-026,45000.00,TRUE
+WH-002,Horizon East Coast Fulfillment,340 Commerce Way,Newark,NJ,USA,35000,200000,58,EMP-027,28000.00,TRUE
+WH-003,Horizon Print-on-Demand Facility,890 Digital Drive,Nashville,TN,USA,15000,50000,45,EMP-014,12000.00,TRUE

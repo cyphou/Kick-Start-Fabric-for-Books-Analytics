@@ -1,0 +1,8 @@
+CostCenterID,CostCenterName,Department,DivisionHead
+CC-100,Sales & Revenue,Sales,Sarah Mitchell
+CC-200,Production & Manufacturing,Production,David Chen
+CC-300,Author Relations & Royalties,Editorial,Maria Garcia
+CC-400,Marketing & Promotion,Marketing,James Wilson
+CC-500,Distribution & Logistics,Operations,Lisa Brown
+CC-600,Human Resources,HR,Robert Taylor
+CC-700,IT & Administration,Corporate,Anna Kowalski

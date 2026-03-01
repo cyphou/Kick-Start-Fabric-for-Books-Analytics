@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Test results
+test-results/
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# IDE
+.idea/
+
+# Build outputs
+*.log

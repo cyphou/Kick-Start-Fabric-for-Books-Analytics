@@ -1,0 +1,114 @@
+table DimBooks
+	lineageTag: 10000004-0001-0001-0001-000000000001
+
+	column BookID
+		dataType: string
+		summarizeBy: none
+		sourceColumn: BookID
+		lineageTag: 10000004-0001-0001-0001-200000000001
+
+		annotation SummarizationSetBy = Automatic
+
+	column Title
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Title
+		lineageTag: 10000004-0001-0001-0001-200000000002
+
+		annotation SummarizationSetBy = Automatic
+
+	column AuthorID
+		dataType: string
+		summarizeBy: none
+		sourceColumn: AuthorID
+		lineageTag: 10000004-0001-0001-0001-200000000003
+
+		annotation SummarizationSetBy = Automatic
+
+	column Genre
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Genre
+		lineageTag: 10000004-0001-0001-0001-200000000004
+
+		annotation SummarizationSetBy = Automatic
+
+	column SubGenre
+		dataType: string
+		summarizeBy: none
+		sourceColumn: SubGenre
+		lineageTag: 10000004-0001-0001-0001-200000000005
+
+		annotation SummarizationSetBy = Automatic
+
+	column ISBN
+		dataType: string
+		summarizeBy: none
+		sourceColumn: ISBN
+		lineageTag: 10000004-0001-0001-0001-200000000006
+
+		annotation SummarizationSetBy = Automatic
+
+	column PublishDate
+		dataType: dateTime
+		summarizeBy: none
+		sourceColumn: PublishDate
+		lineageTag: 10000004-0001-0001-0001-200000000007
+
+		annotation SummarizationSetBy = Automatic
+
+	column ListPrice
+		dataType: double
+		summarizeBy: sum
+		sourceColumn: ListPrice
+		lineageTag: 10000004-0001-0001-0001-200000000008
+
+		annotation SummarizationSetBy = Automatic
+
+	column Format
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Format
+		lineageTag: 10000004-0001-0001-0001-200000000009
+
+		annotation SummarizationSetBy = Automatic
+
+	column PageCount
+		dataType: int64
+		summarizeBy: sum
+		sourceColumn: PageCount
+		lineageTag: 10000004-0001-0001-0001-200000000010
+
+		annotation SummarizationSetBy = Automatic
+
+	column PrintRunSize
+		dataType: int64
+		summarizeBy: sum
+		sourceColumn: PrintRunSize
+		lineageTag: 10000004-0001-0001-0001-200000000011
+
+		annotation SummarizationSetBy = Automatic
+
+	column ImprintName
+		dataType: string
+		summarizeBy: none
+		sourceColumn: ImprintName
+		lineageTag: 10000004-0001-0001-0001-200000000012
+
+		annotation SummarizationSetBy = Automatic
+
+	column Status
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Status
+		lineageTag: 10000004-0001-0001-0001-200000000013
+
+		annotation SummarizationSetBy = Automatic
+
+	partition DimBooks = entity
+		mode: directLake
+		schemaName: dim
+		entityName: DimBooks
+		expressionSource: DatabaseQuery
+
+	annotation PBI_ResultType = Table

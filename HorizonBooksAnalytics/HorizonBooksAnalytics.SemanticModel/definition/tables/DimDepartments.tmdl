@@ -1,0 +1,58 @@
+table DimDepartments
+	lineageTag: 10000009-0001-0001-0001-000000000001
+
+	column DepartmentID
+		dataType: string
+		summarizeBy: none
+		sourceColumn: DepartmentID
+		lineageTag: 10000009-0001-0001-0001-200000000001
+
+		annotation SummarizationSetBy = Automatic
+
+	column DepartmentName
+		dataType: string
+		summarizeBy: none
+		sourceColumn: DepartmentName
+		lineageTag: 10000009-0001-0001-0001-200000000002
+
+		annotation SummarizationSetBy = Automatic
+
+	column DepartmentHead
+		dataType: string
+		summarizeBy: none
+		sourceColumn: DepartmentHead
+		lineageTag: 10000009-0001-0001-0001-200000000003
+
+		annotation SummarizationSetBy = Automatic
+
+	column HeadCount
+		dataType: int64
+		summarizeBy: sum
+		sourceColumn: HeadCount
+		lineageTag: 10000009-0001-0001-0001-200000000004
+
+		annotation SummarizationSetBy = Automatic
+
+	column AnnualBudget
+		dataType: double
+		summarizeBy: sum
+		sourceColumn: AnnualBudget
+		lineageTag: 10000009-0001-0001-0001-200000000005
+
+		annotation SummarizationSetBy = Automatic
+
+	column Location
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Location
+		lineageTag: 10000009-0001-0001-0001-200000000006
+
+		annotation SummarizationSetBy = Automatic
+
+	partition DimDepartments = entity
+		mode: directLake
+		schemaName: dim
+		entityName: DimDepartments
+		expressionSource: DatabaseQuery
+
+	annotation PBI_ResultType = Table

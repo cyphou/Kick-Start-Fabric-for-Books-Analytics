@@ -1,0 +1,122 @@
+table DimDate
+	lineageTag: 10000001-0001-0001-0001-000000000001
+
+	column DateKey
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: DateKey
+		lineageTag: 10000001-0001-0001-0001-200000000001
+
+		annotation SummarizationSetBy = Automatic
+
+	column FullDate
+		dataType: dateTime
+		summarizeBy: none
+		sourceColumn: FullDate
+		lineageTag: 10000001-0001-0001-0001-200000000002
+
+		annotation SummarizationSetBy = Automatic
+
+	column DayOfMonth
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: DayOfMonth
+		lineageTag: 10000001-0001-0001-0001-200000000003
+
+		annotation SummarizationSetBy = Automatic
+
+	column DayOfWeek
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: DayOfWeek
+		lineageTag: 10000001-0001-0001-0001-200000000004
+
+		annotation SummarizationSetBy = Automatic
+
+	column DayName
+		dataType: string
+		summarizeBy: none
+		sourceColumn: DayName
+		lineageTag: 10000001-0001-0001-0001-200000000005
+
+		annotation SummarizationSetBy = Automatic
+
+	column MonthNumber
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: MonthNumber
+		lineageTag: 10000001-0001-0001-0001-200000000006
+
+		annotation SummarizationSetBy = Automatic
+
+	column MonthName
+		dataType: string
+		summarizeBy: none
+		sourceColumn: MonthName
+		lineageTag: 10000001-0001-0001-0001-200000000007
+
+		annotation SummarizationSetBy = Automatic
+
+	column Quarter
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: Quarter
+		lineageTag: 10000001-0001-0001-0001-200000000008
+
+		annotation SummarizationSetBy = Automatic
+
+	column QuarterName
+		dataType: string
+		summarizeBy: none
+		sourceColumn: QuarterName
+		lineageTag: 10000001-0001-0001-0001-200000000009
+
+		annotation SummarizationSetBy = Automatic
+
+	column Year
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: Year
+		lineageTag: 10000001-0001-0001-0001-200000000010
+
+		annotation SummarizationSetBy = Automatic
+
+	column FiscalYear
+		dataType: string
+		summarizeBy: none
+		sourceColumn: FiscalYear
+		lineageTag: 10000001-0001-0001-0001-200000000011
+
+		annotation SummarizationSetBy = Automatic
+
+	column FiscalQuarter
+		dataType: string
+		summarizeBy: none
+		sourceColumn: FiscalQuarter
+		lineageTag: 10000001-0001-0001-0001-200000000012
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsWeekend
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: IsWeekend
+		lineageTag: 10000001-0001-0001-0001-200000000013
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsHoliday
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: IsHoliday
+		lineageTag: 10000001-0001-0001-0001-200000000014
+
+		annotation SummarizationSetBy = Automatic
+
+	partition DimDate = entity
+		mode: directLake
+		schemaName: dim
+		entityName: DimDate
+		expressionSource: DatabaseQuery
+
+	annotation PBI_ResultType = Table

@@ -1,0 +1,27 @@
+AccountID,AccountName,AccountType,AccountCategory,ParentAccountID,IsActive
+1001,Revenue - Book Sales,Revenue,Sales,,TRUE
+1002,Revenue - E-Book Sales,Revenue,Sales,,TRUE
+1003,Revenue - Audiobook Sales,Revenue,Sales,,TRUE
+1004,Revenue - Rights & Licensing,Revenue,Licensing,,TRUE
+1005,Revenue - Subsidiary Rights,Revenue,Licensing,,TRUE
+1010,COGS - Printing,Expense,Cost of Goods Sold,,TRUE
+1011,COGS - Paper & Materials,Expense,Cost of Goods Sold,,TRUE
+1012,COGS - E-Book Production,Expense,Cost of Goods Sold,,TRUE
+1013,COGS - Audiobook Production,Expense,Cost of Goods Sold,,TRUE
+1020,Royalties - Author Advances,Expense,Royalties,,TRUE
+1021,Royalties - Earned Royalties,Expense,Royalties,,TRUE
+1030,Marketing - Advertising,Expense,Marketing,,TRUE
+1031,Marketing - Book Tours,Expense,Marketing,,TRUE
+1032,Marketing - Digital Marketing,Expense,Marketing,,TRUE
+1040,Distribution - Warehousing,Expense,Distribution,,TRUE
+1041,Distribution - Shipping,Expense,Distribution,,TRUE
+1042,Distribution - Returns Processing,Expense,Distribution,,TRUE
+1050,Salaries & Benefits,Expense,HR,,TRUE
+1051,Office & Admin,Expense,Operations,,TRUE
+1052,Technology & IT,Expense,Operations,,TRUE
+1060,Cash & Equivalents,Asset,Current Assets,,TRUE
+1061,Accounts Receivable,Asset,Current Assets,,TRUE
+1062,Inventory - Finished Goods,Asset,Current Assets,,TRUE
+1070,Accounts Payable,Liability,Current Liabilities,,TRUE
+1071,Royalties Payable,Liability,Current Liabilities,,TRUE
+1072,Deferred Revenue,Liability,Current Liabilities,,TRUE

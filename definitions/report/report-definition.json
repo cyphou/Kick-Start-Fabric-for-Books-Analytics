@@ -1,0 +1,198 @@
+{
+  "displayName": "Horizon Books Publishing Analytics",
+  "type": "Report",
+  "description": "Power BI report with 10 pages covering Executive Dashboard, Finance P&L, Budget vs Actual, Book Performance, Customer & Distribution, Geographic Analysis, Inventory & Supply Chain, HR Workforce, Compensation & Performance, and Recruitment Pipeline.",
+  "semanticModel": "{{SEMANTIC_MODEL_ID}}",
+  "semanticModelName": "HorizonBooksAnalytics",
+  "theme": {
+    "primaryColor": "#1B3A5C",
+    "secondaryColor": "#E8A838",
+    "accent1": "#3A8FBF",
+    "accent2": "#6B4C9A",
+    "accent3": "#2ECC71",
+    "background": "#F5F6FA",
+    "font": "Segoe UI"
+  },
+  "pages": [
+    {
+      "ordinal": 1,
+      "name": "Executive Dashboard",
+      "description": "Landing page with KPI cards (Revenue, Gross Margin, Orders, Headcount), Revenue by Quarter, Revenue by Channel, Top 10 Books",
+      "slicers": ["Fiscal Year", "Genre", "Imprint"],
+      "visuals": [
+        { "type": "Card", "measure": "Total Revenue" },
+        { "type": "Card", "measure": "Gross Margin %" },
+        { "type": "Card", "measure": "Total Orders" },
+        { "type": "Card", "measure": "Total Headcount" },
+        { "type": "Clustered Column", "title": "Revenue by Quarter" },
+        { "type": "Donut Chart", "title": "Revenue by Channel" },
+        { "type": "Table", "title": "Top 10 Books by Revenue" }
+      ]
+    },
+    {
+      "ordinal": 2,
+      "name": "Finance - P&L Analysis",
+      "description": "Revenue, COGS, Gross Profit, OpEx, Operating Margin with waterfall, monthly trend, and account breakdown matrix",
+      "slicers": ["Fiscal Year", "Fiscal Quarter"],
+      "visuals": [
+        { "type": "Card", "measure": "Total Revenue" },
+        { "type": "Card", "measure": "Total COGS" },
+        { "type": "Card", "measure": "Gross Profit" },
+        { "type": "Card", "measure": "Total Operating Expenses" },
+        { "type": "Card", "measure": "Operating Margin %" },
+        { "type": "Waterfall Chart", "title": "P&L Waterfall" },
+        { "type": "Line Chart", "title": "Monthly Revenue vs Expenses Trend" },
+        { "type": "Matrix", "title": "Account Breakdown by Quarter" }
+      ]
+    },
+    {
+      "ordinal": 3,
+      "name": "Finance - Budget vs Actual",
+      "description": "Budget attainment gauge, variance analysis by account and quarter",
+      "slicers": ["Fiscal Year", "Fiscal Quarter"],
+      "visuals": [
+        { "type": "Gauge", "measure": "Budget Attainment" },
+        { "type": "Card", "measure": "Budget Variance" },
+        { "type": "Card", "measure": "Budget Variance %" },
+        { "type": "Grouped Bar", "title": "Budget vs Actual by Account" },
+        { "type": "Clustered Column", "title": "Variance by Quarter" },
+        { "type": "Table", "title": "Detailed Variance Table" }
+      ]
+    },
+    {
+      "ordinal": 4,
+      "name": "Operations - Book Performance",
+      "description": "Bestseller highlight, genre treemap, top 10 books bar, monthly sales trend, book detail table",
+      "slicers": ["Genre", "Imprint", "Publish Date Range"],
+      "visuals": [
+        { "type": "Card", "measure": "Best Seller (dynamic)" },
+        { "type": "Card", "measure": "Total Titles Active" },
+        { "type": "Card", "measure": "Average Selling Price" },
+        { "type": "Treemap", "title": "Sales by Genre" },
+        { "type": "Horizontal Bar", "title": "Top 10 Books" },
+        { "type": "Area Chart", "title": "Monthly Book Sales Trend" },
+        { "type": "Table", "title": "Book Detail Table" }
+      ]
+    },
+    {
+      "ordinal": 5,
+      "name": "Operations - Customer & Distribution",
+      "description": "Customer analysis, revenue by customer type and region, order volume trends",
+      "slicers": ["Customer Type", "Region"],
+      "drillThrough": "Customer Detail Page",
+      "visuals": [
+        { "type": "Card", "measure": "Active Customers" },
+        { "type": "Card", "measure": "Revenue per Customer" },
+        { "type": "Card", "measure": "Average Order Value" },
+        { "type": "Card", "measure": "On Time Delivery Rate" },
+        { "type": "Stacked Bar", "title": "Revenue by Customer Type" },
+        { "type": "Table", "title": "Top Customers Table" },
+        { "type": "Pie Chart", "title": "Revenue by Region" },
+        { "type": "Line + Column", "title": "Order Volume Trend" }
+      ]
+    },
+    {
+      "ordinal": 6,
+      "name": "Geographic Analysis",
+      "description": "Global sales map, revenue by continent, international customer breakdown",
+      "slicers": ["Continent", "Country", "Customer Type"],
+      "drillThrough": "Country Detail Page",
+      "visuals": [
+        { "type": "Card", "measure": "Countries Served" },
+        { "type": "Card", "measure": "International Revenue" },
+        { "type": "Card", "measure": "International Revenue %" },
+        { "type": "Card", "measure": "International Customer Count" },
+        { "type": "Card", "measure": "Employee Locations" },
+        { "type": "Azure Map", "title": "Global Sales Map" },
+        { "type": "Stacked Column", "title": "Revenue by Continent" },
+        { "type": "Table", "title": "Revenue by Country" },
+        { "type": "Horizontal Bar", "title": "Top International Customers" }
+      ]
+    },
+    {
+      "ordinal": 7,
+      "name": "Operations - Inventory & Supply Chain",
+      "description": "Inventory health dashboard with stock alerts, days of supply, return analysis",
+      "slicers": ["Warehouse", "Status"],
+      "visuals": [
+        { "type": "Card", "measure": "Current Inventory Value" },
+        { "type": "Card", "measure": "Low Stock Items" },
+        { "type": "Card", "measure": "Avg Days of Supply" },
+        { "type": "Card", "measure": "Inventory Turnover" },
+        { "type": "Donut", "title": "Inventory Status Distribution" },
+        { "type": "Horizontal Bar", "title": "Days of Supply by Book" },
+        { "type": "Stacked Bar", "title": "Inventory Value by Genre" },
+        { "type": "Line Chart", "title": "Inventory Trend" },
+        { "type": "Matrix", "title": "Return Analysis" }
+      ]
+    },
+    {
+      "ordinal": 8,
+      "name": "HR - Workforce Overview",
+      "description": "People analytics with headcount by department, employment type, location, org structure",
+      "slicers": ["Department", "Location"],
+      "visuals": [
+        { "type": "Card", "measure": "Total Headcount" },
+        { "type": "Card", "measure": "Avg Tenure Years" },
+        { "type": "Card", "measure": "Open Positions" },
+        { "type": "Card", "measure": "Revenue per Employee" },
+        { "type": "Horizontal Bar", "title": "Headcount by Department" },
+        { "type": "Donut", "title": "Employment Type" },
+        { "type": "Pie", "title": "Headcount by Location" },
+        { "type": "Decomposition Tree", "title": "Org Structure" }
+      ]
+    },
+    {
+      "ordinal": 9,
+      "name": "HR - Compensation & Performance",
+      "description": "Salary distribution, bonus analysis, performance scores, payroll cost trends",
+      "slicers": ["Department", "Performance Rating"],
+      "visuals": [
+        { "type": "Card", "measure": "Total Payroll Cost" },
+        { "type": "Card", "measure": "Avg Salary per Employee" },
+        { "type": "KPI", "measure": "Avg Performance Score" },
+        { "type": "Card", "measure": "Top Performer Rate" },
+        { "type": "Bar", "title": "Salary Distribution by Dept" },
+        { "type": "Stacked Column", "title": "Bonus vs Base by Dept" },
+        { "type": "Histogram", "title": "Performance Score Distribution" },
+        { "type": "Table", "title": "Performance Detail" },
+        { "type": "Line", "title": "Payroll Cost per Revenue Dollar" }
+      ]
+    },
+    {
+      "ordinal": 10,
+      "name": "HR - Recruitment Pipeline",
+      "description": "Hiring funnel, open requisitions, time-to-fill, offer acceptance rate",
+      "slicers": ["Department", "Status"],
+      "visuals": [
+        { "type": "Card", "measure": "Open Positions" },
+        { "type": "Card", "measure": "Avg Time to Fill" },
+        { "type": "Card", "measure": "Offer Acceptance Rate" },
+        { "type": "Funnel", "title": "Recruitment Funnel" },
+        { "type": "Bar", "title": "Hiring by Department" },
+        { "type": "Range Column", "title": "Salary Range Analysis" },
+        { "type": "Table", "title": "Open Positions Table" }
+      ]
+    }
+  ],
+  "bookmarks": [
+    { "name": "Current Quarter View", "description": "Pre-filtered to latest quarter" },
+    { "name": "Holiday Season Analysis", "description": "Filtered to Q4" },
+    { "name": "Bestseller Deep Dive", "description": "Filtered to Winter's Promise (BK-017)" },
+    { "name": "Critical Inventory Alert", "description": "Shows only Low Stock/Critical items" },
+    { "name": "International Markets", "description": "Filtered to non-US geographies" }
+  ],
+  "customTooltips": [
+    { "name": "Book Tooltip", "fields": ["Title", "Author", "Genre", "ISBN", "PublishDate", "ListPrice", "TotalUnitsSold", "Revenue"] },
+    { "name": "Customer Tooltip", "fields": ["Name", "Type", "Region", "FirstOrderDate", "TotalOrders", "TotalRevenue", "AvgDiscount"] },
+    { "name": "Employee Tooltip", "fields": ["Name", "Title", "Department", "HireDate", "Tenure", "LastPerformanceScore"] }
+  ],
+  "navigation": "Left side tab bar or top tabs for all 10 pages",
+  "specificationFile": "Reports/ReportSpecification.md",
+  "tokens": {
+    "semanticModelId": "{{SEMANTIC_MODEL_ID}}"
+  },
+  "deployedBy": "Manual creation in Fabric portal (report authoring)",
+  "workspaceFolder": "5. Analytics",
+  "notes": "Power BI reports cannot be fully deployed via REST API definition upload. This definition serves as the visual specification for manual report authoring or Power BI Desktop (.pbix) creation."
+}

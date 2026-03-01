@@ -1,0 +1,114 @@
+table DimAuthors
+	lineageTag: 10000005-0001-0001-0001-000000000001
+
+	column AuthorID
+		dataType: string
+		summarizeBy: none
+		sourceColumn: AuthorID
+		lineageTag: 10000005-0001-0001-0001-200000000001
+
+		annotation SummarizationSetBy = Automatic
+
+	column FirstName
+		dataType: string
+		summarizeBy: none
+		sourceColumn: FirstName
+		lineageTag: 10000005-0001-0001-0001-200000000002
+
+		annotation SummarizationSetBy = Automatic
+
+	column LastName
+		dataType: string
+		summarizeBy: none
+		sourceColumn: LastName
+		lineageTag: 10000005-0001-0001-0001-200000000003
+
+		annotation SummarizationSetBy = Automatic
+
+	column PenName
+		dataType: string
+		summarizeBy: none
+		sourceColumn: PenName
+		lineageTag: 10000005-0001-0001-0001-200000000004
+
+		annotation SummarizationSetBy = Automatic
+
+	column AgentName
+		dataType: string
+		summarizeBy: none
+		sourceColumn: AgentName
+		lineageTag: 10000005-0001-0001-0001-200000000005
+
+		annotation SummarizationSetBy = Automatic
+
+	column AgentCompany
+		dataType: string
+		summarizeBy: none
+		sourceColumn: AgentCompany
+		lineageTag: 10000005-0001-0001-0001-200000000006
+
+		annotation SummarizationSetBy = Automatic
+
+	column ContractStartDate
+		dataType: dateTime
+		summarizeBy: none
+		sourceColumn: ContractStartDate
+		lineageTag: 10000005-0001-0001-0001-200000000007
+
+		annotation SummarizationSetBy = Automatic
+
+	column ContractEndDate
+		dataType: dateTime
+		summarizeBy: none
+		sourceColumn: ContractEndDate
+		lineageTag: 10000005-0001-0001-0001-200000000008
+
+		annotation SummarizationSetBy = Automatic
+
+	column RoyaltyRate
+		dataType: double
+		summarizeBy: sum
+		sourceColumn: RoyaltyRate
+		lineageTag: 10000005-0001-0001-0001-200000000009
+
+		annotation SummarizationSetBy = Automatic
+
+	column AdvanceAmount
+		dataType: double
+		summarizeBy: sum
+		sourceColumn: AdvanceAmount
+		lineageTag: 10000005-0001-0001-0001-200000000010
+
+		annotation SummarizationSetBy = Automatic
+
+	column Genre
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Genre
+		lineageTag: 10000005-0001-0001-0001-200000000011
+
+		annotation SummarizationSetBy = Automatic
+
+	column Nationality
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Nationality
+		lineageTag: 10000005-0001-0001-0001-200000000012
+
+		annotation SummarizationSetBy = Automatic
+
+	column BookCount
+		dataType: int64
+		summarizeBy: sum
+		sourceColumn: BookCount
+		lineageTag: 10000005-0001-0001-0001-200000000013
+
+		annotation SummarizationSetBy = Automatic
+
+	partition DimAuthors = entity
+		mode: directLake
+		schemaName: dim
+		entityName: DimAuthors
+		expressionSource: DatabaseQuery
+
+	annotation PBI_ResultType = Table

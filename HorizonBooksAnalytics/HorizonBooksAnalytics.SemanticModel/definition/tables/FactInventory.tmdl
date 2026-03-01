@@ -1,0 +1,144 @@
+table FactInventory
+	lineageTag: 20000004-0001-0001-0001-000000000001
+
+	measure 'Current Inventory Value' = CALCULATE(SUM(FactInventory[TotalInventoryValue]),LASTDATE(FactInventory[SnapshotDate]))
+		formatString: $#,0;($#,0)
+		displayFolder: Operations \ Inventory
+		lineageTag: 20000004-0001-0001-0001-100000000001
+
+	measure 'Current Units on Hand' = CALCULATE(SUM(FactInventory[QuantityOnHand]),LASTDATE(FactInventory[SnapshotDate]))
+		formatString: #,0
+		displayFolder: Operations \ Inventory
+		lineageTag: 20000004-0001-0001-0001-100000000002
+
+	measure 'Avg Days of Supply' = CALCULATE(AVERAGE(FactInventory[DaysOfSupply]),LASTDATE(FactInventory[SnapshotDate]))
+		formatString: 0.0
+		displayFolder: Operations \ Inventory
+		lineageTag: 20000004-0001-0001-0001-100000000003
+
+	measure 'Low Stock Items' =
+		CALCULATE(
+			DISTINCTCOUNT(FactInventory[BookID]),
+			FactInventory[Status] IN {"Low Stock", "Critical"},
+			LASTDATE(FactInventory[SnapshotDate])
+		)
+		formatString: #,0
+		displayFolder: Operations \ Inventory
+		lineageTag: 20000004-0001-0001-0001-100000000004
+
+	measure 'Inventory Turnover' = DIVIDE([Total COGS],[Current Inventory Value],0)
+		formatString: 0.00
+		displayFolder: Operations \ Inventory
+		lineageTag: 20000004-0001-0001-0001-100000000005
+
+	column InventoryID
+		dataType: string
+		summarizeBy: none
+		sourceColumn: InventoryID
+		lineageTag: 20000004-0001-0001-0001-200000000001
+
+		annotation SummarizationSetBy = Automatic
+
+	column BookID
+		dataType: string
+		summarizeBy: none
+		sourceColumn: BookID
+		lineageTag: 20000004-0001-0001-0001-200000000002
+
+		annotation SummarizationSetBy = Automatic
+
+	column WarehouseID
+		dataType: string
+		summarizeBy: none
+		sourceColumn: WarehouseID
+		lineageTag: 20000004-0001-0001-0001-200000000003
+
+		annotation SummarizationSetBy = Automatic
+
+	column SnapshotDate
+		dataType: dateTime
+		summarizeBy: none
+		sourceColumn: SnapshotDate
+		lineageTag: 20000004-0001-0001-0001-200000000004
+
+		annotation SummarizationSetBy = Automatic
+
+	column QuantityOnHand
+		dataType: int64
+		summarizeBy: sum
+		sourceColumn: QuantityOnHand
+		lineageTag: 20000004-0001-0001-0001-200000000005
+
+		annotation SummarizationSetBy = Automatic
+
+	column QuantityReserved
+		dataType: int64
+		summarizeBy: sum
+		sourceColumn: QuantityReserved
+		lineageTag: 20000004-0001-0001-0001-200000000006
+
+		annotation SummarizationSetBy = Automatic
+
+	column QuantityAvailable
+		dataType: int64
+		summarizeBy: sum
+		sourceColumn: QuantityAvailable
+		lineageTag: 20000004-0001-0001-0001-200000000007
+
+		annotation SummarizationSetBy = Automatic
+
+	column ReorderPoint
+		dataType: int64
+		summarizeBy: sum
+		sourceColumn: ReorderPoint
+		lineageTag: 20000004-0001-0001-0001-200000000008
+
+		annotation SummarizationSetBy = Automatic
+
+	column ReorderQuantity
+		dataType: int64
+		summarizeBy: sum
+		sourceColumn: ReorderQuantity
+		lineageTag: 20000004-0001-0001-0001-200000000009
+
+		annotation SummarizationSetBy = Automatic
+
+	column UnitCost
+		dataType: double
+		summarizeBy: sum
+		sourceColumn: UnitCost
+		lineageTag: 20000004-0001-0001-0001-200000000010
+
+		annotation SummarizationSetBy = Automatic
+
+	column TotalInventoryValue
+		dataType: double
+		summarizeBy: sum
+		sourceColumn: TotalInventoryValue
+		lineageTag: 20000004-0001-0001-0001-200000000011
+
+		annotation SummarizationSetBy = Automatic
+
+	column DaysOfSupply
+		dataType: int64
+		summarizeBy: sum
+		sourceColumn: DaysOfSupply
+		lineageTag: 20000004-0001-0001-0001-200000000012
+
+		annotation SummarizationSetBy = Automatic
+
+	column Status
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Status
+		lineageTag: 20000004-0001-0001-0001-200000000013
+
+		annotation SummarizationSetBy = Automatic
+
+	partition FactInventory = entity
+		mode: directLake
+		schemaName: fact
+		entityName: FactInventory
+		expressionSource: DatabaseQuery
+
+	annotation PBI_ResultType = Table

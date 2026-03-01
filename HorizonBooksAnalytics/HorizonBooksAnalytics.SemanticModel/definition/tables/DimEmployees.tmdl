@@ -1,0 +1,131 @@
+table DimEmployees
+	lineageTag: 10000008-0001-0001-0001-000000000001
+
+	measure 'Total Headcount' = CALCULATE(COUNTROWS(DimEmployees),DimEmployees[IsActive] = TRUE())
+		formatString: #,0
+		displayFolder: HR \ Workforce
+		lineageTag: 10000008-0001-0001-0001-100000000001
+
+	measure 'Full Time Employees' = CALCULATE(COUNTROWS(DimEmployees),DimEmployees[IsActive] = TRUE(),DimEmployees[EmploymentType] = "Full-Time")
+		formatString: #,0
+		displayFolder: HR \ Workforce
+		lineageTag: 10000008-0001-0001-0001-100000000002
+
+	measure 'Part Time & Contract' = CALCULATE(COUNTROWS(DimEmployees),DimEmployees[IsActive] = TRUE(),DimEmployees[EmploymentType] IN {"Part-Time", "Contract"})
+		formatString: #,0
+		displayFolder: HR \ Workforce
+		lineageTag: 10000008-0001-0001-0001-100000000003
+
+	measure 'Avg Tenure Years' = AVERAGEX(FILTER(DimEmployees, DimEmployees[IsActive] = TRUE()),DATEDIFF(DimEmployees[HireDate], TODAY(), YEAR))
+		formatString: 0.0
+		displayFolder: HR \ Workforce
+		lineageTag: 10000008-0001-0001-0001-100000000004
+
+	measure 'Revenue per Employee' = DIVIDE([Total Revenue], [Total Headcount], 0)
+		formatString: $#,0.00
+		displayFolder: HR \ Workforce
+		lineageTag: 10000008-0001-0001-0001-100000000005
+
+	column EmployeeID
+		dataType: string
+		summarizeBy: none
+		sourceColumn: EmployeeID
+		lineageTag: 10000008-0001-0001-0001-200000000001
+
+		annotation SummarizationSetBy = Automatic
+
+	column FirstName
+		dataType: string
+		summarizeBy: none
+		sourceColumn: FirstName
+		lineageTag: 10000008-0001-0001-0001-200000000002
+
+		annotation SummarizationSetBy = Automatic
+
+	column LastName
+		dataType: string
+		summarizeBy: none
+		sourceColumn: LastName
+		lineageTag: 10000008-0001-0001-0001-200000000003
+
+		annotation SummarizationSetBy = Automatic
+
+	column Email
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Email
+		lineageTag: 10000008-0001-0001-0001-200000000004
+
+		annotation SummarizationSetBy = Automatic
+
+	column HireDate
+		dataType: dateTime
+		summarizeBy: none
+		sourceColumn: HireDate
+		lineageTag: 10000008-0001-0001-0001-200000000005
+
+		annotation SummarizationSetBy = Automatic
+
+	column DepartmentID
+		dataType: string
+		summarizeBy: none
+		sourceColumn: DepartmentID
+		lineageTag: 10000008-0001-0001-0001-200000000006
+
+		annotation SummarizationSetBy = Automatic
+
+	column JobTitle
+		dataType: string
+		summarizeBy: none
+		sourceColumn: JobTitle
+		lineageTag: 10000008-0001-0001-0001-200000000007
+
+		annotation SummarizationSetBy = Automatic
+
+	column ManagerID
+		dataType: string
+		summarizeBy: none
+		sourceColumn: ManagerID
+		lineageTag: 10000008-0001-0001-0001-200000000008
+
+		annotation SummarizationSetBy = Automatic
+
+	column EmploymentType
+		dataType: string
+		summarizeBy: none
+		sourceColumn: EmploymentType
+		lineageTag: 10000008-0001-0001-0001-200000000009
+
+		annotation SummarizationSetBy = Automatic
+
+	column Location
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Location
+		lineageTag: 10000008-0001-0001-0001-200000000010
+
+		annotation SummarizationSetBy = Automatic
+
+	column GeoID
+		dataType: string
+		summarizeBy: none
+		sourceColumn: GeoID
+		lineageTag: 10000008-0001-0001-0001-200000000011
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsActive
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: IsActive
+		lineageTag: 10000008-0001-0001-0001-200000000012
+
+		annotation SummarizationSetBy = Automatic
+
+	partition DimEmployees = entity
+		mode: directLake
+		schemaName: dim
+		entityName: DimEmployees
+		expressionSource: DatabaseQuery
+
+	annotation PBI_ResultType = Table

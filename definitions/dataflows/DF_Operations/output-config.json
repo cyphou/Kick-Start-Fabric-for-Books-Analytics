@@ -1,0 +1,85 @@
+{
+  "version": "1.0",
+  "artifacts": [
+    {
+      "queryName": "DimBooks",
+      "destination": {
+        "type": "Lakehouse",
+        "workspaceId": "{{WORKSPACE_ID}}",
+        "lakehouseId": "{{BRONZE_LH_ID}}",
+        "tableName": "DimBooks",
+        "loadMode": "Overwrite"
+      }
+    },
+    {
+      "queryName": "DimAuthors",
+      "destination": {
+        "type": "Lakehouse",
+        "workspaceId": "{{WORKSPACE_ID}}",
+        "lakehouseId": "{{BRONZE_LH_ID}}",
+        "tableName": "DimAuthors",
+        "loadMode": "Overwrite"
+      }
+    },
+    {
+      "queryName": "DimCustomers",
+      "destination": {
+        "type": "Lakehouse",
+        "workspaceId": "{{WORKSPACE_ID}}",
+        "lakehouseId": "{{BRONZE_LH_ID}}",
+        "tableName": "DimCustomers",
+        "loadMode": "Overwrite"
+      }
+    },
+    {
+      "queryName": "DimGeography",
+      "destination": {
+        "type": "Lakehouse",
+        "workspaceId": "{{WORKSPACE_ID}}",
+        "lakehouseId": "{{BRONZE_LH_ID}}",
+        "tableName": "DimGeography",
+        "loadMode": "Overwrite"
+      }
+    },
+    {
+      "queryName": "DimWarehouses",
+      "destination": {
+        "type": "Lakehouse",
+        "workspaceId": "{{WORKSPACE_ID}}",
+        "lakehouseId": "{{BRONZE_LH_ID}}",
+        "tableName": "DimWarehouses",
+        "loadMode": "Overwrite"
+      }
+    },
+    {
+      "queryName": "FactOrders",
+      "destination": {
+        "type": "Lakehouse",
+        "workspaceId": "{{WORKSPACE_ID}}",
+        "lakehouseId": "{{BRONZE_LH_ID}}",
+        "tableName": "FactOrders",
+        "loadMode": "Overwrite"
+      }
+    },
+    {
+      "queryName": "FactInventory",
+      "destination": {
+        "type": "Lakehouse",
+        "workspaceId": "{{WORKSPACE_ID}}",
+        "lakehouseId": "{{BRONZE_LH_ID}}",
+        "tableName": "FactInventory",
+        "loadMode": "Overwrite"
+      }
+    },
+    {
+      "queryName": "FactReturns",
+      "destination": {
+        "type": "Lakehouse",
+        "workspaceId": "{{WORKSPACE_ID}}",
+        "lakehouseId": "{{BRONZE_LH_ID}}",
+        "tableName": "FactReturns",
+        "loadMode": "Overwrite"
+      }
+    }
+  ]
+}

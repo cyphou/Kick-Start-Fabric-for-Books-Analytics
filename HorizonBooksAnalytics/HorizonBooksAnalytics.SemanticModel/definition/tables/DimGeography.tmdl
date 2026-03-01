@@ -1,0 +1,120 @@
+table DimGeography
+	lineageTag: 10000006-0001-0001-0001-000000000001
+
+	column GeoID
+		dataType: string
+		summarizeBy: none
+		sourceColumn: GeoID
+		lineageTag: 10000006-0001-0001-0001-200000000001
+
+		annotation SummarizationSetBy = Automatic
+
+	column City
+		dataType: string
+		summarizeBy: none
+		sourceColumn: City
+		lineageTag: 10000006-0001-0001-0001-200000000002
+		dataCategory: City
+
+		annotation SummarizationSetBy = Automatic
+
+	column StateProvince
+		dataType: string
+		summarizeBy: none
+		sourceColumn: StateProvince
+		lineageTag: 10000006-0001-0001-0001-200000000003
+		dataCategory: StateOrProvince
+
+		annotation SummarizationSetBy = Automatic
+
+	column Country
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Country
+		lineageTag: 10000006-0001-0001-0001-200000000004
+		dataCategory: Country
+
+		annotation SummarizationSetBy = Automatic
+
+	column Continent
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Continent
+		lineageTag: 10000006-0001-0001-0001-200000000005
+		dataCategory: Continent
+
+		annotation SummarizationSetBy = Automatic
+
+	column Region
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Region
+		lineageTag: 10000006-0001-0001-0001-200000000006
+
+		annotation SummarizationSetBy = Automatic
+
+	column SubRegion
+		dataType: string
+		summarizeBy: none
+		sourceColumn: SubRegion
+		lineageTag: 10000006-0001-0001-0001-200000000007
+
+		annotation SummarizationSetBy = Automatic
+
+	column Latitude
+		dataType: double
+		summarizeBy: none
+		sourceColumn: Latitude
+		lineageTag: 10000006-0001-0001-0001-200000000008
+		dataCategory: Latitude
+
+		annotation SummarizationSetBy = Automatic
+
+	column Longitude
+		dataType: double
+		summarizeBy: none
+		sourceColumn: Longitude
+		lineageTag: 10000006-0001-0001-0001-200000000009
+		dataCategory: Longitude
+
+		annotation SummarizationSetBy = Automatic
+
+	column TimeZone
+		dataType: string
+		summarizeBy: none
+		sourceColumn: TimeZone
+		lineageTag: 10000006-0001-0001-0001-200000000010
+
+		annotation SummarizationSetBy = Automatic
+
+	column Currency
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Currency
+		lineageTag: 10000006-0001-0001-0001-200000000011
+
+		annotation SummarizationSetBy = Automatic
+
+	column Population
+		dataType: int64
+		summarizeBy: sum
+		sourceColumn: Population
+		lineageTag: 10000006-0001-0001-0001-200000000012
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsCapital
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: IsCapital
+		lineageTag: 10000006-0001-0001-0001-200000000013
+
+		annotation SummarizationSetBy = Automatic
+
+	partition DimGeography = entity
+		mode: directLake
+		schemaName: dim
+		entityName: DimGeography
+		expressionSource: DatabaseQuery
+
+	annotation PBI_ResultType = Table

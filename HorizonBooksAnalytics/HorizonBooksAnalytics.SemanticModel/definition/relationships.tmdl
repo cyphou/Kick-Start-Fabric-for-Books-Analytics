@@ -1,0 +1,135 @@
+relationship FactFinancialTransactions_TransactionDate_DimDate
+	fromColumn: FactFinancialTransactions.TransactionDate
+	toColumn: DimDate.FullDate
+	crossFilteringBehavior: oneDirection
+
+relationship FactFinancialTransactions_AccountID_DimAccounts
+	fromColumn: FactFinancialTransactions.AccountID
+	toColumn: DimAccounts.AccountID
+	crossFilteringBehavior: oneDirection
+
+relationship FactFinancialTransactions_CostCenterID_DimCostCenters
+	fromColumn: FactFinancialTransactions.CostCenterID
+	toColumn: DimCostCenters.CostCenterID
+	crossFilteringBehavior: oneDirection
+
+relationship FactFinancialTransactions_BookID_DimBooks
+	fromColumn: FactFinancialTransactions.BookID
+	toColumn: DimBooks.BookID
+	crossFilteringBehavior: oneDirection
+
+relationship FactBudget_AccountID_DimAccounts
+	fromColumn: FactBudget.AccountID
+	toColumn: DimAccounts.AccountID
+	crossFilteringBehavior: oneDirection
+
+relationship FactBudget_CostCenterID_DimCostCenters
+	fromColumn: FactBudget.CostCenterID
+	toColumn: DimCostCenters.CostCenterID
+	crossFilteringBehavior: oneDirection
+
+relationship FactOrders_OrderDate_DimDate
+	fromColumn: FactOrders.OrderDate
+	toColumn: DimDate.FullDate
+	crossFilteringBehavior: oneDirection
+
+relationship FactOrders_BookID_DimBooks
+	fromColumn: FactOrders.BookID
+	toColumn: DimBooks.BookID
+	crossFilteringBehavior: oneDirection
+
+relationship FactOrders_CustomerID_DimCustomers
+	fromColumn: FactOrders.CustomerID
+	toColumn: DimCustomers.CustomerID
+	crossFilteringBehavior: oneDirection
+
+relationship FactOrders_SalesRepID_DimEmployees
+	fromColumn: FactOrders.SalesRepID
+	toColumn: DimEmployees.EmployeeID
+	crossFilteringBehavior: oneDirection
+
+relationship FactOrders_WarehouseID_DimWarehouses
+	fromColumn: FactOrders.WarehouseID
+	toColumn: DimWarehouses.WarehouseID
+	crossFilteringBehavior: oneDirection
+
+relationship FactInventory_BookID_DimBooks
+	fromColumn: FactInventory.BookID
+	toColumn: DimBooks.BookID
+	crossFilteringBehavior: oneDirection
+
+relationship FactInventory_WarehouseID_DimWarehouses
+	fromColumn: FactInventory.WarehouseID
+	toColumn: DimWarehouses.WarehouseID
+	crossFilteringBehavior: oneDirection
+
+relationship FactInventory_SnapshotDate_DimDate
+	fromColumn: FactInventory.SnapshotDate
+	toColumn: DimDate.FullDate
+	crossFilteringBehavior: oneDirection
+
+relationship FactReturns_BookID_DimBooks
+	fromColumn: FactReturns.BookID
+	toColumn: DimBooks.BookID
+	crossFilteringBehavior: oneDirection
+
+relationship FactReturns_CustomerID_DimCustomers
+	fromColumn: FactReturns.CustomerID
+	toColumn: DimCustomers.CustomerID
+	crossFilteringBehavior: oneDirection
+
+relationship FactReturns_ReturnDate_DimDate
+	fromColumn: FactReturns.ReturnDate
+	toColumn: DimDate.FullDate
+	crossFilteringBehavior: oneDirection
+
+relationship FactPayroll_EmployeeID_DimEmployees
+	fromColumn: FactPayroll.EmployeeID
+	toColumn: DimEmployees.EmployeeID
+	crossFilteringBehavior: oneDirection
+
+relationship FactPayroll_PayDate_DimDate
+	fromColumn: FactPayroll.PayDate
+	toColumn: DimDate.FullDate
+	crossFilteringBehavior: oneDirection
+
+relationship FactPerformanceReviews_EmployeeID_DimEmployees
+	fromColumn: FactPerformanceReviews.EmployeeID
+	toColumn: DimEmployees.EmployeeID
+	crossFilteringBehavior: oneDirection
+
+relationship FactRecruitment_DepartmentID_DimDepartments
+	fromColumn: FactRecruitment.DepartmentID
+	toColumn: DimDepartments.DepartmentID
+	crossFilteringBehavior: oneDirection
+
+relationship DimEmployees_DepartmentID_DimDepartments
+	fromColumn: DimEmployees.DepartmentID
+	toColumn: DimDepartments.DepartmentID
+	crossFilteringBehavior: oneDirection
+
+relationship DimBooks_AuthorID_DimAuthors
+	fromColumn: DimBooks.AuthorID
+	toColumn: DimAuthors.AuthorID
+	crossFilteringBehavior: oneDirection
+
+relationship DimCustomers_GeoID_DimGeography
+	fromColumn: DimCustomers.GeoID
+	toColumn: DimGeography.GeoID
+	crossFilteringBehavior: oneDirection
+
+relationship DimEmployees_GeoID_DimGeography
+	fromColumn: DimEmployees.GeoID
+	toColumn: DimGeography.GeoID
+	crossFilteringBehavior: oneDirection
+	isActive: false
+
+relationship FactPerformanceReviews_ReviewDate_DimDate
+	fromColumn: FactPerformanceReviews.ReviewDate
+	toColumn: DimDate.FullDate
+	crossFilteringBehavior: oneDirection
+
+relationship FactRecruitment_OpenDate_DimDate
+	fromColumn: FactRecruitment.OpenDate
+	toColumn: DimDate.FullDate
+	crossFilteringBehavior: oneDirection

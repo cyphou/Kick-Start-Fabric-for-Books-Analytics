@@ -1,0 +1,46 @@
+BookID,Title,AuthorID,Genre,SubGenre,ISBN,PublishDate,ListPrice,Format,PageCount,PrintRunSize,ImprintName,Status
+BK-001,The Literary Mind,AUT-001,Fiction,Literary Fiction,978-1-2345-0001-1,2023-09-15,24.99,Hardcover,320,15000,Horizon Literary,Active
+BK-002,Quantum Horizons,AUT-002,Fiction,Science Fiction,978-1-2345-0002-8,2023-11-01,27.99,Hardcover,480,20000,Starlight Press,Active
+BK-003,Garden of Whispers,AUT-003,Fiction,Romance,978-1-2345-0003-5,2023-10-20,16.99,Paperback,288,12000,Rosewood Books,Active
+BK-004,Code Breakers,AUT-004,Non-Fiction,Technology,978-1-2345-0004-2,2024-01-15,29.99,Hardcover,400,18000,Horizon Technical,Active
+BK-005,The Midnight Garden,AUT-005,Fiction,Mystery,978-1-2345-0005-9,2024-01-30,22.99,Paperback,352,10000,Moonlight Mysteries,Active
+BK-006,Empire of Stars,AUT-006,Fiction,Fantasy,978-1-2345-0006-6,2024-02-20,28.99,Hardcover,560,25000,Starlight Press,Active
+BK-007,The Art of Slow Living,AUT-007,Non-Fiction,Lifestyle,978-1-2345-0007-3,2024-03-01,19.99,Paperback,224,14000,Horizon Living,Active
+BK-008,Digital Nomad,AUT-008,Non-Fiction,Business,978-1-2345-0008-0,2024-03-15,25.99,Hardcover,336,16000,Horizon Technical,Active
+BK-009,Ocean Deep,AUT-009,Fiction,Literary Fiction,978-1-2345-0009-7,2024-04-01,23.99,Hardcover,304,12000,Horizon Literary,Active
+BK-010,The Last Algorithm,AUT-010,Fiction,Thriller,978-1-2345-0010-3,2024-04-20,26.99,Hardcover,416,30000,Moonlight Mysteries,Active
+BK-011,Whispers in the Wind,AUT-011,Fiction,Romance,978-1-2345-0011-0,2024-05-10,15.99,Paperback,256,8000,Rosewood Books,Active
+BK-012,Children of Tomorrow,AUT-012,Fiction,Science Fiction,978-1-2345-0012-7,2024-05-25,27.99,Hardcover,512,22000,Starlight Press,Active
+BK-013,The Phoenix Protocol,AUT-013,Fiction,Thriller,978-1-2345-0013-4,2024-06-15,28.99,Hardcover,448,35000,Moonlight Mysteries,Active
+BK-014,Mindful Cooking,AUT-014,Non-Fiction,Cooking,978-1-2345-0014-1,2024-07-01,32.99,Hardcover,272,10000,Horizon Living,Active
+BK-015,The Forgotten City,AUT-015,Fiction,Fantasy,978-1-2345-0015-8,2024-07-20,26.99,Hardcover,496,18000,Starlight Press,Active
+BK-016,Sustainable Future,AUT-016,Non-Fiction,Environment,978-1-2345-0016-5,2024-08-15,21.99,Paperback,288,11000,Horizon Technical,Active
+BK-017,Winter's Promise,AUT-017,Fiction,Literary Fiction,978-1-2345-0017-2,2024-09-01,27.99,Hardcover,384,50000,Horizon Literary,Active
+BK-018,The Herbalist's Guide,AUT-018,Non-Fiction,Health,978-1-2345-0018-9,2024-09-20,24.99,Paperback,320,9000,Horizon Living,Active
+BK-019,New Year New You,AUT-019,Non-Fiction,Self-Help,978-1-2345-0019-6,2024-10-15,18.99,Paperback,240,13000,Horizon Living,Active
+BK-020,The Joy of Reading,AUT-020,Non-Fiction,Education,978-1-2345-0020-2,2024-11-01,22.99,Hardcover,256,15000,Horizon Literary,Active
+BK-021,Starfall Legacy,AUT-006,Fiction,Fantasy,978-1-2345-0021-9,2025-01-15,29.99,Hardcover,608,40000,Starlight Press,Pre-order
+BK-022,The Data Detective,AUT-004,Non-Fiction,Technology,978-1-2345-0022-6,2025-02-01,28.99,Hardcover,384,20000,Horizon Technical,Pre-order
+BK-023,Love in Paris,AUT-003,Fiction,Romance,978-1-2345-0023-3,2025-03-01,17.99,Paperback,304,14000,Rosewood Books,Pre-order
+BK-024,Climate Warriors,AUT-016,Non-Fiction,Environment,978-1-2345-0024-0,2025-03-15,23.99,Paperback,320,12000,Horizon Technical,Pre-order
+BK-025,The Silent Witness,AUT-005,Fiction,Mystery,978-1-2345-0025-7,2025-04-01,24.99,Hardcover,368,16000,Moonlight Mysteries,Pre-order
+BK-026,Monsoon Memories,AUT-021,Fiction,Literary Fiction,978-1-2345-0026-4,2023-08-10,22.99,Hardcover,336,12000,Horizon Literary,Active
+BK-027,The Berlin Wall,AUT-022,Non-Fiction,History,978-1-2345-0027-1,2023-11-15,26.99,Hardcover,448,14000,Horizon Literary,Active
+BK-028,Flames of Seville,AUT-023,Fiction,Romance,978-1-2345-0028-8,2024-02-14,16.99,Paperback,304,10000,Rosewood Books,Active
+BK-029,The Ogun Chronicles,AUT-024,Fiction,Fantasy,978-1-2345-0029-5,2024-03-20,25.99,Hardcover,480,15000,Starlight Press,Active
+BK-030,The Silk Road Algorithm,AUT-025,Fiction,Science Fiction,978-1-2345-0030-1,2024-04-15,27.99,Hardcover,400,18000,Starlight Press,Active
+BK-031,Provence Kitchen,AUT-026,Non-Fiction,Cooking,978-1-2345-0031-8,2024-05-01,34.99,Hardcover,288,9000,Horizon Living,Active
+BK-032,The Oslo Conspiracy,AUT-027,Fiction,Thriller,978-1-2345-0032-5,2024-06-01,26.99,Hardcover,384,20000,Moonlight Mysteries,Active
+BK-033,Desert Sands & Silicon,AUT-028,Non-Fiction,Business,978-1-2345-0033-2,2024-07-15,28.99,Hardcover,320,11000,Horizon Technical,Active
+BK-034,River of Stars,AUT-029,Fiction,Literary Fiction,978-1-2345-0034-9,2024-08-01,24.99,Hardcover,352,13000,Horizon Literary,Active
+BK-035,Shadow Detective Tokyo,AUT-030,Fiction,Mystery,978-1-2345-0035-6,2024-09-15,23.99,Paperback,336,11000,Moonlight Mysteries,Active
+BK-036,The Literary Mind Vol 2,AUT-001,Fiction,Literary Fiction,978-1-2345-0036-3,2024-03-10,25.99,Hardcover,340,12000,Horizon Literary,Active
+BK-037,Quantum Horizons: Nexus,AUT-002,Fiction,Science Fiction,978-1-2345-0037-0,2024-06-20,28.99,Hardcover,496,18000,Starlight Press,Active
+BK-038,Roses of Tuscany,AUT-003,Fiction,Romance,978-1-2345-0038-7,2024-08-10,17.99,Paperback,272,9000,Rosewood Books,Active
+BK-039,AI Ethics Handbook,AUT-004,Non-Fiction,Technology,978-1-2345-0039-4,2024-09-25,31.99,Hardcover,368,15000,Horizon Technical,Active
+BK-040,The Phoenix Protocol: Endgame,AUT-013,Fiction,Thriller,978-1-2345-0040-0,2024-10-01,29.99,Hardcover,464,40000,Moonlight Mysteries,Active
+BK-041,Sacred Grove,AUT-015,Fiction,Fantasy,978-1-2345-0041-7,2024-10-20,27.99,Hardcover,528,16000,Starlight Press,Active
+BK-042,World War Two at Sea,AUT-022,Non-Fiction,History,978-1-2345-0042-4,2024-11-15,29.99,Hardcover,512,10000,Horizon Literary,Active
+BK-043,Midnight in Mumbai,AUT-021,Fiction,Literary Fiction,978-1-2345-0043-1,2024-11-20,23.99,Hardcover,320,14000,Horizon Literary,Active
+BK-044,The Wanderer's Guide,AUT-008,Non-Fiction,Travel,978-1-2345-0044-8,2024-04-10,21.99,Paperback,256,12000,Horizon Living,Active
+BK-045,Echoes of the Sahel,AUT-009,Fiction,Literary Fiction,978-1-2345-0045-5,2024-12-01,24.99,Hardcover,288,10000,Horizon Literary,Active

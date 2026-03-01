@@ -1,0 +1,8 @@
+DepartmentID,DepartmentName,DepartmentHead,HeadCount,AnnualBudget,Location
+DEPT-01,Sales & Distribution,Sarah Mitchell,6,850000.00,New York
+DEPT-02,Production & Manufacturing,David Chen,4,620000.00,New York / Chicago
+DEPT-03,Editorial & Rights,Maria Garcia,6,780000.00,New York
+DEPT-04,Marketing & Publicity,James Wilson,4,540000.00,New York
+DEPT-05,Operations & Logistics,Lisa Brown,5,480000.00,Chicago
+DEPT-06,Human Resources,Robert Taylor,3,320000.00,New York
+DEPT-07,Technology & IT,Anna Kowalski,3,450000.00,New York

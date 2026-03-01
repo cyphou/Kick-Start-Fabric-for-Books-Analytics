@@ -1,0 +1,31 @@
+AuthorID,FirstName,LastName,PenName,AgentName,AgentCompany,ContractStartDate,ContractEndDate,RoyaltyRate,AdvanceAmount,Genre,Nationality,BookCount
+AUT-001,Eleanor,Whitfield,,Patricia Dunn,Literary Stars Agency,2022-01-15,2026-01-14,12.0,25000.00,Literary Fiction,British,3
+AUT-002,Marcus,Chen,,David Kim,Nexus Literary,2021-06-01,2025-05-31,10.0,35000.00,Science Fiction,American,5
+AUT-003,Isabella,Romano,,Sophie Laurent,European Lit Partners,2023-03-01,2027-02-28,10.0,20000.00,Romance,Italian,2
+AUT-004,James,Thornton,,Michael Reed,Tech & Ideas Agency,2022-09-15,2026-09-14,12.0,40000.00,Technology,American,4
+AUT-005,Yuki,Tanaka,,Hiroshi Sato,Pacific Literary Group,2023-07-01,2027-06-30,10.0,18000.00,Mystery,Japanese,2
+AUT-006,Alexander,Frost,,Patricia Dunn,Literary Stars Agency,2021-01-01,2025-12-31,15.0,100000.00,Fantasy,Canadian,6
+AUT-007,Freya,Lindqvist,,Anna Bergstrom,Nordic Books Intl,2023-09-01,2027-08-31,8.0,15000.00,Lifestyle,Swedish,1
+AUT-008,Ryan,Calloway,,Laura Bennett,Modern Voices Agency,2023-11-01,2027-10-31,10.0,30000.00,Business,American,2
+AUT-009,Amara,Okafor,,Grace Mensah,Global Stories Agency,2024-01-01,2028-12-31,10.0,22000.00,Literary Fiction,Nigerian,1
+AUT-010,Viktor,Petrov,,David Kim,Nexus Literary,2023-06-01,2027-05-31,12.0,75000.00,Thriller,Russian-American,3
+AUT-011,Clara,Beaumont,,Sophie Laurent,European Lit Partners,2024-02-01,2028-01-31,8.0,12000.00,Romance,French,1
+AUT-012,Kai,Henderson,,Michael Reed,Tech & Ideas Agency,2023-08-01,2027-07-31,10.0,35000.00,Science Fiction,Australian,2
+AUT-013,Natasha,Blake,,Laura Bennett,Modern Voices Agency,2024-01-15,2028-01-14,14.0,80000.00,Thriller,British,2
+AUT-014,Ming,Li,,Hiroshi Sato,Pacific Literary Group,2024-03-01,2028-02-28,8.0,10000.00,Cooking,Chinese-American,1
+AUT-015,Declan,Murphy,,Patricia Dunn,Literary Stars Agency,2024-04-01,2028-03-31,10.0,28000.00,Fantasy,Irish,1
+AUT-016,Sophia,Andersson,,Anna Bergstrom,Nordic Books Intl,2024-05-01,2028-04-30,10.0,20000.00,Environment,Swedish,2
+AUT-017,Catherine,Harper,,Laura Bennett,Modern Voices Agency,2023-12-01,2027-11-30,15.0,120000.00,Literary Fiction,American,4
+AUT-018,Adrian,Popescu,,Grace Mensah,Global Stories Agency,2024-06-01,2028-05-31,8.0,8000.00,Health,Romanian,1
+AUT-019,Jessica,Park,,David Kim,Nexus Literary,2024-07-01,2028-06-30,8.0,12000.00,Self-Help,Korean-American,1
+AUT-020,Thomas,Brennan,,Patricia Dunn,Literary Stars Agency,2024-08-01,2028-07-31,10.0,18000.00,Education,American,2
+AUT-021,Priya,Sharma,,Hiroshi Sato,Pacific Literary Group,2023-04-01,2027-03-31,10.0,30000.00,Literary Fiction,Indian,2
+AUT-022,Hans,Weber,,Anna Bergstrom,Nordic Books Intl,2023-10-01,2027-09-30,10.0,25000.00,History,German,2
+AUT-023,Lucía,Herrera,,Sophie Laurent,European Lit Partners,2024-01-01,2028-12-31,10.0,22000.00,Romance,Spanish,1
+AUT-024,Oluwaseun,Adeyemi,,Grace Mensah,Global Stories Agency,2024-02-15,2028-02-14,8.0,15000.00,Fantasy,Nigerian,1
+AUT-025,Chen,Wei,,Hiroshi Sato,Pacific Literary Group,2024-04-01,2028-03-31,10.0,35000.00,Science Fiction,Chinese,1
+AUT-026,Marie,Dupont,,Sophie Laurent,European Lit Partners,2024-05-15,2028-05-14,8.0,18000.00,Cooking,French,1
+AUT-027,Johan,Eriksson,,Anna Bergstrom,Nordic Books Intl,2024-06-01,2028-05-31,10.0,20000.00,Thriller,Norwegian,1
+AUT-028,Fatima,Al-Rashid,,Grace Mensah,Global Stories Agency,2024-07-01,2028-06-30,8.0,16000.00,Non-Fiction,Emirati,1
+AUT-029,Daniel,Costa,,Sophie Laurent,European Lit Partners,2024-08-01,2028-07-31,10.0,28000.00,Literary Fiction,Brazilian,1
+AUT-030,Aisha,Nakamura,,Hiroshi Sato,Pacific Literary Group,2024-09-01,2028-08-31,10.0,20000.00,Mystery,Japanese-American,1

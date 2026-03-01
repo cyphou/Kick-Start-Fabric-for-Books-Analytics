@@ -1,0 +1,7 @@
+expression DatabaseQuery = let database = Sql.Database("{{SQL_ENDPOINT}}", "{{LAKEHOUSE_NAME}}") in database
+	lineageTag: a0000000-0000-0000-0000-000000000001
+	queryGroup: DatabaseQuery
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table

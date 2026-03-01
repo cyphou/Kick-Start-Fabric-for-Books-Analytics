@@ -1,0 +1,97 @@
+table FactPerformanceReviews
+	lineageTag: 20000007-0001-0001-0001-000000000001
+
+	measure 'Avg Performance Score' = AVERAGE(FactPerformanceReviews[OverallScore])
+		formatString: 0.0
+		displayFolder: HR \ Performance
+		lineageTag: 20000007-0001-0001-0001-100000000001
+
+	measure 'Top Performers' = CALCULATE(COUNTROWS(FactPerformanceReviews),FactPerformanceReviews[PerformanceRating] IN {"Exceeds Expectations", "Outstanding"})
+		formatString: #,0
+		displayFolder: HR \ Performance
+		lineageTag: 20000007-0001-0001-0001-100000000002
+
+	measure 'Top Performer Rate' = DIVIDE([Top Performers],COUNTROWS(FactPerformanceReviews),0)
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: HR \ Performance
+		lineageTag: 20000007-0001-0001-0001-100000000003
+
+	column ReviewID
+		dataType: string
+		summarizeBy: none
+		sourceColumn: ReviewID
+		lineageTag: 20000007-0001-0001-0001-200000000001
+
+		annotation SummarizationSetBy = Automatic
+
+	column EmployeeID
+		dataType: string
+		summarizeBy: none
+		sourceColumn: EmployeeID
+		lineageTag: 20000007-0001-0001-0001-200000000002
+
+		annotation SummarizationSetBy = Automatic
+
+	column ReviewDate
+		dataType: dateTime
+		summarizeBy: none
+		sourceColumn: ReviewDate
+		lineageTag: 20000007-0001-0001-0001-200000000003
+
+		annotation SummarizationSetBy = Automatic
+
+	column ReviewerID
+		dataType: string
+		summarizeBy: none
+		sourceColumn: ReviewerID
+		lineageTag: 20000007-0001-0001-0001-200000000004
+
+		annotation SummarizationSetBy = Automatic
+
+	column PerformanceRating
+		dataType: string
+		summarizeBy: none
+		sourceColumn: PerformanceRating
+		lineageTag: 20000007-0001-0001-0001-200000000005
+
+		annotation SummarizationSetBy = Automatic
+
+	column GoalsMet
+		dataType: string
+		summarizeBy: none
+		sourceColumn: GoalsMet
+		lineageTag: 20000007-0001-0001-0001-200000000006
+
+		annotation SummarizationSetBy = Automatic
+
+	column Strengths
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Strengths
+		lineageTag: 20000007-0001-0001-0001-200000000007
+
+		annotation SummarizationSetBy = Automatic
+
+	column AreasForImprovement
+		dataType: string
+		summarizeBy: none
+		sourceColumn: AreasForImprovement
+		lineageTag: 20000007-0001-0001-0001-200000000008
+
+		annotation SummarizationSetBy = Automatic
+
+	column OverallScore
+		dataType: double
+		summarizeBy: sum
+		sourceColumn: OverallScore
+		lineageTag: 20000007-0001-0001-0001-200000000009
+
+		annotation SummarizationSetBy = Automatic
+
+	partition FactPerformanceReviews = entity
+		mode: directLake
+		schemaName: fact
+		entityName: FactPerformanceReviews
+		expressionSource: DatabaseQuery
+
+	annotation PBI_ResultType = Table

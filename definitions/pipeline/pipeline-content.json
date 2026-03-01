@@ -1,0 +1,144 @@
+{
+  "$comment": [
+    "Horizon Books - Orchestration Pipeline: PL_HorizonBooks_Orchestration",
+    "",
+    "Execution flow (Medallion Architecture):",
+    "",
+    "  ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐",
+    "  │  DF_Finance      │ │  DF_HR          │ │  DF_Operations  │",
+    "  │  CSV → Bronze    │ │  CSV → Bronze   │ │  CSV → Bronze   │",
+    "  └───────┬──────────┘ └───────┬─────────┘ └───────┬─────────┘",
+    "          └────────────────────┼────────────────────┘",
+    "                              ▼",
+    "  ┌──────────────────────────────────────┐",
+    "  │  📓 NB01: Bronze → Silver           │",
+    "  │  (reads BronzeLH tables → SilverLH) │",
+    "  └────────────┬─────────────────────────┘",
+    "               ▼",
+    "  ┌──────────────────────────────────────┐",
+    "  │  📓 NB02: Web Enrichment            │",
+    "  │  (external APIs → SilverLH.web)     │",
+    "  └────────────┬─────────────────────────┘",
+    "               ▼",
+    "  ┌──────────────────────────────────────┐",
+    "  │  📓 NB03: Silver → Gold             │",
+    "  │  (SilverLH → GoldLH star schema)    │",
+    "  └────────────┬─────────────────────────┘",
+    "               ▼",
+    "  ┌──────────────────────────────────────┐",
+    "  │  📓 NB04: Forecasting               │",
+    "  │  (Holt-Winters on GoldLH analytics)  │",
+    "  └──────────────────────────────────────┘",
+    "",
+    "  Phase 1: 3 Dataflows run in parallel - load CSVs from BronzeLH/Files/ into BronzeLH tables.",
+    "  Phase 2: NB01 reads Bronze tables, applies transforms, writes to SilverLH.",
+    "  Phase 3: NB02 enriches Silver with external API data.",
+    "  Phase 4: NB03 builds Gold star schema from Silver.",
+    "  Phase 5: NB04 runs forecasting models on Gold data.",
+    "",
+    "  IMPORTANT: After first deployment, open each Dataflow in the Fabric portal",
+    "  to configure the Lakehouse connection and output destinations.",
+    "",
+    "  Token placeholders ({{...}}) resolved at deploy time by Deploy-Pipeline.ps1."
+  ],
+
+  "properties": {
+    "description": "Medallion ETL: DF(CSV→Bronze) → NB01(Bronze→Silver) → NB02(WebEnrich) → NB03(Silver→Gold) → NB04(Forecasting)",
+    "activities": [
+
+      {
+        "$comment": "── Phase 1a: Dataflow Finance - CSV to Bronze tables ──",
+
+        "name": "HorizonBooks_DF_Finance",
+        "type": "RefreshDataflow",
+        "description": "Dataflow Gen2: Loads DimAccounts, DimCostCenters, FactFinancialTransactions, FactBudget CSVs into BronzeLH tables.",
+        "dependsOn": [],
+        "policy":         { "timeout": "0.12:00:00", "retry": 0, "retryIntervalInSeconds": 30, "secureOutput": false, "secureInput": false },
+        "typeProperties": { "workspaceId": "{{WORKSPACE_ID}}", "dataflowId": "{{DF_FINANCE_ID}}", "notifyOption": "NoNotification", "dataflowType": "DataflowFabric" },
+        "folder":         { "name": "1. Data Ingestion" }
+      },
+
+      {
+        "$comment": "── Phase 1b: Dataflow HR - CSV to Bronze tables ──",
+
+        "name": "HorizonBooks_DF_HR",
+        "type": "RefreshDataflow",
+        "description": "Dataflow Gen2: Loads DimEmployees, DimDepartments, FactPayroll, FactPerformanceReviews, FactRecruitment CSVs into BronzeLH tables.",
+        "dependsOn": [],
+        "policy":         { "timeout": "0.12:00:00", "retry": 0, "retryIntervalInSeconds": 30, "secureOutput": false, "secureInput": false },
+        "typeProperties": { "workspaceId": "{{WORKSPACE_ID}}", "dataflowId": "{{DF_HR_ID}}", "notifyOption": "NoNotification", "dataflowType": "DataflowFabric" },
+        "folder":         { "name": "1. Data Ingestion" }
+      },
+
+      {
+        "$comment": "── Phase 1c: Dataflow Operations - CSV to Bronze tables ──",
+
+        "name": "HorizonBooks_DF_Operations",
+        "type": "RefreshDataflow",
+        "description": "Dataflow Gen2: Loads DimBooks, DimAuthors, DimCustomers, DimGeography, DimWarehouses, FactOrders, FactInventory, FactReturns CSVs into BronzeLH tables.",
+        "dependsOn": [],
+        "policy":         { "timeout": "0.12:00:00", "retry": 0, "retryIntervalInSeconds": 30, "secureOutput": false, "secureInput": false },
+        "typeProperties": { "workspaceId": "{{WORKSPACE_ID}}", "dataflowId": "{{DF_OPERATIONS_ID}}", "notifyOption": "NoNotification", "dataflowType": "DataflowFabric" },
+        "folder":         { "name": "1. Data Ingestion" }
+      },
+
+      {
+        "$comment": "── Phase 2: Bronze to Silver (reads from Bronze tables) ──",
+
+        "name": "HorizonBooks_01_BronzeToSilver",
+        "type": "TridentNotebook",
+        "description": "PySpark: BronzeLH tables → SilverLH Delta (finance/hr/operations schemas). Quality checks, transforms, dedup.",
+        "dependsOn": [
+          { "activity": "HorizonBooks_DF_Finance", "dependencyConditions": ["Succeeded"] },
+          { "activity": "HorizonBooks_DF_HR", "dependencyConditions": ["Succeeded"] },
+          { "activity": "HorizonBooks_DF_Operations", "dependencyConditions": ["Succeeded"] }
+        ],
+        "policy":         { "timeout": "0.01:00:00", "retry": 1, "retryIntervalInSeconds": 60 },
+        "typeProperties": { "notebookId": "{{NB01_ID}}", "workspaceId": "{{WORKSPACE_ID}}" },
+        "folder":         { "name": "2. Transformation" }
+      },
+
+      {
+        "$comment": "── Phase 3: Web enrichment ──",
+
+        "name": "HorizonBooks_02_WebEnrichment",
+        "type": "TridentNotebook",
+        "description": "PySpark: fetches external API data → SilverLH.web schema. Runs after NB01 to ensure Silver schemas exist.",
+        "dependsOn": [
+          { "activity": "HorizonBooks_01_BronzeToSilver", "dependencyConditions": ["Succeeded"] }
+        ],
+        "policy":         { "timeout": "0.01:00:00", "retry": 1, "retryIntervalInSeconds": 60 },
+        "typeProperties": { "notebookId": "{{NB02_ID}}", "workspaceId": "{{WORKSPACE_ID}}" },
+        "folder":         { "name": "2. Transformation" }
+      },
+
+      {
+        "$comment": "── Phase 4: Star schema build ──",
+
+        "name": "HorizonBooks_03_SilverToGold",
+        "type": "TridentNotebook",
+        "description": "PySpark: SilverLH (finance+hr+operations+web) → GoldLH star schema (dim/fact schemas) + analytics views.",
+        "dependsOn": [
+          { "activity": "HorizonBooks_02_WebEnrichment", "dependencyConditions": ["Succeeded"] }
+        ],
+        "policy":         { "timeout": "0.02:00:00", "retry": 1, "retryIntervalInSeconds": 60 },
+        "typeProperties": { "notebookId": "{{NB03_ID}}", "workspaceId": "{{WORKSPACE_ID}}" },
+        "folder":         { "name": "3. Gold Layer" }
+      },
+
+      {
+        "$comment": "── Phase 5: Forecasting models ──",
+
+        "name": "HorizonBooks_04_Forecasting",
+        "type": "TridentNotebook",
+        "description": "PySpark: Builds Holt-Winters forecasts on Gold data — sales revenue, genre demand, financial P&L, inventory, workforce.",
+        "dependsOn": [
+          { "activity": "HorizonBooks_03_SilverToGold", "dependencyConditions": ["Succeeded"] }
+        ],
+        "policy":         { "timeout": "0.01:00:00", "retry": 1, "retryIntervalInSeconds": 60 },
+        "typeProperties": { "notebookId": "{{NB04_ID}}", "workspaceId": "{{WORKSPACE_ID}}" },
+        "folder":         { "name": "4. Forecasting" }
+      }
+    ]
+  }
+}

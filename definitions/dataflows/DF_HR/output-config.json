@@ -1,0 +1,55 @@
+{
+  "version": "1.0",
+  "artifacts": [
+    {
+      "queryName": "DimEmployees",
+      "destination": {
+        "type": "Lakehouse",
+        "workspaceId": "{{WORKSPACE_ID}}",
+        "lakehouseId": "{{BRONZE_LH_ID}}",
+        "tableName": "DimEmployees",
+        "loadMode": "Overwrite"
+      }
+    },
+    {
+      "queryName": "DimDepartments",
+      "destination": {
+        "type": "Lakehouse",
+        "workspaceId": "{{WORKSPACE_ID}}",
+        "lakehouseId": "{{BRONZE_LH_ID}}",
+        "tableName": "DimDepartments",
+        "loadMode": "Overwrite"
+      }
+    },
+    {
+      "queryName": "FactPayroll",
+      "destination": {
+        "type": "Lakehouse",
+        "workspaceId": "{{WORKSPACE_ID}}",
+        "lakehouseId": "{{BRONZE_LH_ID}}",
+        "tableName": "FactPayroll",
+        "loadMode": "Overwrite"
+      }
+    },
+    {
+      "queryName": "FactPerformanceReviews",
+      "destination": {
+        "type": "Lakehouse",
+        "workspaceId": "{{WORKSPACE_ID}}",
+        "lakehouseId": "{{BRONZE_LH_ID}}",
+        "tableName": "FactPerformanceReviews",
+        "loadMode": "Overwrite"
+      }
+    },
+    {
+      "queryName": "FactRecruitment",
+      "destination": {
+        "type": "Lakehouse",
+        "workspaceId": "{{WORKSPACE_ID}}",
+        "lakehouseId": "{{BRONZE_LH_ID}}",
+        "tableName": "FactRecruitment",
+        "loadMode": "Overwrite"
+      }
+    }
+  ]
+}

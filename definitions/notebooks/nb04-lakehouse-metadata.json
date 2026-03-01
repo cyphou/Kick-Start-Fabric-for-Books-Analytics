@@ -1,0 +1,14 @@
+{
+  "dependencies": {
+    "lakehouse": {
+      "default_lakehouse": "{{GOLD_LH_ID}}",
+      "default_lakehouse_name": "{{GOLD_LH_NAME}}",
+      "default_lakehouse_workspace_id": "{{WORKSPACE_ID}}",
+      "known_lakehouses": [
+        { "id": "{{BRONZE_LH_ID}}" },
+        { "id": "{{SILVER_LH_ID}}" },
+        { "id": "{{GOLD_LH_ID}}" }
+      ]
+    }
+  }
+}

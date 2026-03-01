@@ -1,0 +1,13 @@
+{
+    "pester.testFilePath": [
+        "tests/**/*.Tests.ps1"
+    ],
+    "pester.runTestsInNewProcess": true,
+    "pester.pesterModulePath": "",
+    "pester.autoDiscoverOnOpen": true,
+    "powershell.codeFormatting.preset": "OTBS",
+    "files.associations": {
+        "*.Tests.ps1": "powershell"
+    },
+    "testing.automaticallyOpenPeekView": "failureVisible"
+}

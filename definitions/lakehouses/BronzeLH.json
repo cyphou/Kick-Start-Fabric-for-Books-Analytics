@@ -1,0 +1,59 @@
+{
+  "displayName": "BronzeLH",
+  "type": "Lakehouse",
+  "description": "Horizon Books Bronze layer - raw CSV files for Finance, HR, Operations",
+  "creationPayload": {
+    "enableSchemas": true
+  },
+  "layer": "Bronze",
+  "purpose": "Landing zone for raw data files. CSVs uploaded to Files/, Dataflow Gen2 loads tables to Tables/.",
+  "schemas": {
+    "dbo": "Default schema for Dataflow-loaded raw tables"
+  },
+  "expectedContent": {
+    "files": [
+      "Files/Finance/DimAccounts.csv",
+      "Files/Finance/DimCostCenters.csv",
+      "Files/Finance/FactFinancialTransactions.csv",
+      "Files/Finance/FactBudget.csv",
+      "Files/HR/DimEmployees.csv",
+      "Files/HR/DimDepartments.csv",
+      "Files/HR/FactPayroll.csv",
+      "Files/HR/FactPerformanceReviews.csv",
+      "Files/HR/FactRecruitment.csv",
+      "Files/Operations/DimBooks.csv",
+      "Files/Operations/DimAuthors.csv",
+      "Files/Operations/DimCustomers.csv",
+      "Files/Operations/DimGeography.csv",
+      "Files/Operations/DimWarehouses.csv",
+      "Files/Operations/FactOrders.csv",
+      "Files/Operations/FactInventory.csv",
+      "Files/Operations/FactReturns.csv"
+    ],
+    "tables": [
+      "DimAccounts",
+      "DimCostCenters",
+      "FactFinancialTransactions",
+      "FactBudget",
+      "DimEmployees",
+      "DimDepartments",
+      "FactPayroll",
+      "FactPerformanceReviews",
+      "FactRecruitment",
+      "DimBooks",
+      "DimAuthors",
+      "DimCustomers",
+      "DimGeography",
+      "DimWarehouses",
+      "FactOrders",
+      "FactInventory",
+      "FactReturns"
+    ]
+  },
+  "tokens": {
+    "id": "{{BRONZE_LH_ID}}",
+    "name": "{{BRONZE_LH_NAME}}"
+  },
+  "deployedBy": "Deploy-Full.ps1 Step 1",
+  "workspaceFolder": "1. Data Ingestion"
+}

@@ -1,0 +1,58 @@
+table DimAccounts
+	lineageTag: 10000002-0001-0001-0001-000000000001
+
+	column AccountID
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: AccountID
+		lineageTag: 10000002-0001-0001-0001-200000000001
+
+		annotation SummarizationSetBy = Automatic
+
+	column AccountName
+		dataType: string
+		summarizeBy: none
+		sourceColumn: AccountName
+		lineageTag: 10000002-0001-0001-0001-200000000002
+
+		annotation SummarizationSetBy = Automatic
+
+	column AccountType
+		dataType: string
+		summarizeBy: none
+		sourceColumn: AccountType
+		lineageTag: 10000002-0001-0001-0001-200000000003
+
+		annotation SummarizationSetBy = Automatic
+
+	column AccountCategory
+		dataType: string
+		summarizeBy: none
+		sourceColumn: AccountCategory
+		lineageTag: 10000002-0001-0001-0001-200000000004
+
+		annotation SummarizationSetBy = Automatic
+
+	column ParentAccountID
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: ParentAccountID
+		lineageTag: 10000002-0001-0001-0001-200000000005
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsActive
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: IsActive
+		lineageTag: 10000002-0001-0001-0001-200000000006
+
+		annotation SummarizationSetBy = Automatic
+
+	partition DimAccounts = entity
+		mode: directLake
+		schemaName: dim
+		entityName: DimAccounts
+		expressionSource: DatabaseQuery
+
+	annotation PBI_ResultType = Table

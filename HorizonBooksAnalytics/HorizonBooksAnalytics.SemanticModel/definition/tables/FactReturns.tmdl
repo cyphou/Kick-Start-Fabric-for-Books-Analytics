@@ -1,0 +1,123 @@
+table FactReturns
+	lineageTag: 20000005-0001-0001-0001-000000000001
+
+	measure 'Total Returns' = SUM(FactReturns[Quantity])
+		formatString: #,0
+		displayFolder: Operations \ Returns
+		lineageTag: 20000005-0001-0001-0001-100000000001
+
+	measure 'Total Refunds' = SUM(FactReturns[RefundAmount])
+		formatString: $#,0;($#,0)
+		displayFolder: Operations \ Returns
+		lineageTag: 20000005-0001-0001-0001-100000000002
+
+	measure 'Return Rate' = DIVIDE([Total Returns], [Total Units Sold], 0)
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Operations \ Returns
+		lineageTag: 20000005-0001-0001-0001-100000000003
+
+	measure 'Damaged Returns' = CALCULATE(SUM(FactReturns[Quantity]),FactReturns[Condition] = "Damaged")
+		formatString: #,0
+		displayFolder: Operations \ Returns
+		lineageTag: 20000005-0001-0001-0001-100000000004
+
+	measure 'Damage Rate' = DIVIDE([Damaged Returns], [Total Returns], 0)
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Operations \ Returns
+		lineageTag: 20000005-0001-0001-0001-100000000005
+
+	column ReturnID
+		dataType: string
+		summarizeBy: none
+		sourceColumn: ReturnID
+		lineageTag: 20000005-0001-0001-0001-200000000001
+
+		annotation SummarizationSetBy = Automatic
+
+	column OrderID
+		dataType: string
+		summarizeBy: none
+		sourceColumn: OrderID
+		lineageTag: 20000005-0001-0001-0001-200000000002
+
+		annotation SummarizationSetBy = Automatic
+
+	column BookID
+		dataType: string
+		summarizeBy: none
+		sourceColumn: BookID
+		lineageTag: 20000005-0001-0001-0001-200000000003
+
+		annotation SummarizationSetBy = Automatic
+
+	column CustomerID
+		dataType: string
+		summarizeBy: none
+		sourceColumn: CustomerID
+		lineageTag: 20000005-0001-0001-0001-200000000004
+
+		annotation SummarizationSetBy = Automatic
+
+	column ReturnDate
+		dataType: dateTime
+		summarizeBy: none
+		sourceColumn: ReturnDate
+		lineageTag: 20000005-0001-0001-0001-200000000005
+
+		annotation SummarizationSetBy = Automatic
+
+	column Quantity
+		dataType: int64
+		summarizeBy: sum
+		sourceColumn: Quantity
+		lineageTag: 20000005-0001-0001-0001-200000000006
+
+		annotation SummarizationSetBy = Automatic
+
+	column Reason
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Reason
+		lineageTag: 20000005-0001-0001-0001-200000000007
+
+		annotation SummarizationSetBy = Automatic
+
+	column ReturnStatus
+		dataType: string
+		summarizeBy: none
+		sourceColumn: ReturnStatus
+		lineageTag: 20000005-0001-0001-0001-200000000008
+
+		annotation SummarizationSetBy = Automatic
+
+	column RefundAmount
+		dataType: double
+		summarizeBy: sum
+		sourceColumn: RefundAmount
+		lineageTag: 20000005-0001-0001-0001-200000000009
+
+		annotation SummarizationSetBy = Automatic
+
+	column Condition
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Condition
+		lineageTag: 20000005-0001-0001-0001-200000000010
+
+		annotation SummarizationSetBy = Automatic
+
+	column RestockStatus
+		dataType: string
+		summarizeBy: none
+		sourceColumn: RestockStatus
+		lineageTag: 20000005-0001-0001-0001-200000000011
+
+		annotation SummarizationSetBy = Automatic
+
+	partition FactReturns = entity
+		mode: directLake
+		schemaName: fact
+		entityName: FactReturns
+		expressionSource: DatabaseQuery
+
+	annotation PBI_ResultType = Table

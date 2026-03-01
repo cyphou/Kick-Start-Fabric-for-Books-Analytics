@@ -1,0 +1,62 @@
+{
+  "displayName": "GoldLH",
+  "type": "Lakehouse",
+  "description": "Horizon Books Gold layer - schemas: dim, fact, analytics",
+  "creationPayload": {
+    "enableSchemas": true
+  },
+  "layer": "Gold",
+  "purpose": "Star schema optimized for analytics. NB03 reads Silver schemas and builds dimensional model. SQL endpoint used by Direct Lake semantic model.",
+  "schemas": {
+    "dim": "DimDate, DimBooks, DimAuthors, DimCustomers, DimGeography, DimEmployees, DimDepartments, DimAccounts, DimCostCenters, DimWarehouses",
+    "fact": "FactOrders, FactInventory, FactReturns, FactFinancialTransactions, FactBudget, FactPayroll, FactPerformanceReviews, FactRecruitment",
+    "analytics": "Precomputed analytics views (vw_BookSalesPerformance, vw_MonthlyFinancialSummary, etc.)"
+  },
+  "expectedTables": {
+    "dim": [
+      "DimDate",
+      "DimBooks",
+      "DimAuthors",
+      "DimCustomers",
+      "DimGeography",
+      "DimEmployees",
+      "DimDepartments",
+      "DimAccounts",
+      "DimCostCenters",
+      "DimWarehouses"
+    ],
+    "fact": [
+      "FactOrders",
+      "FactInventory",
+      "FactReturns",
+      "FactFinancialTransactions",
+      "FactBudget",
+      "FactPayroll",
+      "FactPerformanceReviews",
+      "FactRecruitment"
+    ],
+    "analytics": [
+      "vw_BookSalesPerformance",
+      "vw_MonthlyFinancialSummary",
+      "vw_EmployeeCostAnalysis",
+      "vw_InventoryHealth",
+      "vw_CustomerOrderSummary",
+      "vw_ReturnAnalysis",
+      "vw_GeographicSalesAnalysis",
+      "vw_InternationalSalesByRegion"
+    ]
+  },
+  "sqlScripts": {
+    "createTables": "Lakehouse/CreateTables.sql",
+    "generateDateDim": "Lakehouse/GenerateDateDimension.sql"
+  },
+  "tokens": {
+    "id": "{{GOLD_LH_ID}}",
+    "name": "{{GOLD_LH_NAME}}",
+    "sqlEndpoint": "{{SQL_ENDPOINT}}"
+  },
+  "deployedBy": "Deploy-Full.ps1 Step 1",
+  "populatedBy": "NB03 (SilverToGold)",
+  "consumedBy": "HorizonBooksAnalytics (SemanticModel via Direct Lake)",
+  "workspaceFolder": "3. Gold Layer"
+}

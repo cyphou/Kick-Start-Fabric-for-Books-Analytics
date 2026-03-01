@@ -1,0 +1,117 @@
+table DimCustomers
+	lineageTag: 10000007-0001-0001-0001-000000000001
+
+	column CustomerID
+		dataType: string
+		summarizeBy: none
+		sourceColumn: CustomerID
+		lineageTag: 10000007-0001-0001-0001-200000000001
+
+		annotation SummarizationSetBy = Automatic
+
+	column CustomerName
+		dataType: string
+		summarizeBy: none
+		sourceColumn: CustomerName
+		lineageTag: 10000007-0001-0001-0001-200000000002
+
+		annotation SummarizationSetBy = Automatic
+
+	column CustomerType
+		dataType: string
+		summarizeBy: none
+		sourceColumn: CustomerType
+		lineageTag: 10000007-0001-0001-0001-200000000003
+
+		annotation SummarizationSetBy = Automatic
+
+	column ContactEmail
+		dataType: string
+		summarizeBy: none
+		sourceColumn: ContactEmail
+		lineageTag: 10000007-0001-0001-0001-200000000004
+
+		annotation SummarizationSetBy = Automatic
+
+	column City
+		dataType: string
+		summarizeBy: none
+		sourceColumn: City
+		lineageTag: 10000007-0001-0001-0001-200000000005
+		dataCategory: City
+
+		annotation SummarizationSetBy = Automatic
+
+	column State
+		dataType: string
+		summarizeBy: none
+		sourceColumn: State
+		lineageTag: 10000007-0001-0001-0001-200000000006
+		dataCategory: StateOrProvince
+
+		annotation SummarizationSetBy = Automatic
+
+	column Country
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Country
+		lineageTag: 10000007-0001-0001-0001-200000000007
+		dataCategory: Country
+
+		annotation SummarizationSetBy = Automatic
+
+	column Region
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Region
+		lineageTag: 10000007-0001-0001-0001-200000000008
+
+		annotation SummarizationSetBy = Automatic
+
+	column GeoID
+		dataType: string
+		summarizeBy: none
+		sourceColumn: GeoID
+		lineageTag: 10000007-0001-0001-0001-200000000009
+
+		annotation SummarizationSetBy = Automatic
+
+	column CreditLimit
+		dataType: double
+		summarizeBy: sum
+		sourceColumn: CreditLimit
+		lineageTag: 10000007-0001-0001-0001-200000000010
+
+		annotation SummarizationSetBy = Automatic
+
+	column PaymentTerms
+		dataType: string
+		summarizeBy: none
+		sourceColumn: PaymentTerms
+		lineageTag: 10000007-0001-0001-0001-200000000011
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsActive
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: IsActive
+		lineageTag: 10000007-0001-0001-0001-200000000012
+
+		annotation SummarizationSetBy = Automatic
+
+	column AccountOpenDate
+		dataType: dateTime
+		summarizeBy: none
+		sourceColumn: AccountOpenDate
+		lineageTag: 10000007-0001-0001-0001-200000000013
+
+		annotation SummarizationSetBy = Automatic
+
+	partition DimCustomers = entity
+		mode: directLake
+		schemaName: dim
+		entityName: DimCustomers
+		expressionSource: DatabaseQuery
+
+	annotation PBI_ResultType = Table

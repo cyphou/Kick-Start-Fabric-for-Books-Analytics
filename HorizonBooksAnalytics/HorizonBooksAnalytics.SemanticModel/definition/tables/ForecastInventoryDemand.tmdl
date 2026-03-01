@@ -1,0 +1,127 @@
+table ForecastInventoryDemand
+	lineageTag: 30000004-0001-0001-0001-000000000001
+
+	measure 'Forecast Demand Units' = IF(HASONEVALUE(ForecastInventoryDemand[RecordType]), SUM(ForecastInventoryDemand[UnitsDemanded]), BLANK())
+		formatString: #,0
+		displayFolder: Forecasting \ Inventory
+		lineageTag: 30000004-0001-0001-0001-100000000001
+
+	measure 'Stock Coverage Months' =
+		CALCULATE(
+			AVERAGE(ForecastInventoryDemand[StockCoverMonths]),
+			ForecastInventoryDemand[RecordType] = "Forecast",
+			ForecastInventoryDemand[ForecastHorizon] = 1
+		)
+		formatString: 0.0
+		displayFolder: Forecasting \ Inventory
+		lineageTag: 30000004-0001-0001-0001-100000000002
+
+	measure 'Cumulative Forecast Demand' = IF(HASONEVALUE(ForecastInventoryDemand[RecordType]), SUM(ForecastInventoryDemand[CumulativeDemand]), BLANK())
+		formatString: #,0
+		displayFolder: Forecasting \ Inventory
+		lineageTag: 30000004-0001-0001-0001-100000000003
+
+	column ForecastMonth
+		dataType: dateTime
+		formatString: yyyy-MM-dd
+		summarizeBy: none
+		sourceColumn: ForecastMonth
+		lineageTag: 30000004-0001-0001-0001-200000000001
+
+		annotation SummarizationSetBy = Automatic
+
+	column WarehouseID
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: WarehouseID
+		lineageTag: 30000004-0001-0001-0001-200000000002
+
+		annotation SummarizationSetBy = Automatic
+
+	column UnitsDemanded
+		dataType: double
+		summarizeBy: sum
+		sourceColumn: UnitsDemanded
+		lineageTag: 30000004-0001-0001-0001-200000000003
+
+		annotation SummarizationSetBy = Automatic
+
+	column Revenue
+		dataType: double
+		summarizeBy: sum
+		sourceColumn: Revenue
+		lineageTag: 30000004-0001-0001-0001-200000000004
+
+		annotation SummarizationSetBy = Automatic
+
+	column LowerBound
+		dataType: double
+		summarizeBy: sum
+		sourceColumn: LowerBound
+		lineageTag: 30000004-0001-0001-0001-200000000005
+
+		annotation SummarizationSetBy = Automatic
+
+	column UpperBound
+		dataType: double
+		summarizeBy: sum
+		sourceColumn: UpperBound
+		lineageTag: 30000004-0001-0001-0001-200000000006
+
+		annotation SummarizationSetBy = Automatic
+
+	column ForecastHorizon
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: ForecastHorizon
+		lineageTag: 30000004-0001-0001-0001-200000000007
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordType
+		dataType: string
+		summarizeBy: none
+		sourceColumn: RecordType
+		lineageTag: 30000004-0001-0001-0001-200000000008
+
+		annotation SummarizationSetBy = Automatic
+
+	column ForecastModel
+		dataType: string
+		summarizeBy: none
+		sourceColumn: ForecastModel
+		lineageTag: 30000004-0001-0001-0001-200000000009
+
+		annotation SummarizationSetBy = Automatic
+
+	column CurrentStock
+		dataType: double
+		summarizeBy: sum
+		sourceColumn: CurrentStock
+		lineageTag: 30000004-0001-0001-0001-200000000010
+
+		annotation SummarizationSetBy = Automatic
+
+	column CumulativeDemand
+		dataType: double
+		summarizeBy: sum
+		sourceColumn: CumulativeDemand
+		lineageTag: 30000004-0001-0001-0001-200000000011
+
+		annotation SummarizationSetBy = Automatic
+
+	column StockCoverMonths
+		dataType: double
+		summarizeBy: average
+		sourceColumn: StockCoverMonths
+		lineageTag: 30000004-0001-0001-0001-200000000012
+
+		annotation SummarizationSetBy = Automatic
+
+	partition ForecastInventoryDemand = entity
+		mode: directLake
+		schemaName: analytics
+		entityName: ForecastInventoryDemand
+		expressionSource: DatabaseQuery
+
+	annotation PBI_ResultType = Table

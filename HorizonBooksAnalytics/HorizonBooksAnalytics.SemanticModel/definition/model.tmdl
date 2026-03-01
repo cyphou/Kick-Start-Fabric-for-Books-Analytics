@@ -1,0 +1,38 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation PBI_QueryOrder = ["DimDate","DimAccounts","DimCostCenters","DimBooks","DimAuthors","DimGeography","DimCustomers","DimEmployees","DimDepartments","DimWarehouses","FactFinancialTransactions","FactBudget","FactOrders","FactInventory","FactReturns","FactPayroll","FactPerformanceReviews","FactRecruitment","ForecastSalesRevenue","ForecastGenreDemand","ForecastFinancial","ForecastInventoryDemand","ForecastWorkforce"]
+
+ref table DimDate
+ref table DimAccounts
+ref table DimCostCenters
+ref table DimBooks
+ref table DimAuthors
+ref table DimGeography
+ref table DimCustomers
+ref table DimEmployees
+ref table DimDepartments
+ref table DimWarehouses
+ref table FactFinancialTransactions
+ref table FactBudget
+ref table FactOrders
+ref table FactInventory
+ref table FactReturns
+ref table FactPayroll
+ref table FactPerformanceReviews
+ref table FactRecruitment
+ref table ForecastSalesRevenue
+ref table ForecastGenreDemand
+ref table ForecastFinancial
+ref table ForecastInventoryDemand
+ref table ForecastWorkforce
+
+ref expression DatabaseQuery
+
+queryGroup DatabaseQuery
+
+annotation PBI_QueryRelationships = []

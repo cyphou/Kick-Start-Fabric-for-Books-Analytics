@@ -1,0 +1,71 @@
+GeoID,City,StateProvince,Country,Continent,Region,SubRegion,Latitude,Longitude,TimeZone,Currency,Population,IsCapital
+GEO-001,New York,New York,United States,North America,Northeast,Mid-Atlantic,40.7128,-74.0060,America/New_York,USD,8336817,FALSE
+GEO-002,Los Angeles,California,United States,North America,West,Pacific,34.0522,-118.2437,America/Los_Angeles,USD,3979576,FALSE
+GEO-003,Chicago,Illinois,United States,North America,Midwest,Great Lakes,41.8781,-87.6298,America/Chicago,USD,2693976,FALSE
+GEO-004,Seattle,Washington,United States,North America,West,Pacific Northwest,47.6062,-122.3321,America/Los_Angeles,USD,737015,FALSE
+GEO-005,Nashville,Tennessee,United States,North America,Southeast,East South Central,36.1627,-86.7816,America/Chicago,USD,689447,FALSE
+GEO-006,Charlotte,North Carolina,United States,North America,Southeast,South Atlantic,35.2271,-80.8431,America/New_York,USD,874579,FALSE
+GEO-007,Birmingham,Alabama,United States,North America,Southeast,East South Central,33.5186,-86.8104,America/Chicago,USD,200733,FALSE
+GEO-008,Portland,Oregon,United States,North America,West,Pacific Northwest,45.5152,-122.6784,America/Los_Angeles,USD,652503,FALSE
+GEO-009,Minneapolis,Minnesota,United States,North America,Midwest,West North Central,44.9778,-93.2650,America/Chicago,USD,429954,FALSE
+GEO-010,Bridgeton,Missouri,United States,North America,Midwest,West North Central,38.7673,-90.4115,America/Chicago,USD,11550,FALSE
+GEO-011,Williamsport,Pennsylvania,United States,North America,Northeast,Mid-Atlantic,41.2412,-77.0011,America/New_York,USD,28356,FALSE
+GEO-012,Cambridge,Massachusetts,United States,North America,Northeast,New England,42.3736,-71.1097,America/New_York,USD,118403,FALSE
+GEO-013,Cupertino,California,United States,North America,West,Pacific,37.3230,-122.0322,America/Los_Angeles,USD,60170,FALSE
+GEO-014,Bentonville,Arkansas,United States,North America,Southeast,West South Central,36.3729,-94.2088,America/Chicago,USD,54164,FALSE
+GEO-015,Issaquah,Washington,United States,North America,West,Pacific Northwest,47.5301,-122.0326,America/Los_Angeles,USD,40051,FALSE
+GEO-016,Newark,New Jersey,United States,North America,Northeast,Mid-Atlantic,40.7357,-74.1724,America/New_York,USD,311549,FALSE
+GEO-017,San Francisco,California,United States,North America,West,Pacific,37.7749,-122.4194,America/Los_Angeles,USD,873965,FALSE
+GEO-018,Boston,Massachusetts,United States,North America,Northeast,New England,42.3601,-71.0589,America/New_York,USD,675647,FALSE
+GEO-019,Miami,Florida,United States,North America,Southeast,South Atlantic,25.7617,-80.1918,America/New_York,USD,442241,FALSE
+GEO-020,Austin,Texas,United States,North America,Southwest,West South Central,30.2672,-97.7431,America/Chicago,USD,978908,FALSE
+GEO-021,Denver,Colorado,United States,North America,West,Mountain,39.7392,-104.9903,America/Denver,USD,715522,FALSE
+GEO-022,Atlanta,Georgia,United States,North America,Southeast,South Atlantic,33.7490,-84.3880,America/New_York,USD,498715,FALSE
+GEO-023,Philadelphia,Pennsylvania,United States,North America,Northeast,Mid-Atlantic,39.9526,-75.1652,America/New_York,USD,1603797,FALSE
+GEO-024,Washington,District of Columbia,United States,North America,Northeast,South Atlantic,38.9072,-77.0369,America/New_York,USD,689545,TRUE
+GEO-025,Dallas,Texas,United States,North America,Southwest,West South Central,32.7767,-96.7970,America/Chicago,USD,1304379,FALSE
+GEO-026,Houston,Texas,United States,North America,Southwest,West South Central,29.7604,-95.3698,America/Chicago,USD,2304580,FALSE
+GEO-027,Phoenix,Arizona,United States,North America,Southwest,Mountain,33.4484,-112.0740,America/Phoenix,USD,1608139,FALSE
+GEO-028,San Diego,California,United States,North America,West,Pacific,32.7157,-117.1611,America/Los_Angeles,USD,1423851,FALSE
+GEO-029,Detroit,Michigan,United States,North America,Midwest,Great Lakes,42.3314,-83.0458,America/New_York,USD,639111,FALSE
+GEO-030,Toronto,Ontario,Canada,North America,International,Eastern Canada,43.6532,-79.3832,America/Toronto,CAD,2731571,FALSE
+GEO-031,Vancouver,British Columbia,Canada,North America,International,Western Canada,49.2827,-123.1207,America/Vancouver,CAD,631486,FALSE
+GEO-032,Montreal,Quebec,Canada,North America,International,Eastern Canada,45.5017,-73.5673,America/Montreal,CAD,1762949,FALSE
+GEO-033,London,England,United Kingdom,Europe,International,Western Europe,51.5074,-0.1278,Europe/London,GBP,8982000,TRUE
+GEO-034,Oxford,Oxfordshire,United Kingdom,Europe,International,Western Europe,51.7520,-1.2577,Europe/London,GBP,152450,FALSE
+GEO-035,Edinburgh,Scotland,United Kingdom,Europe,International,Western Europe,55.9533,-3.1883,Europe/London,GBP,524930,TRUE
+GEO-036,Paris,Île-de-France,France,Europe,International,Western Europe,48.8566,2.3522,Europe/Paris,EUR,2161000,TRUE
+GEO-037,Berlin,Berlin,Germany,Europe,International,Central Europe,52.5200,13.4050,Europe/Berlin,EUR,3644826,TRUE
+GEO-038,Munich,Bavaria,Germany,Europe,International,Central Europe,48.1351,11.5820,Europe/Berlin,EUR,1471508,FALSE
+GEO-039,Frankfurt,Hesse,Germany,Europe,International,Central Europe,50.1109,8.6821,Europe/Berlin,EUR,753056,FALSE
+GEO-040,Madrid,Community of Madrid,Spain,Europe,International,Southern Europe,40.4168,-3.7038,Europe/Madrid,EUR,3223334,TRUE
+GEO-041,Barcelona,Catalonia,Spain,Europe,International,Southern Europe,41.3874,2.1686,Europe/Madrid,EUR,1620343,FALSE
+GEO-042,Rome,Lazio,Italy,Europe,International,Southern Europe,41.9028,12.4964,Europe/Rome,EUR,2873000,TRUE
+GEO-043,Milan,Lombardy,Italy,Europe,International,Southern Europe,45.4642,9.1900,Europe/Rome,EUR,1378689,FALSE
+GEO-044,Amsterdam,North Holland,Netherlands,Europe,International,Western Europe,52.3676,4.9041,Europe/Amsterdam,EUR,872680,TRUE
+GEO-045,Stockholm,Stockholm County,Sweden,Europe,International,Northern Europe,59.3293,18.0686,Europe/Stockholm,SEK,975904,TRUE
+GEO-046,Copenhagen,Capital Region,Denmark,Europe,International,Northern Europe,55.6761,12.5683,Europe/Copenhagen,DKK,794128,TRUE
+GEO-047,Oslo,Oslo,Norway,Europe,International,Northern Europe,59.9139,10.7522,Europe/Oslo,NOK,697549,TRUE
+GEO-048,Dublin,Leinster,Ireland,Europe,International,Western Europe,53.3498,-6.2603,Europe/Dublin,EUR,1024027,TRUE
+GEO-049,Lisbon,Lisbon District,Portugal,Europe,International,Southern Europe,38.7223,-9.1393,Europe/Lisbon,EUR,505526,TRUE
+GEO-050,Warsaw,Masovia,Poland,Europe,International,Central Europe,52.2297,21.0122,Europe/Warsaw,PLN,1790658,TRUE
+GEO-051,Tokyo,Tokyo,Japan,Asia,International,East Asia,35.6762,139.6503,Asia/Tokyo,JPY,13960000,TRUE
+GEO-052,Osaka,Osaka,Japan,Asia,International,East Asia,34.6937,135.5023,Asia/Tokyo,JPY,2753862,FALSE
+GEO-053,Sydney,New South Wales,Australia,Oceania,International,Oceania,33.8688,151.2093,Australia/Sydney,AUD,5312163,FALSE
+GEO-054,Melbourne,Victoria,Australia,Oceania,International,Oceania,-37.8136,144.9631,Australia/Melbourne,AUD,5078193,FALSE
+GEO-055,São Paulo,São Paulo,Brazil,South America,International,South America,-23.5505,-46.6333,America/Sao_Paulo,BRL,12325232,FALSE
+GEO-056,Rio de Janeiro,Rio de Janeiro,Brazil,South America,International,South America,-22.9068,-43.1729,America/Sao_Paulo,BRL,6748000,FALSE
+GEO-057,Mexico City,Mexico City,Mexico,North America,International,Central America,19.4326,-99.1332,America/Mexico_City,MXN,9209944,TRUE
+GEO-058,Buenos Aires,Buenos Aires,Argentina,South America,International,South America,-34.6037,-58.3816,America/Argentina/Buenos_Aires,ARS,3075646,TRUE
+GEO-059,Mumbai,Maharashtra,India,Asia,International,South Asia,19.0760,72.8777,Asia/Kolkata,INR,12442373,FALSE
+GEO-060,New Delhi,Delhi,India,Asia,International,South Asia,28.6139,77.2090,Asia/Kolkata,INR,16787941,TRUE
+GEO-061,Singapore,Singapore,Singapore,Asia,International,Southeast Asia,1.3521,103.8198,Asia/Singapore,SGD,5850342,TRUE
+GEO-062,Seoul,Seoul,South Korea,Asia,International,East Asia,37.5665,126.9780,Asia/Seoul,KRW,9776000,TRUE
+GEO-063,Cape Town,Western Cape,South Africa,Africa,International,Sub-Saharan Africa,-33.9249,18.4241,Africa/Johannesburg,ZAR,4618000,FALSE
+GEO-064,Johannesburg,Gauteng,South Africa,Africa,International,Sub-Saharan Africa,-26.2041,28.0473,Africa/Johannesburg,ZAR,5783000,FALSE
+GEO-065,Dubai,Dubai,United Arab Emirates,Asia,International,Middle East,25.2048,55.2708,Asia/Dubai,AED,3490000,FALSE
+GEO-066,Tel Aviv,Tel Aviv District,Israel,Asia,International,Middle East,32.0853,34.7818,Asia/Jerusalem,ILS,460613,FALSE
+GEO-067,Beijing,Beijing,China,Asia,International,East Asia,39.9042,116.4074,Asia/Shanghai,CNY,21540000,TRUE
+GEO-068,Shanghai,Shanghai,China,Asia,International,East Asia,31.2304,121.4737,Asia/Shanghai,CNY,24870895,FALSE
+GEO-069,Lagos,Lagos State,Nigeria,Africa,International,Sub-Saharan Africa,6.5244,3.3792,Africa/Lagos,NGN,15388000,FALSE
+GEO-070,Nairobi,Nairobi County,Kenya,Africa,International,Sub-Saharan Africa,-1.2921,36.8219,Africa/Nairobi,KES,4397073,TRUE

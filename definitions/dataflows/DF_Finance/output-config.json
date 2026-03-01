@@ -1,0 +1,45 @@
+{
+  "version": "1.0",
+  "artifacts": [
+    {
+      "queryName": "DimAccounts",
+      "destination": {
+        "type": "Lakehouse",
+        "workspaceId": "{{WORKSPACE_ID}}",
+        "lakehouseId": "{{BRONZE_LH_ID}}",
+        "tableName": "DimAccounts",
+        "loadMode": "Overwrite"
+      }
+    },
+    {
+      "queryName": "DimCostCenters",
+      "destination": {
+        "type": "Lakehouse",
+        "workspaceId": "{{WORKSPACE_ID}}",
+        "lakehouseId": "{{BRONZE_LH_ID}}",
+        "tableName": "DimCostCenters",
+        "loadMode": "Overwrite"
+      }
+    },
+    {
+      "queryName": "FactFinancialTransactions",
+      "destination": {
+        "type": "Lakehouse",
+        "workspaceId": "{{WORKSPACE_ID}}",
+        "lakehouseId": "{{BRONZE_LH_ID}}",
+        "tableName": "FactFinancialTransactions",
+        "loadMode": "Overwrite"
+      }
+    },
+    {
+      "queryName": "FactBudget",
+      "destination": {
+        "type": "Lakehouse",
+        "workspaceId": "{{WORKSPACE_ID}}",
+        "lakehouseId": "{{BRONZE_LH_ID}}",
+        "tableName": "FactBudget",
+        "loadMode": "Overwrite"
+      }
+    }
+  ]
+}

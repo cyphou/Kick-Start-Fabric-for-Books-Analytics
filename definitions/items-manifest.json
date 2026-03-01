@@ -1,0 +1,187 @@
+{
+  "$schema": "https://aka.ms/fabric-cicd-manifest",
+  "description": "Horizon Books 3-Lakehouse Medallion demo - Complete Fabric item catalog for CI/CD",
+  "workspace": {
+    "displayName": "HorizonBooks_Demo",
+    "token": "{{WORKSPACE_ID}}"
+  },
+  "items": [
+    {
+      "displayName": "BronzeLH",
+      "type": "Lakehouse",
+      "description": "Bronze layer - Raw CSV files in Files/, Dataflow-loaded tables in Tables/",
+      "token": "{{BRONZE_LH_ID}}",
+      "properties": {
+        "enableSchemas": true
+      }
+    },
+    {
+      "displayName": "SilverLH",
+      "type": "Lakehouse",
+      "description": "Silver layer - Cleaned Delta tables in schemas: finance, hr, operations, web",
+      "token": "{{SILVER_LH_ID}}",
+      "properties": {
+        "enableSchemas": true
+      }
+    },
+    {
+      "displayName": "GoldLH",
+      "type": "Lakehouse",
+      "description": "Gold layer - Star schema in schemas: dim, fact, analytics",
+      "token": "{{GOLD_LH_ID}}",
+      "properties": {
+        "enableSchemas": true,
+        "sqlEndpoint": "{{SQL_ENDPOINT}}"
+      }
+    },
+    {
+      "displayName": "HorizonBooks_01_BronzeToSilver",
+      "type": "Notebook",
+      "description": "PySpark: Reads Bronze tables (loaded by Dataflows), writes schema-organized Delta to SilverLH",
+      "token": "{{NB01_ID}}",
+      "sourceFile": "notebooks/01_BronzeToSilver.py",
+      "definitionParts": [
+        { "path": "notebook-content.py" }
+      ],
+      "metadataTemplate": "definitions/notebooks/nb01-lakehouse-metadata.json",
+      "defaultLakehouse": "{{BRONZE_LH_ID}}"
+    },
+    {
+      "displayName": "HorizonBooks_02_WebEnrichment",
+      "type": "Notebook",
+      "description": "PySpark: Fetches external web data, writes enrichment tables to SilverLH",
+      "token": "{{NB02_ID}}",
+      "sourceFile": "notebooks/02_WebEnrichment.py",
+      "definitionParts": [
+        { "path": "notebook-content.py" }
+      ],
+      "metadataTemplate": "definitions/notebooks/nb02-lakehouse-metadata.json",
+      "defaultLakehouse": "{{SILVER_LH_ID}}"
+    },
+    {
+      "displayName": "HorizonBooks_03_SilverToGold",
+      "type": "Notebook",
+      "description": "PySpark: Reads SilverLH schemas, builds star schema + analytics views in GoldLH",
+      "token": "{{NB03_ID}}",
+      "sourceFile": "notebooks/03_SilverToGold.py",
+      "definitionParts": [
+        { "path": "notebook-content.py" }
+      ],
+      "metadataTemplate": "definitions/notebooks/nb03-lakehouse-metadata.json",
+      "defaultLakehouse": "{{GOLD_LH_ID}}"
+    },
+    {
+      "displayName": "HorizonBooks_04_Forecasting",
+      "type": "Notebook",
+      "description": "PySpark: Holt-Winters time-series forecasting on GoldLH — sales revenue, genre demand, financial P&L, inventory demand, workforce planning. Writes to analytics schema.",
+      "token": "{{NB04_ID}}",
+      "sourceFile": "notebooks/04_Forecasting.py",
+      "definitionParts": [
+        { "path": "notebook-content.py" }
+      ],
+      "metadataTemplate": "definitions/notebooks/nb04-lakehouse-metadata.json",
+      "defaultLakehouse": "{{GOLD_LH_ID}}"
+    },
+    {
+      "displayName": "HorizonBooks_DF_Finance",
+      "type": "DataflowGen2",
+      "description": "Loads Finance CSVs (DimAccounts, DimCostCenters, FactFinancialTransactions, FactBudget) into BronzeLH tables",
+      "token": "{{DF_FINANCE_ID}}",
+      "definitionParts": [
+        { "path": "mashup.pq", "source": "definitions/dataflows/DF_Finance/mashup.pq" },
+        { "path": "queryMetadata.json", "source": "definitions/dataflows/queryMetadata.json" }
+      ],
+      "outputConfig": "definitions/dataflows/DF_Finance/output-config.json"
+    },
+    {
+      "displayName": "HorizonBooks_DF_HR",
+      "type": "DataflowGen2",
+      "description": "Loads HR CSVs (DimEmployees, DimDepartments, FactPayroll, FactPerformanceReviews, FactRecruitment) into BronzeLH tables",
+      "token": "{{DF_HR_ID}}",
+      "definitionParts": [
+        { "path": "mashup.pq", "source": "definitions/dataflows/DF_HR/mashup.pq" },
+        { "path": "queryMetadata.json", "source": "definitions/dataflows/queryMetadata.json" }
+      ],
+      "outputConfig": "definitions/dataflows/DF_HR/output-config.json"
+    },
+    {
+      "displayName": "HorizonBooks_DF_Operations",
+      "type": "DataflowGen2",
+      "description": "Loads Operations CSVs (DimBooks, DimAuthors, DimCustomers, DimGeography, DimWarehouses, FactOrders, FactInventory, FactReturns) into BronzeLH tables",
+      "token": "{{DF_OPERATIONS_ID}}",
+      "definitionParts": [
+        { "path": "mashup.pq", "source": "definitions/dataflows/DF_Operations/mashup.pq" },
+        { "path": "queryMetadata.json", "source": "definitions/dataflows/queryMetadata.json" }
+      ],
+      "outputConfig": "definitions/dataflows/DF_Operations/output-config.json"
+    },
+    {
+      "displayName": "PL_HorizonBooks_Orchestration",
+      "type": "DataPipeline",
+      "description": "Orchestrates full ETL: 3 Dataflows (CSV→Bronze) → NB01 (Bronze→Silver) → NB02 (WebEnrich) → NB03 (Silver→Gold) → NB04 (Forecasting)",
+      "token": "{{PIPELINE_ID}}",
+      "definitionParts": [
+        { "path": "pipeline-content.json", "source": "definitions/pipeline/pipeline-content.json" }
+      ]
+    },
+    {
+      "displayName": "HorizonBooksAnalytics",
+      "type": "SemanticModel",
+      "description": "Direct Lake semantic model on GoldLH - 23 tables (dim/fact/analytics schemas), 27 relationships, 96 DAX measures, 5 forecast tables",
+      "token": "{{SEMANTIC_MODEL_ID}}",
+      "sourceFolder": "HorizonBooksAnalytics/HorizonBooksAnalytics.SemanticModel",
+      "definitionParts": [
+        { "path": "definition.pbism" },
+        { "path": "definition/*.tmdl" },
+        { "path": "definition/tables/*.tmdl" }
+      ],
+      "tokenReplacements": {
+        "expressions.tmdl": {
+          "{{SQL_ENDPOINT}}": "GoldLH SQL analytics endpoint",
+          "{{LAKEHOUSE_NAME}}": "GoldLH display name"
+        }
+      }
+    },
+    {
+      "displayName": "Horizon Books Publishing Analytics",
+      "type": "Report",
+      "description": "10-page Power BI report: Executive Dashboard, Finance P&L, Budget vs Actual, Book Performance, Customer & Distribution, Geographic Analysis, Inventory & Supply Chain, HR Workforce, Compensation & Performance, Recruitment Pipeline",
+      "token": "{{REPORT_ID}}",
+      "semanticModel": "{{SEMANTIC_MODEL_ID}}",
+      "definitionSpec": "definitions/report/report-definition.json",
+      "specificationFile": "Reports/ReportSpecification.md"
+    },
+    {
+      "displayName": "HorizonBooks DataAgent",
+      "type": "DataAgent",
+      "description": "AI-powered natural-language Q&A agent over the Horizon Books semantic model. Covers Finance, HR, Operations, and Geographic domains.",
+      "token": "{{DATA_AGENT_ID}}",
+      "requirements": { "minimumCapacity": "F64" },
+      "definitionSpec": "definitions/dataagent/dataagent-definition.json",
+      "configurationFile": "DataAgent/DataAgentConfiguration.md"
+    }
+  ],
+  "deploymentOrder": [
+    "BronzeLH",
+    "SilverLH",
+    "GoldLH",
+    "HorizonBooks_01_BronzeToSilver",
+    "HorizonBooks_02_WebEnrichment",
+    "HorizonBooks_03_SilverToGold",
+    "HorizonBooks_04_Forecasting",
+    "HorizonBooks_DF_Finance",
+    "HorizonBooks_DF_HR",
+    "HorizonBooks_DF_Operations",
+    "PL_HorizonBooks_Orchestration",
+    "HorizonBooksAnalytics",
+    "Horizon Books Publishing Analytics",
+    "HorizonBooks DataAgent"
+  ],
+  "workspaceFolders": [
+    { "displayName": "1. Data Ingestion",   "items": ["BronzeLH", "HorizonBooks_DF_Finance", "HorizonBooks_DF_HR", "HorizonBooks_DF_Operations"] },
+    { "displayName": "2. Transformation",    "items": ["SilverLH", "HorizonBooks_01_BronzeToSilver", "HorizonBooks_02_WebEnrichment"] },
+    { "displayName": "3. Gold Layer",        "items": ["GoldLH", "HorizonBooks_03_SilverToGold", "HorizonBooks_04_Forecasting"] },
+    { "displayName": "4. Orchestration",     "items": ["PL_HorizonBooks_Orchestration"] },
+    { "displayName": "5. Analytics",         "items": ["HorizonBooksAnalytics", "Horizon Books Publishing Analytics", "HorizonBooks DataAgent"] }
+  ]
+}

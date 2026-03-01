@@ -1,0 +1,92 @@
+{
+  "name": "HorizonBooksTheme",
+  "dataColors": [
+    "#1B3A5C",
+    "#E8A838",
+    "#3A8FBF",
+    "#6B4C9A",
+    "#2ECC71",
+    "#E74C3C",
+    "#1ABC9C",
+    "#F39C12",
+    "#8E44AD",
+    "#2980B9"
+  ],
+  "background": "#F5F6FA",
+  "foreground": "#1B3A5C",
+  "tableAccent": "#E8A838",
+  "textClasses": {
+    "title": {
+      "fontFace": "Segoe UI",
+      "fontSize": 14,
+      "color": "#1B3A5C"
+    },
+    "header": {
+      "fontFace": "Segoe UI",
+      "fontSize": 12,
+      "color": "#1B3A5C"
+    },
+    "callout": {
+      "fontFace": "Segoe UI",
+      "fontSize": 28,
+      "color": "#1B3A5C"
+    },
+    "label": {
+      "fontFace": "Segoe UI",
+      "fontSize": 10,
+      "color": "#333333"
+    }
+  },
+  "visualStyles": {
+    "*": {
+      "*": {
+        "background": [
+          {
+            "color": { "solid": { "color": "#FFFFFF" } },
+            "transparency": 0
+          }
+        ],
+        "border": [
+          {
+            "color": { "solid": { "color": "#E0E0E0" } },
+            "show": true
+          }
+        ],
+        "visualHeader": [
+          {
+            "background": { "solid": { "color": "#FFFFFF" } }
+          }
+        ]
+      }
+    },
+    "card": {
+      "*": {
+        "labels": [
+          {
+            "color": { "solid": { "color": "#1B3A5C" } },
+            "fontSize": 28
+          }
+        ],
+        "categoryLabels": [
+          {
+            "color": { "solid": { "color": "#666666" } },
+            "fontSize": 12
+          }
+        ]
+      }
+    },
+    "page": {
+      "*": {
+        "background": [
+          {
+            "color": { "solid": { "color": "#F5F6FA" } },
+            "transparency": 0
+          }
+        ]
+      }
+    }
+  },
+  "good": "#2ECC71",
+  "neutral": "#E8A838",
+  "bad": "#E74C3C"
+}

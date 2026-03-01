@@ -1,0 +1,125 @@
+table FactPayroll
+	lineageTag: 20000006-0001-0001-0001-000000000001
+
+	measure 'Total Payroll Cost' = SUM(FactPayroll[NetPay])
+		formatString: $#,0;($#,0)
+		displayFolder: HR \ Compensation
+		lineageTag: 20000006-0001-0001-0001-100000000001
+
+	measure 'Total Base Salary' = SUM(FactPayroll[BaseSalary])
+		formatString: $#,0;($#,0)
+		displayFolder: HR \ Compensation
+		lineageTag: 20000006-0001-0001-0001-100000000002
+
+	measure 'Total Bonus Paid' = SUM(FactPayroll[Bonus])
+		formatString: $#,0;($#,0)
+		displayFolder: HR \ Compensation
+		lineageTag: 20000006-0001-0001-0001-100000000003
+
+	measure 'Total Overtime' = SUM(FactPayroll[Overtime])
+		formatString: $#,0;($#,0)
+		displayFolder: HR \ Compensation
+		lineageTag: 20000006-0001-0001-0001-100000000004
+
+	measure 'Avg Salary per Employee' = DIVIDE([Total Base Salary],DISTINCTCOUNT(FactPayroll[EmployeeID]),0)
+		formatString: $#,0.00
+		displayFolder: HR \ Compensation
+		lineageTag: 20000006-0001-0001-0001-100000000005
+
+	measure 'Bonus as % of Base' = DIVIDE([Total Bonus Paid], [Total Base Salary], 0)
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: HR \ Compensation
+		lineageTag: 20000006-0001-0001-0001-100000000006
+
+	measure 'Payroll Cost per Revenue Dollar' = DIVIDE([Total Payroll Cost],[Total Revenue],0)
+		formatString: $0.00
+		displayFolder: HR \ Compensation
+		lineageTag: 20000006-0001-0001-0001-100000000007
+
+	column PayrollID
+		dataType: string
+		summarizeBy: none
+		sourceColumn: PayrollID
+		lineageTag: 20000006-0001-0001-0001-200000000001
+
+		annotation SummarizationSetBy = Automatic
+
+	column EmployeeID
+		dataType: string
+		summarizeBy: none
+		sourceColumn: EmployeeID
+		lineageTag: 20000006-0001-0001-0001-200000000002
+
+		annotation SummarizationSetBy = Automatic
+
+	column PayPeriodStart
+		dataType: dateTime
+		summarizeBy: none
+		sourceColumn: PayPeriodStart
+		lineageTag: 20000006-0001-0001-0001-200000000003
+
+		annotation SummarizationSetBy = Automatic
+
+	column PayPeriodEnd
+		dataType: dateTime
+		summarizeBy: none
+		sourceColumn: PayPeriodEnd
+		lineageTag: 20000006-0001-0001-0001-200000000004
+
+		annotation SummarizationSetBy = Automatic
+
+	column BaseSalary
+		dataType: double
+		summarizeBy: sum
+		sourceColumn: BaseSalary
+		lineageTag: 20000006-0001-0001-0001-200000000005
+
+		annotation SummarizationSetBy = Automatic
+
+	column Bonus
+		dataType: double
+		summarizeBy: sum
+		sourceColumn: Bonus
+		lineageTag: 20000006-0001-0001-0001-200000000006
+
+		annotation SummarizationSetBy = Automatic
+
+	column Overtime
+		dataType: double
+		summarizeBy: sum
+		sourceColumn: Overtime
+		lineageTag: 20000006-0001-0001-0001-200000000007
+
+		annotation SummarizationSetBy = Automatic
+
+	column Deductions
+		dataType: double
+		summarizeBy: sum
+		sourceColumn: Deductions
+		lineageTag: 20000006-0001-0001-0001-200000000008
+
+		annotation SummarizationSetBy = Automatic
+
+	column NetPay
+		dataType: double
+		summarizeBy: sum
+		sourceColumn: NetPay
+		lineageTag: 20000006-0001-0001-0001-200000000009
+
+		annotation SummarizationSetBy = Automatic
+
+	column PayDate
+		dataType: dateTime
+		summarizeBy: none
+		sourceColumn: PayDate
+		lineageTag: 20000006-0001-0001-0001-200000000010
+
+		annotation SummarizationSetBy = Automatic
+
+	partition FactPayroll = entity
+		mode: directLake
+		schemaName: fact
+		entityName: FactPayroll
+		expressionSource: DatabaseQuery
+
+	annotation PBI_ResultType = Table

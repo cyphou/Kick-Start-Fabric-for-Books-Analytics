@@ -1,0 +1,199 @@
+table FactFinancialTransactions
+	lineageTag: 20000001-0001-0001-0001-000000000001
+
+	measure 'Total Revenue' = CALCULATE(SUM(FactFinancialTransactions[Amount]),DimAccounts[AccountType] = "Revenue")
+		formatString: $#,0;($#,0)
+		displayFolder: Finance \ Revenue
+		lineageTag: 20000001-0001-0001-0001-100000000001
+
+	measure 'Book Sales Revenue' = CALCULATE(SUM(FactFinancialTransactions[Amount]),DimAccounts[AccountID] = 1001)
+		formatString: $#,0;($#,0)
+		displayFolder: Finance \ Revenue
+		lineageTag: 20000001-0001-0001-0001-100000000002
+
+	measure 'E-Book Sales Revenue' = CALCULATE(SUM(FactFinancialTransactions[Amount]),DimAccounts[AccountID] = 1002)
+		formatString: $#,0;($#,0)
+		displayFolder: Finance \ Revenue
+		lineageTag: 20000001-0001-0001-0001-100000000003
+
+	measure 'Audiobook Revenue' = CALCULATE(SUM(FactFinancialTransactions[Amount]),DimAccounts[AccountID] = 1003)
+		formatString: $#,0;($#,0)
+		displayFolder: Finance \ Revenue
+		lineageTag: 20000001-0001-0001-0001-100000000004
+
+	measure 'Rights & Licensing Revenue' = CALCULATE(SUM(FactFinancialTransactions[Amount]),DimAccounts[AccountCategory] = "Licensing")
+		formatString: $#,0;($#,0)
+		displayFolder: Finance \ Revenue
+		lineageTag: 20000001-0001-0001-0001-100000000005
+
+	measure 'Digital Revenue Share' = DIVIDE([E-Book Sales Revenue] + [Audiobook Revenue],[Total Revenue],0)
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Finance \ Revenue
+		lineageTag: 20000001-0001-0001-0001-100000000006
+
+	measure 'Total COGS' = CALCULATE(ABS(SUM(FactFinancialTransactions[Amount])),DimAccounts[AccountCategory] = "Cost of Goods Sold")
+		formatString: $#,0;($#,0)
+		displayFolder: Finance \ Costs
+		lineageTag: 20000001-0001-0001-0001-100000000007
+
+	measure 'Total Royalties' = CALCULATE(ABS(SUM(FactFinancialTransactions[Amount])),DimAccounts[AccountCategory] = "Royalties")
+		formatString: $#,0;($#,0)
+		displayFolder: Finance \ Costs
+		lineageTag: 20000001-0001-0001-0001-100000000008
+
+	measure 'Total Marketing Spend' = CALCULATE(ABS(SUM(FactFinancialTransactions[Amount])),DimAccounts[AccountCategory] = "Marketing")
+		formatString: $#,0;($#,0)
+		displayFolder: Finance \ Costs
+		lineageTag: 20000001-0001-0001-0001-100000000009
+
+	measure 'Total Distribution Cost' = CALCULATE(ABS(SUM(FactFinancialTransactions[Amount])),DimAccounts[AccountCategory] = "Distribution")
+		formatString: $#,0;($#,0)
+		displayFolder: Finance \ Costs
+		lineageTag: 20000001-0001-0001-0001-100000000010
+
+	measure 'Total Operating Expenses' = CALCULATE(ABS(SUM(FactFinancialTransactions[Amount])),DimAccounts[AccountType] = "Expense")
+		formatString: $#,0;($#,0)
+		displayFolder: Finance \ Costs
+		lineageTag: 20000001-0001-0001-0001-100000000011
+
+	measure 'Gross Profit' = [Total Revenue] - [Total COGS]
+		formatString: $#,0;($#,0)
+		displayFolder: Finance \ Profitability
+		lineageTag: 20000001-0001-0001-0001-100000000012
+
+	measure 'Gross Margin %' = DIVIDE([Gross Profit], [Total Revenue], 0)
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Finance \ Profitability
+		lineageTag: 20000001-0001-0001-0001-100000000013
+
+	measure 'Operating Profit' = [Total Revenue] - [Total Operating Expenses]
+		formatString: $#,0;($#,0)
+		displayFolder: Finance \ Profitability
+		lineageTag: 20000001-0001-0001-0001-100000000014
+
+	measure 'Operating Margin %' = DIVIDE([Operating Profit], [Total Revenue], 0)
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Finance \ Profitability
+		lineageTag: 20000001-0001-0001-0001-100000000015
+
+	measure 'Revenue PY' = CALCULATE([Total Revenue],DATEADD(DimDate[FullDate], -1, YEAR))
+		formatString: $#,0;($#,0)
+		displayFolder: Finance \ Growth
+		lineageTag: 20000001-0001-0001-0001-100000000016
+
+	measure 'Revenue YoY Growth' = DIVIDE([Total Revenue] - [Revenue PY],ABS([Revenue PY]),0)
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Finance \ Growth
+		lineageTag: 20000001-0001-0001-0001-100000000017
+
+	measure 'Revenue QoQ' =
+		VAR CurrentQ = [Total Revenue]
+		VAR PriorQ = CALCULATE([Total Revenue], DATEADD(DimDate[FullDate], -1, QUARTER))
+		RETURN DIVIDE(CurrentQ - PriorQ, ABS(PriorQ), 0)
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Finance \ Growth
+		lineageTag: 20000001-0001-0001-0001-100000000018
+
+	column TransactionID
+		dataType: string
+		summarizeBy: none
+		sourceColumn: TransactionID
+		lineageTag: 20000001-0001-0001-0001-200000000001
+
+		annotation SummarizationSetBy = Automatic
+
+	column TransactionDate
+		dataType: dateTime
+		summarizeBy: none
+		sourceColumn: TransactionDate
+		lineageTag: 20000001-0001-0001-0001-200000000002
+
+		annotation SummarizationSetBy = Automatic
+
+	column AccountID
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: AccountID
+		lineageTag: 20000001-0001-0001-0001-200000000003
+
+		annotation SummarizationSetBy = Automatic
+
+	column BookID
+		dataType: string
+		summarizeBy: none
+		sourceColumn: BookID
+		lineageTag: 20000001-0001-0001-0001-200000000004
+
+		annotation SummarizationSetBy = Automatic
+
+	column Amount
+		dataType: double
+		summarizeBy: sum
+		sourceColumn: Amount
+		lineageTag: 20000001-0001-0001-0001-200000000005
+
+		annotation SummarizationSetBy = Automatic
+
+	column Currency
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Currency
+		lineageTag: 20000001-0001-0001-0001-200000000006
+
+		annotation SummarizationSetBy = Automatic
+
+	column TransactionType
+		dataType: string
+		summarizeBy: none
+		sourceColumn: TransactionType
+		lineageTag: 20000001-0001-0001-0001-200000000007
+
+		annotation SummarizationSetBy = Automatic
+
+	column FiscalYear
+		dataType: string
+		summarizeBy: none
+		sourceColumn: FiscalYear
+		lineageTag: 20000001-0001-0001-0001-200000000008
+
+		annotation SummarizationSetBy = Automatic
+
+	column FiscalQuarter
+		dataType: string
+		summarizeBy: none
+		sourceColumn: FiscalQuarter
+		lineageTag: 20000001-0001-0001-0001-200000000009
+
+		annotation SummarizationSetBy = Automatic
+
+	column FiscalMonth
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: FiscalMonth
+		lineageTag: 20000001-0001-0001-0001-200000000010
+
+		annotation SummarizationSetBy = Automatic
+
+	column CostCenterID
+		dataType: string
+		summarizeBy: none
+		sourceColumn: CostCenterID
+		lineageTag: 20000001-0001-0001-0001-200000000011
+
+		annotation SummarizationSetBy = Automatic
+
+	column Description
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Description
+		lineageTag: 20000001-0001-0001-0001-200000000012
+
+		annotation SummarizationSetBy = Automatic
+
+	partition FactFinancialTransactions = entity
+		mode: directLake
+		schemaName: fact
+		entityName: FactFinancialTransactions
+		expressionSource: DatabaseQuery
+
+	annotation PBI_ResultType = Table
