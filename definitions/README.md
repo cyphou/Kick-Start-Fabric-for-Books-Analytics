@@ -25,6 +25,9 @@ Token placeholders (`{{...}}`) show where runtime values (workspace/lakehouse GU
 | `{{NB01_ID}}` | Notebook 01 BronzeToSilver GUID | Deploy-Pipeline.ps1 |
 | `{{NB02_ID}}` | Notebook 02 WebEnrichment GUID | Deploy-Pipeline.ps1 |
 | `{{NB03_ID}}` | Notebook 03 SilverToGold GUID | Deploy-Pipeline.ps1 |
+| `{{NB04_ID}}` | Notebook 04 Forecasting GUID | Deploy-Pipeline.ps1 |
+| `{{SPARK_ENV_ID}}` | Spark Environment GUID | Deploy-Full.ps1 |
+| `{{PIPELINE_ID}}` | Data Pipeline GUID | Deploy-Pipeline.ps1 |
 | `{{SEMANTIC_MODEL_ID}}` | Semantic Model GUID | Deploy-Full.ps1 |
 | `{{REPORT_ID}}` | Power BI Report GUID | Manual / Deploy script |
 | `{{DATA_AGENT_ID}}` | Data Agent GUID | Deploy-DataAgent.ps1 |
@@ -49,7 +52,12 @@ definitions/
 ├── notebooks/
 │   ├── nb01-lakehouse-metadata.json  # NB01 lakehouse binding template
 │   ├── nb02-lakehouse-metadata.json  # NB02 lakehouse binding template
-│   └── nb03-lakehouse-metadata.json  # NB03 lakehouse binding template
+│   ├── nb03-lakehouse-metadata.json  # NB03 lakehouse binding template
+│   └── nb04-lakehouse-metadata.json  # NB04 lakehouse binding template
+├── environment/
+│   ├── environment-definition.json   # Spark 1.3 runtime, adaptive query, delta optimization
+│   ├── public-libraries.json         # PyPI dependencies (statsmodels, pandas, numpy, etc.)
+│   └── requirements.txt              # pip-compatible dependency list
 ├── lakehouses/
 │   ├── BronzeLH.json               # Bronze Lakehouse creation config (schemas, files, tables)
 │   ├── SilverLH.json               # Silver Lakehouse creation config (4 schemas)
@@ -58,7 +66,7 @@ definitions/
 │   └── report-definition.json      # Power BI report spec (10 pages, visuals, bookmarks)
 ├── dataagent/
 │   └── dataagent-definition.json   # Data Agent config (instructions, table mapping, starter Qs)
-├── items-manifest.json             # Full item catalog for CI/CD (13 items)
+├── items-manifest.json             # Full item catalog for CI/CD (15 items)
 └── README.md                       # This file
 ```
 
@@ -89,10 +97,11 @@ Semantic Model TMDL files are already in `HorizonBooksAnalytics/` (PBIP format).
 | Item Type | Count | Definition Location |
 |---|---|---|
 | Lakehouse | 3 | `definitions/lakehouses/` |
-| Notebook | 3 | `definitions/notebooks/` (metadata) + `notebooks/` (source) |
+| Environment | 1 | `definitions/environment/` |
+| Notebook | 4 | `definitions/notebooks/` (metadata) + `notebooks/` (source) |
 | DataflowGen2 | 3 | `definitions/dataflows/` |
 | DataPipeline | 1 | `definitions/pipeline/` |
 | SemanticModel | 1 | `HorizonBooksAnalytics/` (PBIP/TMDL) |
 | Report | 1 | `definitions/report/` |
 | DataAgent | 1 | `definitions/dataagent/` |
-| **Total** | **13** | |
+| **Total** | **15** | |

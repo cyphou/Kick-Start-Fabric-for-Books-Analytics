@@ -162,6 +162,11 @@ The Data Engineer role took the longest to fill (91 days), suggesting we may nee
 | FactPayroll | Payroll records | Employee, Period, Salary, Bonus, NetPay |
 | FactPerformanceReviews | Performance data | Employee, Rating, Score |
 | FactRecruitment | Hiring pipeline | Department, Title, Status, TimeToFill |
+| ForecastSalesRevenue | Sales revenue forecast | ForecastMonth, Channel, Revenue, Orders, LowerBound, UpperBound, RecordType |
+| ForecastGenreDemand | Genre demand forecast | ForecastMonth, Genre, UnitDemand, Revenue, LowerBound, UpperBound |
+| ForecastFinancial | Financial P&L forecast | ForecastMonth, PLCategory, Amount, LowerBound, UpperBound |
+| ForecastInventoryDemand | Inventory demand forecast | ForecastMonth, WarehouseID, UnitsDemanded, StockCoverMonths |
+| ForecastWorkforce | Workforce planning forecast | ForecastMonth, Metric, Value, LowerBound, UpperBound |
 
 ### Key Measures the Agent Can Reference:
 - Revenue: Total Revenue, Book/E-Book/Audiobook Revenue, Digital Revenue Share
@@ -172,6 +177,7 @@ The Data Engineer role took the longest to fill (91 days), suggesting we may nee
 - Returns: Return Rate, Total Refunds
 - HR: Headcount, Avg Salary, Avg Performance Score, Open Positions, Time to Fill
 - Geographic: International Revenue, International Revenue %, Countries Served, Revenue per Country, Employee Locations
+- Forecasting: Forecast Revenue, Revenue Lower/Upper Bound, Forecast vs Actual Revenue, Forecast Unit Demand, Forecast Genre Revenue, Demand Confidence Range, Forecast P&L Amount, Forecast Demand Units, Stock Coverage Months, Forecast Payroll, Forecast Headcount, Forecast Openings
 
 ---
 

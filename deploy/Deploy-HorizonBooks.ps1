@@ -7,7 +7,7 @@
     1. A Lakehouse with all CSV data files uploaded via OneLake
     2. Three Spark Notebooks (Medallion Architecture: Bronze→Silver, Web Enrichment, Silver→Gold)
     3. Three Dataflow Gen2 items + a Data Pipeline for orchestration
-    4. A Semantic Model (Direct Lake TMDL) with 25 relationships and 74 DAX measures
+    4. A Semantic Model (Direct Lake TMDL) with 27 relationships and 96 DAX measures
     5. A Data Agent for natural-language data exploration (requires F64+ capacity)
 
 .PARAMETER WorkspaceId
@@ -821,7 +821,7 @@ if (Test-Path $tmdlRoot) {
     Write-Info "Total TMDL parts: $($smParts.Count)"
 
     # Build JSON manually (PS 5.1 ConvertTo-Json crashes with large payloads)
-    $smDescription = "Direct Lake semantic model for Horizon Books Publishing - 18 tables, 25 relationships, 74 DAX measures across Finance, HR, and Operations"
+    $smDescription = "Direct Lake semantic model for Horizon Books Publishing - 23 tables, 27 relationships, 96 DAX measures across Finance, HR, Operations, and Forecasting"
     $partsJson = $smParts -join ","
     $createSmJson = '{"displayName":"' + $SemanticModelName + '","type":"SemanticModel","description":"' + $smDescription + '","definition":{"parts":[' + $partsJson + ']}}'
     Write-Info "SM payload size: $($createSmJson.Length) chars"

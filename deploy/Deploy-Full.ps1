@@ -21,7 +21,7 @@
       Step 7: Execute Lakehouse SQL scripts (CreateTables.sql + GenerateDateDimension.sql)
 
     Phase 3 - Model, Report and AI:
-      Step 8: Deploy Semantic Model (Direct Lake on GoldLH, 27 relationships, 79 measures)
+      Step 8: Deploy Semantic Model (Direct Lake on GoldLH, 27 relationships, 96 measures)
       Step 9: Deploy Power BI Report (PBIR, 10 pages bound to Semantic Model)
       Step 10: Deploy Data Agent (requires F64+ capacity, skipped on trial)
 
@@ -1185,7 +1185,7 @@ Measure-Step "8. Deploy Semantic Model" {
 
     Write-Info "Total TMDL parts: $($smParts.Count)"
 
-    $smDesc    = "Direct Lake semantic model on GoldLH - 18 tables (dim/fact schemas), 27 relationships, 79 DAX measures"
+    $smDesc    = "Direct Lake semantic model on GoldLH - 23 tables (dim/fact/analytics schemas), 27 relationships, 96 DAX measures, 5 forecast tables"
     $partsJson = $smParts -join ","
     $createSmJson = '{"displayName":"' + $SemanticModelName + '","type":"SemanticModel","description":"' + $smDesc + '","definition":{"parts":[' + $partsJson + ']}}'
 

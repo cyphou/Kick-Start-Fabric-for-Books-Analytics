@@ -6,8 +6,8 @@
     Standalone deployment script for the Power BI layer:
 
     Step 1: Deploy Semantic Model (TMDL Direct Lake on GoldLH)
-            - 18 tables across dim/fact schemas
-            - 27 relationships, 79 DAX measures
+            - 23 tables across dim/fact/analytics schemas
+            - 27 relationships, 96 DAX measures
             - Auto-binds to GoldLH SQL endpoint
 
     Step 2: Deploy Power BI Report (PBIR)
@@ -425,7 +425,7 @@ if (Test-Path $tmdlTablesDir) {
 
 Write-Info "Total TMDL parts: $($smParts.Count)"
 
-$smDesc    = "Direct Lake semantic model on GoldLH - 18 tables (dim/fact schemas), 27 relationships, 79 DAX measures"
+$smDesc    = "Direct Lake semantic model on GoldLH - 23 tables (dim/fact/analytics schemas), 27 relationships, 96 DAX measures, 5 forecast tables"
 $partsJson = $smParts -join ","
 $createSmJson = '{"displayName":"' + $SemanticModelName + '","type":"SemanticModel","description":"' + $smDesc + '","definition":{"parts":[' + $partsJson + ']}}'
 

@@ -154,7 +154,7 @@ $workspaceId = $null
 $wsDescription = "Horizon Books Publishing & Distribution - Microsoft Fabric End-to-End Demo. " +
     "Covers Finance (P&L, Budget), HR (Workforce, Compensation, Recruitment), and " +
     "Operations (Books, Orders, Inventory, Returns). " +
-    "18 tables, 25 relationships, 74 DAX measures, 10-page Power BI report."
+    "23 tables, 27 relationships, 96 DAX measures, 10-page Power BI report."
 
 $createBody = @{
     displayName = $WorkspaceName

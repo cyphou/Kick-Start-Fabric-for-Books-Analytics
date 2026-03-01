@@ -14,6 +14,9 @@ Thumbs.db
 
 # IDE
 .idea/
+.vs/
 
 # Build outputs
 *.log
+*.bak
+*.tmp

@@ -9,7 +9,7 @@
 **Company:** Horizon Books Publishing & Distribution  
 **Industry:** Book Publishing, Distribution, and Retail  
 **Data Year:** FY2024 (January - December 2024)  
-**Fabric Components:** 3 Lakehouses (Medallion with schemas), Spark Notebooks, Semantic Model, Power BI Report, Data Agent
+**Fabric Components:** 3 Lakehouses (Medallion with schemas), Spark Environment, 4 Spark Notebooks, Semantic Model, Power BI Report, Data Agent
 
 ### Business Domains Covered
 
@@ -76,7 +76,7 @@ Mystery, Thriller, Romance) and Non-Fiction (Tech, Lifestyle, Health, Education)
 │         │                  │   via API    │   → GoldLH SQL EP      │      │
 │         │ • TMDL Model     │              │                        │      │
 │         │ • PBIR Report    │              │ 27 Relationships       │      │
-│         └──────────────────┘              │ 79 DAX Measures        │      │
+│         └──────────────────┘              │ 96 DAX Measures        │      │
 │                                           │ schemaName: dim|fact   │      │
 │                                           └──┬──────────┬─────────┘      │
 │                                              │          │                 │
@@ -141,19 +141,21 @@ Connect-AzAccount
 .\deploy\Deploy-Full.ps1 -WorkspaceId "<your-workspace-guid>"
 ```
 
-**What it does (9 automated steps):**
+**What it does (11 automated steps):**
 
 | Step | Action | Time |
 |------|--------|------|
 | 1 | Create 3 Lakehouses (BronzeLH, SilverLH, GoldLH) with schemas + wait for GoldLH SQL endpoint | ~3 min |
 | 2 | Upload 17 CSV files to BronzeLH via OneLake DFS API | ~1 min |
-| 3 | Deploy 3 PySpark notebooks (each bound to its default Lakehouse) | ~1 min |
+| 3 | Deploy Spark Environment + 4 PySpark notebooks (each bound to its default Lakehouse) | ~1 min |
 | 4 | Run NB01 Bronze→Silver (schema, quality, dedup → SilverLH) | ~3 min |
 | 5 | Deploy 3 Dataflow Gen2 items + orchestration pipeline | ~1 min |
-| 6 | **Run pipeline**: Dataflows + NB01 (parallel) → NB02 WebEnrichment → NB03 SilverToGold | ~7 min |
-| 7 | Deploy Semantic Model (Direct Lake on GoldLH, 79 measures, schemaName bindings) | ~1 min |
-| 8 | Deploy Data Agent (F64+ only) | <1 min |
-| 9 | Validate all deployed items | <1 min |
+| 6 | **Run pipeline**: Dataflows + NB01 (parallel) → NB02 WebEnrichment → NB03 SilverToGold → NB04 Forecasting | ~7 min |
+| 7 | Execute Lakehouse SQL scripts (CreateTables.sql + GenerateDateDimension.sql) | ~1 min |
+| 8 | Deploy Semantic Model (Direct Lake on GoldLH, 96 measures, schemaName bindings) | ~1 min |
+| 9 | Deploy Power BI Report (PBIR, 10 pages bound to Semantic Model) | <1 min |
+| 10 | Deploy Data Agent (F64+ only) | <1 min |
+| 11 | Validate all deployed items | <1 min |
 
 **Optional flags:**
 
@@ -200,23 +202,24 @@ The individual scripts:
 2. **Deploy-HorizonBooks.ps1** performs 6 steps:
    - Creates the Lakehouse and waits for the SQL endpoint
    - Uploads all 17 CSV files via OneLake DFS API
-   - Deploys **3 PySpark notebooks** (runs NB01 immediately; NB02-03 are orchestrated by the pipeline)
+   - Deploys **4 PySpark notebooks** + Spark Environment (runs NB01 immediately; NB02-04 are orchestrated by the pipeline)
    - Deploys **3 Dataflow Gen2 items** with **auto-configured Lakehouse destinations** + **1 Data Pipeline** for orchestration:
      - `DF_Finance`, `DF_HR`, `DF_Operations` — Load CSVs into BronzeLH Delta tables (parallel)
      - Each dataflow embeds `_DataDestination` queries and `[DataDestinations]` attributes in the mashup.pq — no manual portal configuration needed
      - `PL_HorizonBooks_Orchestration` — Orchestrates: DataFlows → WebEnrichment → SilverToGold
-   - Deploys the Semantic Model from TMDL files with Direct Lake mode (79 DAX measures, 27 relationships)
+   - Deploys the Semantic Model from TMDL files with Direct Lake mode (96 DAX measures, 27 relationships)
    - Optionally deploys the Data Agent
 
 ### Notebook Pipeline Details
 
-The 3-notebook pipeline implements a medallion architecture with web data enrichment:
+The 4-notebook pipeline implements a medallion architecture with web data enrichment and forecasting:
 
 | Notebook | Default LH | Source | Target | Key Operations |
 |---|---|---|---|---|
 | **01_BronzeToSilver** | BronzeLH | 17 CSV files (BronzeLH/Files/) | SilverLH (finance/hr/operations schemas) | Schema enforcement, data quality checks, deduplication, audit columns, dimension/fact-specific transforms |
 | **02_WebEnrichment** | SilverLH | 4 public APIs | SilverLH.web.* + enriched Silver tables | Exchange rates (frankfurter.app), holidays (date.nager.at), country indicators (restcountries.com), book metadata (openlibrary.org) |
 | **03_SilverToGold** | GoldLH | SilverLH tables (cross-LH reads) | GoldLH (dim/fact/analytics schemas) | DimDate with holidays, RFM segmentation, customer cohort analysis, revenue anomaly detection (Z-score), book co-purchasing patterns (market basket), revenue forecasting (EMA) |
+| **04_Forecasting** | GoldLH | GoldLH fact tables | GoldLH (analytics schema) | Holt-Winters time-series forecasting: sales revenue by channel, genre demand, financial P&L, inventory demand, workforce planning (6-month horizon, 95% confidence) |
 
 **Web APIs used** (all free, no authentication required):
 - **frankfurter.app** — Monthly exchange rates (16 currencies, FY2024)
@@ -380,7 +383,8 @@ FullDemoFabricBookUseCase/
 ├── notebooks/                         ← PySpark Transformation Notebooks
 │   ├── 01_BronzeToSilver.py           ← Bronze→Silver (schema, quality, dedup)
 │   ├── 02_WebEnrichment.py            ← Web data from 4 public APIs (no auth)
-│   └── 03_SilverToGold.py             ← Silver→Gold (RFM, cohort, anomaly, forecast)
+│   ├── 03_SilverToGold.py             ← Silver→Gold (RFM, cohort, anomaly, forecast)
+│   └── 04_Forecasting.py             ← Holt-Winters time-series forecasting
 │
 ├── tests/                             ← Pester Test Suite
 │   ├── Deploy-HorizonBooks.Tests.ps1  ← Unit + Integration tests
@@ -415,8 +419,11 @@ FullDemoFabricBookUseCase/
 │   │           ├── FactReturns.tmdl                ← (5 measures)
 │   │           ├── FactPayroll.tmdl                ← (7 measures)
 │   │           ├── FactPerformanceReviews.tmdl     ← (3 measures)
-│   │           └── FactRecruitment.tmdl            ← (5 measures)
-│   │
+│   │           └── FactRecruitment.tmdl            ← (5 measures)│           ├── ForecastSalesRevenue.tmdl       ← (4 measures)
+│           ├── ForecastGenreDemand.tmdl        ← (3 measures)
+│           ├── ForecastFinancial.tmdl          ← (3 measures)
+│           ├── ForecastInventoryDemand.tmdl    ← (3 measures)
+│           └── ForecastWorkforce.tmdl          ← (4 measures)│   │
 │   └── HorizonBooksAnalytics.Report/
 │       ├── .platform                  ← Fabric item metadata
 │       ├── definition.pbir            ← Report config (PBIR v4.0)
@@ -469,6 +476,20 @@ FullDemoFabricBookUseCase/
 │
 ├── Reports/
 │   └── ReportSpecification.md         ← 10-Page Report Layout & Specs
+│
+├── Forecasting/                       ← Forecasting Configuration
+│   ├── README.md                      ← Forecast model documentation
+│   └── forecast-config.json           ← Holt-Winters model config (5 models)
+│
+├── definitions/                       ← CI/CD Item Definitions
+│   ├── environment/                   ← Spark Environment config
+│   │   ├── environment-definition.json ← Runtime 1.3, adaptive, delta optimization
+│   │   ├── public-libraries.json      ← PyPI dependencies
+│   │   └── requirements.txt           ← pip-compatible format
+│   └── items-manifest.json            ← Full item catalog (15 items)
+│
+├── .github/workflows/                 ← CI/CD Pipeline
+│   └── ci-tests.yml                   ← GitHub Actions Pester tests (on push/PR to main)
 │
 └── DataAgent/
     └── DataAgentConfiguration.md      ← AI Agent Instructions & Config
@@ -549,7 +570,7 @@ Ask "Compare Q3 vs Q4" → Show how business users can self-serve analytics
 | Pipeline run: DataFlows | 2 min | DF_Finance, DF_HR, DF_Operations (parallel) |
 | Pipeline run: Web Enrichment | 2 min | 4 public APIs → SilverLH.web.* |
 | Pipeline run: Silver→Gold | 3 min | SilverLH → GoldLH (dim, fact, analytics) |
-| Deploy Semantic Model | 1 min | Direct Lake on GoldLH (79 measures, schemaName) |
+| Deploy Semantic Model | 1 min | Direct Lake on GoldLH (96 measures, schemaName) |
 | Deploy Data Agent | <1 min | AI Q&A |
 | **Total** | **~17 min** | |
 
@@ -565,7 +586,7 @@ Once deployed, the workspace is organized into **folders** and a **visual task f
 |--------|----------|
 | **01 - Data Storage** | BronzeLH, SilverLH, GoldLH (+ SQL Endpoints), StagingLH, StagingWH |
 | **02 - Data Ingestion** | (Reserved for future connectors) |
-| **03 - Data Transformation** | NB01_BronzeToSilver, NB02_WebEnrichment, NB03_SilverToGold |
+| **03 - Data Transformation** | NB01_BronzeToSilver, NB02_WebEnrichment, NB03_SilverToGold, NB04_Forecasting, HorizonBooks_SparkEnv |
 | **04 - Orchestration** | HorizonBooks Data Pipeline |
 | **05 - Analytics** | HorizonBooksAnalytics Semantic Model |
 | **Root** | 3 Dataflow Gen2 items (cannot be placed in folders — Fabric limitation) |
