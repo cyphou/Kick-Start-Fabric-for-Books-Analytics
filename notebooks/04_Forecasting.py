@@ -12,24 +12,7 @@
 # META   "kernel_info": {
 # META     "name": "synapse_pyspark"
 # META   },
-# META   "dependencies": {
-# META     "lakehouse": {
-# META       "default_lakehouse": "70d8979b-18bb-4af6-9e7b-44e7ad96393d",
-# META       "default_lakehouse_name": "GoldLH",
-# META       "default_lakehouse_workspace_id": "91b2dca3-5729-4e7d-a473-bfeb85c16aa1",
-# META       "known_lakehouses": [
-# META         {
-# META           "id": "bc992d2e-8d01-451b-b96d-e7435fcf4c62"
-# META         },
-# META         {
-# META           "id": "f4f99f30-f239-44e9-8f37-0ec19d1458fe"
-# META         },
-# META         {
-# META           "id": "70d8979b-18bb-4af6-9e7b-44e7ad96393d"
-# META         }
-# META       ]
-# META     }
-# META   }
+# META   "dependencies": {}
 # META }
 
 # CELL ********************
@@ -56,6 +39,33 @@ from datetime import datetime, timedelta
 import time
 import warnings
 warnings.filterwarnings("ignore")
+
+# ── MLflow Experiment Tracking ──
+# Disable autologging to prevent Fabric from creating a failed experiment
+# run for every statsmodels .fit() that raises inside our try/except
+# fallback loop (add/add → add/mul → mul/add → mul/mul).
+# Instead we log one clean child run per forecast table.
+import mlflow
+try:
+    mlflow.autolog(disable=True)
+except Exception:
+    pass
+
+EXPERIMENT_NAME = "HorizonBooks_Forecasting"
+try:
+    mlflow.set_experiment(EXPERIMENT_NAME)
+    _parent_run = mlflow.start_run(
+        run_name=f"NB04_Forecasting_{datetime.utcnow():%Y%m%d_%H%M%S}"
+    )
+    mlflow.log_params({
+        "forecast_horizon": FORECAST_HORIZON,
+        "confidence_level": CONFIDENCE_LEVEL,
+        "min_history_months": MIN_HISTORY_MONTHS,
+    })
+    _mlflow_ok = True
+except Exception as _mle:
+    print(f"  ⚠ MLflow setup skipped: {_mle}")
+    _mlflow_ok = False
 
 spark = SparkSession.builder.getOrCreate()
 
@@ -124,6 +134,33 @@ def write_and_summarize(all_results, schema, table_name, model_info,
             print(f"    {str(label):20s} {mi['Model']:25s} ({mi['Months']}m, {mape_str})")
     cell_results[table_name] = {"status": "OK", "rows": row_count, "elapsed": elapsed}
 
+    # ── MLflow child run ──
+    if _mlflow_ok:
+        try:
+            with mlflow.start_run(
+                run_name=table_name, nested=True
+            ) as child_run:
+                mlflow.log_params({
+                    "table": table_name,
+                    "forecast_horizon": FORECAST_HORIZON,
+                })
+                mlflow.log_metrics({
+                    "rows_total": row_count,
+                    "rows_actual": n_actual,
+                    "rows_forecast": n_fcast,
+                    "elapsed_seconds": round(elapsed, 2),
+                })
+                # Log per-dimension model info
+                for i, mi in enumerate(model_info):
+                    suffix = f"_{i}" if len(model_info) > 1 else ""
+                    mlflow.set_tag(f"model{suffix}", mi.get("Model", "unknown"))
+                    if mi.get("MAPE_3m") is not None:
+                        mlflow.log_metric(f"mape_3m{suffix}", mi["MAPE_3m"])
+                    if dim_label and mi.get(dim_label):
+                        mlflow.set_tag(f"dim_{dim_label}{suffix}", str(mi[dim_label]))
+        except Exception as _ml_err:
+            print(f"    ⚠ MLflow logging skipped for {table_name}: {_ml_err}")
+
 # Ensure analytics schema exists
 spark.sql("CREATE SCHEMA IF NOT EXISTS analytics")
 
@@ -134,6 +171,7 @@ def holt_winters_forecast(ts_series, horizon, seasonal_periods=12):
     Falls back to simple linear trend if insufficient data.
     Returns (forecast_values, lower_bound, upper_bound, model_name).
     """
+    import warnings
     from statsmodels.tsa.holtwinters import ExponentialSmoothing
 
     values = ts_series.dropna().values.astype(float)
@@ -142,9 +180,11 @@ def holt_winters_forecast(ts_series, horizon, seasonal_periods=12):
     if n < seasonal_periods * 2:
         # Not enough data for full seasonal model — use additive trend only
         try:
-            model = ExponentialSmoothing(
-                values, trend="add", seasonal=None
-            ).fit(optimized=True)
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                model = ExponentialSmoothing(
+                    values, trend="add", seasonal=None
+                ).fit(optimized=True, use_brute=True, maxiter=500)
             fcast = model.forecast(horizon)
             residuals = values - model.fittedvalues
             sigma = np.std(residuals)
@@ -160,13 +200,15 @@ def holt_winters_forecast(ts_series, horizon, seasonal_periods=12):
         for seasonal in ["add", "mul"]:
             for trend in ["add", "mul"]:
                 try:
-                    model = ExponentialSmoothing(
-                        values,
-                        trend=trend,
-                        seasonal=seasonal,
-                        seasonal_periods=seasonal_periods,
-                        initialization_method="estimated"
-                    ).fit(optimized=True)
+                    with warnings.catch_warnings():
+                        warnings.simplefilter("ignore")
+                        model = ExponentialSmoothing(
+                            values,
+                            trend=trend,
+                            seasonal=seasonal,
+                            seasonal_periods=seasonal_periods,
+                            initialization_method="estimated"
+                        ).fit(optimized=True, use_brute=True, maxiter=500)
                     fcast = model.forecast(horizon)
                     residuals = values - model.fittedvalues
                     sigma = np.std(residuals)
@@ -660,10 +702,10 @@ try:
         # Back-test
         mape = backtest_mape(ts, holt_winters_forecast)
 
-        current_stock = stock_map.get(int(wh), 0)
+        current_stock = stock_map.get(wh, 0)
 
         model_info.append({
-            "WarehouseID": int(wh), "Model": model_name,
+            "WarehouseID": str(wh), "Model": model_name,
             "Months": len(ts), "MAPE_3m": round(mape, 2) if mape else None,
             "CurrentStock": current_stock
         })
@@ -672,7 +714,7 @@ try:
         for _, row in wh_data.iterrows():
             all_results.append({
                 "ForecastMonth": row["OrderMonth"],
-                "WarehouseID": int(row["WarehouseID"]),
+                "WarehouseID": str(row["WarehouseID"]),
                 "UnitsDemanded": float(row["UnitsDemanded"]),
                 "Revenue": float(row["Revenue"]),
                 "LowerBound": float(row["UnitsDemanded"]),
@@ -698,7 +740,7 @@ try:
 
             all_results.append({
                 "ForecastMonth": fc_date,
-                "WarehouseID": int(wh),
+                "WarehouseID": str(wh),
                 "UnitsDemanded": demand,
                 "Revenue": 0.0,
                 "LowerBound": float(max(lower[i], 0)),
@@ -714,7 +756,7 @@ try:
     if all_results:
         schema = StructType([
             StructField("ForecastMonth", DateType()),
-            StructField("WarehouseID", IntegerType()),
+            StructField("WarehouseID", StringType()),
             StructField("UnitsDemanded", DoubleType()),
             StructField("Revenue", DoubleType()),
             StructField("LowerBound", DoubleType()),
@@ -930,6 +972,29 @@ try:
         for ms in model_summary:
             print(f"    {ms}")
         _cell_results["ForecastWorkforce"] = {"status": "OK", "rows": row_count, "elapsed": elapsed}
+
+        # ── MLflow child run ──
+        if _mlflow_ok:
+            try:
+                with mlflow.start_run(
+                    run_name="ForecastWorkforce", nested=True
+                ) as child_run:
+                    mlflow.log_params({
+                        "table": "ForecastWorkforce",
+                        "forecast_horizon": FORECAST_HORIZON,
+                    })
+                    mlflow.log_metrics({
+                        "rows_total": row_count,
+                        "rows_actual": n_actual,
+                        "rows_forecast": n_fcast,
+                        "elapsed_seconds": round(elapsed, 2),
+                    })
+                    for ms in model_summary:
+                        parts = ms.split(":")
+                        if len(parts) == 2:
+                            mlflow.set_tag(f"model_{parts[0].strip()}", parts[1].strip())
+            except Exception as _ml_err:
+                print(f"    ⚠ MLflow logging skipped for ForecastWorkforce: {_ml_err}")
     else:
         print("  ⚠ No workforce data available for forecasting")
         _cell_results["ForecastWorkforce"] = {"status": "SKIP", "rows": 0}
@@ -1039,6 +1104,27 @@ if validation_errors:
     print(f"\n  ⚠ VALIDATION WARNINGS ({len(validation_errors)}):")
     for ve in validation_errors:
         print(f"    - {ve}")
+
+# ── End MLflow parent run ──
+if _mlflow_ok:
+    try:
+        mlflow.log_metrics({
+            "total_rows": total_rows,
+            "total_forecast_rows": total_forecast_rows,
+            "tables_ok": n_ok,
+            "tables_failed": n_fail,
+            "tables_skipped": n_skip,
+            "total_elapsed_seconds": round(total_elapsed, 2),
+        })
+        mlflow.set_tag("status", "FAIL" if n_fail > 0 else "OK")
+        mlflow.end_run()
+        print(f"  ✓ MLflow experiment '{EXPERIMENT_NAME}' logged successfully")
+    except Exception as _ml_err:
+        print(f"  ⚠ MLflow final logging failed: {_ml_err}")
+        try:
+            mlflow.end_run()
+        except Exception:
+            pass
 
 if n_fail > 0:
     raise RuntimeError(

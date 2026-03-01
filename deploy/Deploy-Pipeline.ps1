@@ -859,23 +859,54 @@ catch {
     }
 }
 
-# Move dataflows into the folder
+# Move dataflows into the folder (with 429 throttle retry)
 if ($dataflowFolderId) {
     foreach ($df in $dataflows) {
         $dfId = $dataflowIds[$df.Name]
         if (-not $dfId) { continue }
 
-        try {
-            $fabricToken = Get-FabricToken
-            $moveBody = @{ targetFolderId = $dataflowFolderId } | ConvertTo-Json -Depth 3
-            Invoke-RestMethod -Method Post `
-                -Uri "$FabricApiBase/workspaces/$WorkspaceId/items/$dfId/move" `
-                -Headers @{ "Authorization" = "Bearer $fabricToken"; "Content-Type" = "application/json" } `
-                -Body $moveBody | Out-Null
-            Write-OK "Moved $($df.Name) -> $dataflowFolderName/"
-        }
-        catch {
-            Write-Warn "Could not move $($df.Name) to folder: $($_.Exception.Message)"
+        $maxRetries = 5
+        $retryCount = 0
+        $delay = 5
+        $moved = $false
+        while (-not $moved) {
+            try {
+                $fabricToken = Get-FabricToken
+                $moveBody = @{ targetFolderId = $dataflowFolderId } | ConvertTo-Json -Depth 3
+                Invoke-RestMethod -Method Post `
+                    -Uri "$FabricApiBase/workspaces/$WorkspaceId/items/$dfId/move" `
+                    -Headers @{ "Authorization" = "Bearer $fabricToken"; "Content-Type" = "application/json" } `
+                    -Body $moveBody | Out-Null
+                Write-OK "Moved $($df.Name) -> $dataflowFolderName/"
+                $moved = $true
+                Start-Sleep -Seconds 2  # Proactive throttle: space out move calls
+            }
+            catch {
+                $statusCode = $null
+                if ($_.Exception.Response) {
+                    $statusCode = [int]$_.Exception.Response.StatusCode
+                }
+                if ($statusCode -eq 429 -and $retryCount -lt $maxRetries) {
+                    $retryCount++
+                    $retryAfter = $delay
+                    if ($_.Exception.Response.Headers) {
+                        $raHeader = $_.Exception.Response.Headers | Where-Object { $_.Key -eq 'Retry-After' } | Select-Object -ExpandProperty Value -First 1
+                        if ($raHeader) {
+                            $parsedRa = 0
+                            if ([int]::TryParse($raHeader, [ref]$parsedRa) -and $parsedRa -gt 0) {
+                                $retryAfter = $parsedRa
+                            }
+                        }
+                    }
+                    Write-Info "Throttled (429) moving $($df.Name) — retrying in ${retryAfter}s (attempt $retryCount/$maxRetries)"
+                    Start-Sleep -Seconds $retryAfter
+                    $delay = [Math]::Min($delay * 2, 60)
+                }
+                else {
+                    Write-Warn "Could not move $($df.Name) to folder: $($_.Exception.Message)"
+                    $moved = $true  # exit loop on non-retryable error
+                }
+            }
         }
     }
 }

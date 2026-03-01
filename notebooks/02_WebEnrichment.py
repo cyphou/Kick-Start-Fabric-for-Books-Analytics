@@ -145,31 +145,42 @@ target_currencies = ["EUR", "GBP", "JPY", "MXN", "CAD", "AUD", "BRL", "INR",
                      "ZAR", "KES", "NGN", "EGP", "CNY", "KRW", "SGD", "AED"]
 
 # Fetch monthly rates for 2024-2026
+# NOTE: Frankfurter API only returns rates for business days.
+# Requesting the 1st of a month that falls on a weekend/holiday returns 404.
+# Use the time-series endpoint (date range) so the API returns the nearest
+# available business day rate for each month.
 exchange_rows = []
 rate_fetch_success = True
 
-from datetime import date as _date
+from datetime import date as _date, timedelta
+import calendar
 _today = _date.today()
 
 for yr in [2024, 2025, 2026]:
     end_month = 12 if yr < _today.year else min(12, _today.month)
     for m in range(1, end_month + 1):
-        date_str = f"{yr}-{m:02d}-01"
-        url = f"https://frankfurter.app/{date_str}?from=USD&to={','.join(target_currencies)}"
+        # Build a short date range (1st–7th) so we always hit a business day
+        start_str = f"{yr}-{m:02d}-01"
+        end_str = f"{yr}-{m:02d}-07"
+        url = (f"https://frankfurter.app/{start_str}..{end_str}"
+               f"?from=USD&to={','.join(target_currencies)}")
         data = safe_request(url)
         if data and "rates" in data:
-            for currency, rate in data["rates"].items():
+            # Take the first available date in the range
+            first_date = sorted(data["rates"].keys())[0]
+            day_rates = data["rates"][first_date]
+            for currency, rate in day_rates.items():
                 exchange_rows.append({
-                    "RateDate": date_str,
+                    "RateDate": start_str,
                     "BaseCurrency": "USD",
                     "TargetCurrency": currency,
                     "ExchangeRate": float(rate),
                     "RateMonth": m,
                     "RateYear": yr
                 })
-            print(f"  ✓ {date_str}: {len(data['rates'])} currencies")
+            print(f"  ✓ {start_str} (via {first_date}): {len(day_rates)} currencies")
         else:
-            print(f"  ⚠ Could not fetch rates for {date_str}")
+            print(f"  ⚠ Could not fetch rates for {start_str}")
             rate_fetch_success = False
         time.sleep(0.3)  # Rate limit courtesy
 
@@ -418,7 +429,93 @@ if country_rows:
     df_countries.write.mode("overwrite").format("delta").saveAsTable(web_table("WebCountryIndicators"))
     print(f"  ✓ WebCountryIndicators saved: {df_countries.count()} rows")
 else:
-    print("  ⚠ No country data — DimGeography will not be enriched with indicators")
+    print("  ⚠ REST Countries API unavailable — using static fallback for Horizon Books countries")
+    # Static fallback covering the 28 countries in DimGeography
+    # Columns: CountryCode2,CountryCode3,CountryNameOfficial,CountryNameCommon,Capital,
+    #          Population,AreaSqKm,RegionWorld,SubRegionWorld,PrimaryLanguage,AllLanguages,
+    #          PrimaryCurrencyCode,PrimaryCurrencyName,Latitude,Longitude,Continent,
+    #          GiniIndex,GiniYear,FlagEmoji
+    fallback_countries = [
+        ("AR","ARG","Argentine Republic","Argentina","Buenos Aires",45810000,2780400.0,"Americas","South America","Spanish","Spanish","ARS","Argentine Peso",-34.0,-64.0,"South America",42.9,2020,"🇦🇷"),
+        ("AU","AUS","Commonwealth of Australia","Australia","Canberra",26000000,7692024.0,"Oceania","Australia and New Zealand","English","English","AUD","Australian Dollar",-27.0,133.0,"Oceania",34.4,2018,"🇦🇺"),
+        ("BR","BRA","Federative Republic of Brazil","Brazil","Brasília",214000000,8515767.0,"Americas","South America","Portuguese","Portuguese","BRL","Brazilian Real",-10.0,-55.0,"South America",48.9,2020,"🇧🇷"),
+        ("CA","CAN","Canada","Canada","Ottawa",38000000,9984670.0,"Americas","Northern America","English","English, French","CAD","Canadian Dollar",60.0,-95.0,"North America",33.3,2017,"🇨🇦"),
+        ("CN","CHN","People's Republic of China","China","Beijing",1412000000,9596961.0,"Asia","Eastern Asia","Chinese","Chinese","CNY","Chinese Yuan",35.0,105.0,"Asia",38.2,2019,"🇨🇳"),
+        ("DK","DNK","Kingdom of Denmark","Denmark","Copenhagen",5857000,43094.0,"Europe","Northern Europe","Danish","Danish","DKK","Danish Krone",56.0,10.0,"Europe",28.2,2019,"🇩🇰"),
+        ("FR","FRA","French Republic","France","Paris",67750000,551695.0,"Europe","Western Europe","French","French","EUR","Euro",46.0,2.0,"Europe",32.4,2019,"🇫🇷"),
+        ("DE","DEU","Federal Republic of Germany","Germany","Berlin",83200000,357114.0,"Europe","Western Europe","German","German","EUR","Euro",51.0,9.0,"Europe",31.9,2019,"🇩🇪"),
+        ("IN","IND","Republic of India","India","New Delhi",1408000000,3287263.0,"Asia","Southern Asia","Hindi","Hindi, English","INR","Indian Rupee",20.0,77.0,"Asia",35.7,2019,"🇮🇳"),
+        ("IE","IRL","Republic of Ireland","Ireland","Dublin",5030000,70273.0,"Europe","Northern Europe","Irish","Irish, English","EUR","Euro",53.0,-8.0,"Europe",31.4,2018,"🇮🇪"),
+        ("IL","ISR","State of Israel","Israel","Jerusalem",9364000,20770.0,"Asia","Western Asia","Hebrew","Hebrew, Arabic","ILS","Israeli New Shekel",31.5,34.75,"Asia",39.0,2018,"🇮🇱"),
+        ("IT","ITA","Italian Republic","Italy","Rome",59110000,301336.0,"Europe","Southern Europe","Italian","Italian","EUR","Euro",42.83,12.83,"Europe",35.9,2019,"🇮🇹"),
+        ("JP","JPN","Japan","Japan","Tokyo",125700000,377975.0,"Asia","Eastern Asia","Japanese","Japanese","JPY","Japanese Yen",36.0,138.0,"Asia",32.9,2018,"🇯🇵"),
+        ("KE","KEN","Republic of Kenya","Kenya","Nairobi",54000000,580367.0,"Africa","Eastern Africa","Swahili","Swahili, English","KES","Kenyan Shilling",1.0,38.0,"Africa",40.8,2019,"🇰🇪"),
+        ("MX","MEX","United Mexican States","Mexico","Mexico City",128900000,1964375.0,"Americas","Central America","Spanish","Spanish","MXN","Mexican Peso",23.0,-102.0,"North America",45.4,2020,"🇲🇽"),
+        ("NL","NLD","Kingdom of the Netherlands","Netherlands","Amsterdam",17590000,41850.0,"Europe","Western Europe","Dutch","Dutch","EUR","Euro",52.5,5.75,"Europe",28.1,2019,"🇳🇱"),
+        ("NG","NGA","Federal Republic of Nigeria","Nigeria","Abuja",218000000,923768.0,"Africa","Western Africa","English","English","NGN","Nigerian Naira",10.0,8.0,"Africa",35.1,2018,"🇳🇬"),
+        ("NO","NOR","Kingdom of Norway","Norway","Oslo",5408000,323802.0,"Europe","Northern Europe","Norwegian","Norwegian","NOK","Norwegian Krone",62.0,10.0,"Europe",27.6,2019,"🇳🇴"),
+        ("PL","POL","Republic of Poland","Poland","Warsaw",37750000,312679.0,"Europe","Central Europe","Polish","Polish","PLN","Polish Zloty",52.0,20.0,"Europe",30.2,2019,"🇵🇱"),
+        ("PT","PRT","Portuguese Republic","Portugal","Lisbon",10310000,92090.0,"Europe","Southern Europe","Portuguese","Portuguese","EUR","Euro",39.5,-8.0,"Europe",33.5,2019,"🇵🇹"),
+        ("SG","SGP","Republic of Singapore","Singapore","Singapore",5454000,710.0,"Asia","South-Eastern Asia","English","English, Malay, Mandarin, Tamil","SGD","Singapore Dollar",1.37,103.8,"Asia",None,None,"🇸🇬"),
+        ("ZA","ZAF","Republic of South Africa","South Africa","Pretoria",60000000,1221037.0,"Africa","Southern Africa","Zulu","Zulu, Xhosa, Afrikaans, English","ZAR","South African Rand",-29.0,24.0,"Africa",63.0,2014,"🇿🇦"),
+        ("KR","KOR","Republic of Korea","South Korea","Seoul",51780000,100210.0,"Asia","Eastern Asia","Korean","Korean","KRW","South Korean Won",37.0,127.5,"Asia",31.4,2019,"🇰🇷"),
+        ("ES","ESP","Kingdom of Spain","Spain","Madrid",47350000,505992.0,"Europe","Southern Europe","Spanish","Spanish","EUR","Euro",40.0,-4.0,"Europe",34.7,2019,"🇪🇸"),
+        ("SE","SWE","Kingdom of Sweden","Sweden","Stockholm",10350000,450295.0,"Europe","Northern Europe","Swedish","Swedish","SEK","Swedish Krona",62.0,15.0,"Europe",30.0,2019,"🇸🇪"),
+        ("AE","ARE","United Arab Emirates","United Arab Emirates","Abu Dhabi",9890000,83600.0,"Asia","Western Asia","Arabic","Arabic","AED","UAE Dirham",24.0,54.0,"Asia",26.0,2018,"🇦🇪"),
+        ("GB","GBR","United Kingdom of Great Britain and Northern Ireland","United Kingdom","London",67330000,242495.0,"Europe","Northern Europe","English","English","GBP","Pound Sterling",54.0,-2.0,"Europe",35.1,2019,"🇬🇧"),
+        ("US","USA","United States of America","United States","Washington, D.C.",331900000,9833520.0,"Americas","Northern America","English","English","USD","United States Dollar",38.0,-97.0,"North America",41.4,2020,"🇺🇸"),
+    ]
+    fallback_rows = []
+    for row in fallback_countries:
+        fallback_rows.append({
+            "CountryCode2": row[0], "CountryCode3": row[1],
+            "CountryNameOfficial": row[2], "CountryNameCommon": row[3],
+            "Capital": row[4], "Population": row[5], "AreaSqKm": row[6],
+            "RegionWorld": row[7], "SubRegionWorld": row[8],
+            "PrimaryLanguage": row[9], "AllLanguages": row[10],
+            "PrimaryCurrencyCode": row[11], "PrimaryCurrencyName": row[12],
+            "Latitude": row[13], "Longitude": row[14], "Continent": row[15],
+            "GiniIndex": row[16], "GiniYear": row[17], "FlagEmoji": row[18]
+        })
+    schema_countries = StructType([
+        StructField("CountryCode2", StringType(), True),
+        StructField("CountryCode3", StringType(), True),
+        StructField("CountryNameOfficial", StringType(), True),
+        StructField("CountryNameCommon", StringType(), True),
+        StructField("Capital", StringType(), True),
+        StructField("Population", IntegerType(), True),
+        StructField("AreaSqKm", DoubleType(), True),
+        StructField("RegionWorld", StringType(), True),
+        StructField("SubRegionWorld", StringType(), True),
+        StructField("PrimaryLanguage", StringType(), True),
+        StructField("AllLanguages", StringType(), True),
+        StructField("PrimaryCurrencyCode", StringType(), True),
+        StructField("PrimaryCurrencyName", StringType(), True),
+        StructField("Latitude", DoubleType(), True),
+        StructField("Longitude", DoubleType(), True),
+        StructField("Continent", StringType(), True),
+        StructField("GiniIndex", DoubleType(), True),
+        StructField("GiniYear", IntegerType(), True),
+        StructField("FlagEmoji", StringType(), True)
+    ])
+    df_countries = spark.createDataFrame(fallback_rows, schema=schema_countries)
+    df_countries = df_countries.withColumn("_fetched_at", current_timestamp())
+    df_countries = df_countries.withColumn("_source", lit("fallback_static"))
+    df_countries = df_countries.withColumn(
+        "PopulationDensity",
+        when(col("AreaSqKm") > 0,
+             spark_round(col("Population") / col("AreaSqKm"), 2)
+        ).otherwise(lit(None))
+    )
+    df_countries = df_countries.withColumn(
+        "EconomicSizeCategory",
+        when(col("Population") >= 100_000_000, lit("Large"))
+        .when(col("Population") >= 20_000_000, lit("Medium"))
+        .when(col("Population") >= 1_000_000, lit("Small"))
+        .otherwise(lit("Micro"))
+    )
+    df_countries.write.mode("overwrite").format("delta").saveAsTable(web_table("WebCountryIndicators"))
+    print(f"  ✓ WebCountryIndicators (fallback): {df_countries.count()} rows")
 
 # METADATA ********************
 
@@ -566,7 +663,7 @@ try:
         "left"
     ).drop("_match_country")
 
-    geo_enriched.write.mode("overwrite").format("delta").saveAsTable(silver_table("DimGeography"))
+    geo_enriched.write.mode("overwrite").option("overwriteSchema", "true").format("delta").saveAsTable(silver_table("DimGeography"))
     enriched_count = geo_enriched.filter(col("CountryPopulation").isNotNull()).count()
     print(f"  ✓ DimGeography enriched: {geo_enriched.count()} rows "
           f"({enriched_count} matched with indicators)")
@@ -623,7 +720,7 @@ try:
                "_txn_month", "_txn_year")
     )
 
-    df_fin_normalized.write.mode("overwrite").format("delta").saveAsTable(silver_table("FactFinancialTransactions"))
+    df_fin_normalized.write.mode("overwrite").option("overwriteSchema", "true").format("delta").saveAsTable(silver_table("FactFinancialTransactions"))
     multi_curr = df_fin_normalized.filter(col("Currency") != "USD").count()
     print(f"  ✓ FactFinancialTransactions: {df_fin_normalized.count()} rows")
     print(f"    Added: ExchangeRateToUSD, AmountUSD")
@@ -697,7 +794,7 @@ try:
                "_ord_month", "_ord_year", "CustomerCurrency")
     )
 
-    df_orders_norm.write.mode("overwrite").format("delta").saveAsTable(silver_table("FactOrders"))
+    df_orders_norm.write.mode("overwrite").option("overwriteSchema", "true").format("delta").saveAsTable(silver_table("FactOrders"))
     intl = df_orders_norm.filter(col("OrderCurrency") != "USD").count()
     print(f"  ✓ FactOrders: {df_orders_norm.count()} rows")
     print(f"    Added: OrderCurrency, ExchangeRateToUSD, TotalAmountUSD, UnitPriceUSD")

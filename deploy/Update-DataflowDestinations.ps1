@@ -3,7 +3,8 @@
 # Uses global TargetWorkspaceId/TargetLakehouseId parameters and _Target navigation queries
 
 param(
-    [string]$WorkspaceId = "91b2dca3-5729-4e7d-a473-bfeb85c16aa1"
+    [Parameter(Mandatory = $true)]
+    [string]$WorkspaceId
 )
 
 $ErrorActionPreference = "Stop"

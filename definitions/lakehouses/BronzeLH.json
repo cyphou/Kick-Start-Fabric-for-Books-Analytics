@@ -1,4 +1,4 @@
-{
+﻿{
   "displayName": "BronzeLH",
   "type": "Lakehouse",
   "description": "Horizon Books Bronze layer - raw CSV files for Finance, HR, Operations",
@@ -30,25 +30,278 @@
       "Files/Operations/FactInventory.csv",
       "Files/Operations/FactReturns.csv"
     ],
-    "tables": [
-      "DimAccounts",
-      "DimCostCenters",
-      "FactFinancialTransactions",
-      "FactBudget",
-      "DimEmployees",
-      "DimDepartments",
-      "FactPayroll",
-      "FactPerformanceReviews",
-      "FactRecruitment",
-      "DimBooks",
-      "DimAuthors",
-      "DimCustomers",
-      "DimGeography",
-      "DimWarehouses",
-      "FactOrders",
-      "FactInventory",
-      "FactReturns"
-    ]
+    "tables": {
+      "DimAccounts": {
+        "source": "SampleData/Finance/DimAccounts.csv",
+        "columns": {
+          "AccountID":       { "type": "INT",          "nullable": false },
+          "AccountName":     { "type": "VARCHAR(100)", "nullable": false },
+          "AccountType":     { "type": "VARCHAR(20)",  "nullable": false },
+          "AccountCategory": { "type": "VARCHAR(50)",  "nullable": false },
+          "ParentAccountID": { "type": "INT",          "nullable": true },
+          "IsActive":        { "type": "BOOLEAN",      "nullable": true, "default": true }
+        }
+      },
+      "DimCostCenters": {
+        "source": "SampleData/Finance/DimCostCenters.csv",
+        "columns": {
+          "CostCenterID":   { "type": "VARCHAR(10)",  "nullable": false },
+          "CostCenterName": { "type": "VARCHAR(100)", "nullable": false },
+          "Department":     { "type": "VARCHAR(50)",  "nullable": false },
+          "DivisionHead":   { "type": "VARCHAR(100)", "nullable": true }
+        }
+      },
+      "FactFinancialTransactions": {
+        "source": "SampleData/Finance/FactFinancialTransactions.csv",
+        "columns": {
+          "TransactionID":   { "type": "VARCHAR(20)",   "nullable": false },
+          "TransactionDate": { "type": "DATE",          "nullable": false },
+          "AccountID":       { "type": "INT",           "nullable": false },
+          "BookID":          { "type": "VARCHAR(10)",   "nullable": true },
+          "Amount":          { "type": "DECIMAL(12,2)", "nullable": false },
+          "Currency":        { "type": "VARCHAR(5)",    "nullable": true, "default": "USD" },
+          "TransactionType": { "type": "VARCHAR(10)",   "nullable": true },
+          "FiscalYear":      { "type": "VARCHAR(10)",   "nullable": true },
+          "FiscalQuarter":   { "type": "VARCHAR(5)",    "nullable": true },
+          "FiscalMonth":     { "type": "INT",           "nullable": true },
+          "CostCenterID":    { "type": "VARCHAR(10)",   "nullable": true },
+          "Description":     { "type": "VARCHAR(500)",  "nullable": true }
+        }
+      },
+      "FactBudget": {
+        "source": "SampleData/Finance/FactBudget.csv",
+        "columns": {
+          "BudgetID":      { "type": "VARCHAR(20)",   "nullable": false },
+          "FiscalYear":    { "type": "VARCHAR(10)",   "nullable": false },
+          "FiscalQuarter": { "type": "VARCHAR(5)",    "nullable": false },
+          "FiscalMonth":   { "type": "INT",           "nullable": true },
+          "AccountID":     { "type": "INT",           "nullable": false },
+          "CostCenterID":  { "type": "VARCHAR(10)",   "nullable": true },
+          "BudgetAmount":  { "type": "DECIMAL(12,2)", "nullable": true },
+          "ActualAmount":  { "type": "DECIMAL(12,2)", "nullable": true },
+          "Variance":      { "type": "DECIMAL(12,2)", "nullable": true },
+          "VariancePct":   { "type": "DECIMAL(8,2)",  "nullable": true }
+        }
+      },
+      "DimEmployees": {
+        "source": "SampleData/HR/DimEmployees.csv",
+        "columns": {
+          "EmployeeID":     { "type": "VARCHAR(10)",  "nullable": false },
+          "FirstName":      { "type": "VARCHAR(50)",  "nullable": false },
+          "LastName":       { "type": "VARCHAR(50)",  "nullable": false },
+          "Email":          { "type": "VARCHAR(100)", "nullable": true },
+          "HireDate":       { "type": "DATE",         "nullable": true },
+          "DepartmentID":   { "type": "VARCHAR(10)",  "nullable": true },
+          "JobTitle":       { "type": "VARCHAR(100)", "nullable": true },
+          "ManagerID":      { "type": "VARCHAR(10)",  "nullable": true },
+          "EmploymentType": { "type": "VARCHAR(20)",  "nullable": true },
+          "Location":       { "type": "VARCHAR(50)",  "nullable": true },
+          "GeoID":          { "type": "VARCHAR(10)",  "nullable": true },
+          "IsActive":       { "type": "BOOLEAN",      "nullable": true, "default": true }
+        }
+      },
+      "DimDepartments": {
+        "source": "SampleData/HR/DimDepartments.csv",
+        "columns": {
+          "DepartmentID":   { "type": "VARCHAR(10)",   "nullable": false },
+          "DepartmentName": { "type": "VARCHAR(100)",  "nullable": false },
+          "DepartmentHead": { "type": "VARCHAR(100)",  "nullable": true },
+          "HeadCount":      { "type": "INT",           "nullable": true },
+          "AnnualBudget":   { "type": "DECIMAL(12,2)", "nullable": true },
+          "Location":       { "type": "VARCHAR(50)",   "nullable": true }
+        }
+      },
+      "FactPayroll": {
+        "source": "SampleData/HR/FactPayroll.csv",
+        "columns": {
+          "PayrollID":      { "type": "VARCHAR(20)",   "nullable": false },
+          "EmployeeID":     { "type": "VARCHAR(10)",   "nullable": false },
+          "PayPeriodStart": { "type": "DATE",          "nullable": false },
+          "PayPeriodEnd":   { "type": "DATE",          "nullable": false },
+          "BaseSalary":     { "type": "DECIMAL(10,2)", "nullable": true },
+          "Bonus":          { "type": "DECIMAL(10,2)", "nullable": true },
+          "Overtime":       { "type": "DECIMAL(10,2)", "nullable": true },
+          "Deductions":     { "type": "DECIMAL(10,2)", "nullable": true },
+          "NetPay":         { "type": "DECIMAL(10,2)", "nullable": true },
+          "PayDate":        { "type": "DATE",          "nullable": true }
+        }
+      },
+      "FactPerformanceReviews": {
+        "source": "SampleData/HR/FactPerformanceReviews.csv",
+        "columns": {
+          "ReviewID":            { "type": "VARCHAR(20)",  "nullable": false },
+          "EmployeeID":          { "type": "VARCHAR(10)",  "nullable": false },
+          "ReviewDate":          { "type": "DATE",         "nullable": false },
+          "ReviewerID":          { "type": "VARCHAR(10)",  "nullable": true },
+          "PerformanceRating":   { "type": "VARCHAR(30)",  "nullable": true },
+          "GoalsMet":            { "type": "VARCHAR(10)",  "nullable": true },
+          "Strengths":           { "type": "VARCHAR(500)", "nullable": true },
+          "AreasForImprovement": { "type": "VARCHAR(500)", "nullable": true },
+          "OverallScore":        { "type": "DECIMAL(3,1)", "nullable": true }
+        }
+      },
+      "FactRecruitment": {
+        "source": "SampleData/HR/FactRecruitment.csv",
+        "columns": {
+          "RequisitionID":        { "type": "VARCHAR(20)",   "nullable": false },
+          "DepartmentID":         { "type": "VARCHAR(10)",   "nullable": false },
+          "JobTitle":             { "type": "VARCHAR(100)",  "nullable": false },
+          "OpenDate":             { "type": "DATE",          "nullable": false },
+          "CloseDate":            { "type": "DATE",          "nullable": true },
+          "Status":               { "type": "VARCHAR(20)",   "nullable": true },
+          "ApplicationsReceived": { "type": "INT",           "nullable": true },
+          "Interviewed":          { "type": "INT",           "nullable": true },
+          "OffersExtended":       { "type": "INT",           "nullable": true },
+          "OfferAccepted":        { "type": "INT",           "nullable": true },
+          "HiringManagerID":      { "type": "VARCHAR(10)",   "nullable": true },
+          "SalaryRangeMin":       { "type": "DECIMAL(10,2)", "nullable": true },
+          "SalaryRangeMax":       { "type": "DECIMAL(10,2)", "nullable": true },
+          "TimeToFillDays":       { "type": "INT",           "nullable": true }
+        }
+      },
+      "DimBooks": {
+        "source": "SampleData/Operations/DimBooks.csv",
+        "columns": {
+          "BookID":       { "type": "VARCHAR(10)",   "nullable": false },
+          "Title":        { "type": "VARCHAR(200)",  "nullable": false },
+          "AuthorID":     { "type": "VARCHAR(10)",   "nullable": false },
+          "Genre":        { "type": "VARCHAR(50)",   "nullable": true },
+          "SubGenre":     { "type": "VARCHAR(50)",   "nullable": true },
+          "ISBN":         { "type": "VARCHAR(20)",   "nullable": true },
+          "PublishDate":  { "type": "DATE",          "nullable": true },
+          "ListPrice":    { "type": "DECIMAL(10,2)", "nullable": true },
+          "Format":       { "type": "VARCHAR(20)",   "nullable": true },
+          "PageCount":    { "type": "INT",           "nullable": true },
+          "PrintRunSize": { "type": "INT",           "nullable": true },
+          "ImprintName":  { "type": "VARCHAR(50)",   "nullable": true },
+          "Status":       { "type": "VARCHAR(20)",   "nullable": true }
+        }
+      },
+      "DimAuthors": {
+        "source": "SampleData/Operations/DimAuthors.csv",
+        "columns": {
+          "AuthorID":          { "type": "VARCHAR(10)",   "nullable": false },
+          "FirstName":         { "type": "VARCHAR(50)",   "nullable": false },
+          "LastName":          { "type": "VARCHAR(50)",   "nullable": false },
+          "PenName":           { "type": "VARCHAR(100)",  "nullable": true },
+          "AgentName":         { "type": "VARCHAR(100)",  "nullable": true },
+          "AgentCompany":      { "type": "VARCHAR(100)",  "nullable": true },
+          "ContractStartDate": { "type": "DATE",          "nullable": true },
+          "ContractEndDate":   { "type": "DATE",          "nullable": true },
+          "RoyaltyRate":       { "type": "DECIMAL(5,2)",  "nullable": true },
+          "AdvanceAmount":     { "type": "DECIMAL(12,2)", "nullable": true },
+          "Genre":             { "type": "VARCHAR(50)",   "nullable": true },
+          "Nationality":       { "type": "VARCHAR(50)",   "nullable": true },
+          "BookCount":         { "type": "INT",           "nullable": true }
+        }
+      },
+      "DimCustomers": {
+        "source": "SampleData/Operations/DimCustomers.csv",
+        "columns": {
+          "CustomerID":      { "type": "VARCHAR(10)",   "nullable": false },
+          "CustomerName":    { "type": "VARCHAR(100)",  "nullable": false },
+          "CustomerType":    { "type": "VARCHAR(30)",   "nullable": true },
+          "ContactEmail":    { "type": "VARCHAR(100)",  "nullable": true },
+          "City":            { "type": "VARCHAR(50)",   "nullable": true },
+          "State":           { "type": "VARCHAR(10)",   "nullable": true },
+          "Country":         { "type": "VARCHAR(50)",   "nullable": true },
+          "Region":          { "type": "VARCHAR(30)",   "nullable": true },
+          "GeoID":           { "type": "VARCHAR(10)",   "nullable": true },
+          "CreditLimit":     { "type": "DECIMAL(12,2)", "nullable": true },
+          "PaymentTerms":    { "type": "VARCHAR(20)",   "nullable": true },
+          "IsActive":        { "type": "BOOLEAN",       "nullable": true, "default": true },
+          "AccountOpenDate": { "type": "DATE",          "nullable": true }
+        }
+      },
+      "DimGeography": {
+        "source": "SampleData/Operations/DimGeography.csv",
+        "columns": {
+          "GeoID":         { "type": "VARCHAR(10)",   "nullable": false },
+          "City":          { "type": "VARCHAR(100)",  "nullable": false },
+          "StateProvince": { "type": "VARCHAR(100)",  "nullable": true },
+          "Country":       { "type": "VARCHAR(100)",  "nullable": false },
+          "Continent":     { "type": "VARCHAR(50)",   "nullable": true },
+          "Region":        { "type": "VARCHAR(50)",   "nullable": true },
+          "SubRegion":     { "type": "VARCHAR(50)",   "nullable": true },
+          "Latitude":      { "type": "DECIMAL(10,6)", "nullable": true },
+          "Longitude":     { "type": "DECIMAL(10,6)", "nullable": true },
+          "TimeZone":      { "type": "VARCHAR(50)",   "nullable": true },
+          "Currency":      { "type": "VARCHAR(10)",   "nullable": true },
+          "Population":    { "type": "INT",           "nullable": true },
+          "IsCapital":     { "type": "BOOLEAN",       "nullable": true, "default": false }
+        }
+      },
+      "DimWarehouses": {
+        "source": "SampleData/Operations/DimWarehouses.csv",
+        "columns": {
+          "WarehouseID":        { "type": "VARCHAR(10)",   "nullable": false },
+          "WarehouseName":      { "type": "VARCHAR(100)",  "nullable": false },
+          "Address":            { "type": "VARCHAR(200)",  "nullable": true },
+          "City":               { "type": "VARCHAR(50)",   "nullable": true },
+          "State":              { "type": "VARCHAR(10)",   "nullable": true },
+          "Country":            { "type": "VARCHAR(50)",   "nullable": true },
+          "SquareFootage":      { "type": "INT",           "nullable": true },
+          "MaxCapacityUnits":   { "type": "INT",           "nullable": true },
+          "CurrentUtilization": { "type": "INT",           "nullable": true },
+          "ManagerID":          { "type": "VARCHAR(10)",   "nullable": true },
+          "MonthlyRent":        { "type": "DECIMAL(10,2)", "nullable": true },
+          "IsActive":           { "type": "BOOLEAN",       "nullable": true, "default": true }
+        }
+      },
+      "FactOrders": {
+        "source": "SampleData/Operations/FactOrders.csv",
+        "columns": {
+          "OrderID":      { "type": "VARCHAR(20)",   "nullable": false },
+          "OrderDate":    { "type": "DATE",          "nullable": false },
+          "CustomerID":   { "type": "VARCHAR(10)",   "nullable": false },
+          "BookID":       { "type": "VARCHAR(10)",   "nullable": false },
+          "Quantity":     { "type": "INT",           "nullable": true },
+          "UnitPrice":    { "type": "DECIMAL(10,2)", "nullable": true },
+          "Discount":     { "type": "DECIMAL(5,2)",  "nullable": true },
+          "TotalAmount":  { "type": "DECIMAL(12,2)", "nullable": true },
+          "OrderStatus":  { "type": "VARCHAR(20)",   "nullable": true },
+          "ShipDate":     { "type": "DATE",          "nullable": true },
+          "DeliveryDate": { "type": "DATE",          "nullable": true },
+          "WarehouseID":  { "type": "VARCHAR(10)",   "nullable": true },
+          "SalesRepID":   { "type": "VARCHAR(10)",   "nullable": true },
+          "Channel":      { "type": "VARCHAR(30)",   "nullable": true }
+        }
+      },
+      "FactInventory": {
+        "source": "SampleData/Operations/FactInventory.csv",
+        "columns": {
+          "InventoryID":         { "type": "VARCHAR(20)",   "nullable": false },
+          "BookID":              { "type": "VARCHAR(10)",   "nullable": false },
+          "WarehouseID":         { "type": "VARCHAR(10)",   "nullable": false },
+          "SnapshotDate":        { "type": "DATE",          "nullable": false },
+          "QuantityOnHand":      { "type": "INT",           "nullable": true },
+          "QuantityReserved":    { "type": "INT",           "nullable": true },
+          "QuantityAvailable":   { "type": "INT",           "nullable": true },
+          "ReorderPoint":        { "type": "INT",           "nullable": true },
+          "ReorderQuantity":     { "type": "INT",           "nullable": true },
+          "UnitCost":            { "type": "DECIMAL(10,2)", "nullable": true },
+          "TotalInventoryValue": { "type": "DECIMAL(12,2)", "nullable": true },
+          "DaysOfSupply":        { "type": "INT",           "nullable": true },
+          "Status":              { "type": "VARCHAR(20)",   "nullable": true }
+        }
+      },
+      "FactReturns": {
+        "source": "SampleData/Operations/FactReturns.csv",
+        "columns": {
+          "ReturnID":      { "type": "VARCHAR(20)",   "nullable": false },
+          "OrderID":       { "type": "VARCHAR(20)",   "nullable": false },
+          "BookID":        { "type": "VARCHAR(10)",   "nullable": false },
+          "CustomerID":    { "type": "VARCHAR(10)",   "nullable": false },
+          "ReturnDate":    { "type": "DATE",          "nullable": false },
+          "Quantity":      { "type": "INT",           "nullable": true },
+          "Reason":        { "type": "VARCHAR(100)",  "nullable": true },
+          "ReturnStatus":  { "type": "VARCHAR(20)",   "nullable": true },
+          "RefundAmount":  { "type": "DECIMAL(10,2)", "nullable": true },
+          "Condition":     { "type": "VARCHAR(20)",   "nullable": true },
+          "RestockStatus": { "type": "VARCHAR(20)",   "nullable": true }
+        }
+      }
+    }
   },
   "tokens": {
     "id": "{{BRONZE_LH_ID}}",

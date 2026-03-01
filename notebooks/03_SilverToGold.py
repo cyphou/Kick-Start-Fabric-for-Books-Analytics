@@ -12,24 +12,7 @@
 # META   "kernel_info": {
 # META     "name": "synapse_pyspark"
 # META   },
-# META   "dependencies": {
-# META     "lakehouse": {
-# META       "default_lakehouse": "70d8979b-18bb-4af6-9e7b-44e7ad96393d",
-# META       "default_lakehouse_name": "GoldLH",
-# META       "default_lakehouse_workspace_id": "91b2dca3-5729-4e7d-a473-bfeb85c16aa1",
-# META       "known_lakehouses": [
-# META         {
-# META           "id": "bc992d2e-8d01-451b-b96d-e7435fcf4c62"
-# META         },
-# META         {
-# META           "id": "f4f99f30-f239-44e9-8f37-0ec19d1458fe"
-# META         },
-# META         {
-# META           "id": "70d8979b-18bb-4af6-9e7b-44e7ad96393d"
-# META         }
-# META       ]
-# META     }
-# META   }
+# META   "dependencies": {}
 # META }
 
 # CELL ********************
@@ -212,7 +195,7 @@ dim_date = date_df.select(
     when(year("FullDate") == year(current_date()), lit(True)).otherwise(lit(False)).alias("IsCurrentYear"),
 )
 
-dim_date.write.mode("overwrite").format("delta").saveAsTable(gold_table("DimDate", "dim"))
+dim_date.write.mode("overwrite").option("overwriteSchema", "true").format("delta").saveAsTable(gold_table("DimDate", "dim"))
 date_count = dim_date.count()
 print(f"  ✓ DimDate generated: {date_count} rows")
 print(f"    Date range: {start_date} to {end_date}")
@@ -238,7 +221,7 @@ try:
         when(col("IsWeekend") | col("IsHoliday"), lit(False)).otherwise(lit(True))
     ).drop("HolidayDate")
 
-    dim_date_enriched.write.mode("overwrite").format("delta").saveAsTable(gold_table("DimDate", "dim"))
+    dim_date_enriched.write.mode("overwrite").option("overwriteSchema", "true").format("delta").saveAsTable(gold_table("DimDate", "dim"))
     holiday_count = dim_date_enriched.filter(col("IsHoliday")).count()
     print(f"  ✓ DimDate enriched with {holiday_count} US public holidays")
     print(f"    Added: HolidayName, IsBusinessDay")
@@ -338,7 +321,7 @@ if df_books is not None and df_orders is not None:
         "AvgOrderQuantity", "TotalUnitsReturned", "TotalRefunds", "ReturnCount"
     ])
 
-    df_books_enriched.write.mode("overwrite").format("delta").saveAsTable(gold_table("DimBooks", "dim"))
+    df_books_enriched.write.mode("overwrite").option("overwriteSchema", "true").format("delta").saveAsTable(gold_table("DimBooks", "dim"))
     print(f"  ✓ DimBooks enriched: {df_books_enriched.count()} rows")
     print(f"    Added: TotalUnitsSold, TotalRevenue, UniqueCustomers, ReturnRate, SalesRank, PerformanceTier")
 else:
@@ -477,7 +460,7 @@ if df_customers is not None and df_orders is not None:
         "UniqueTitles", "AvgOrderValue", "TotalRefunds", "ReturnCount"
     ])
 
-    df_customers_enriched.write.mode("overwrite").format("delta").saveAsTable(gold_table("DimCustomers", "dim"))
+    df_customers_enriched.write.mode("overwrite").option("overwriteSchema", "true").format("delta").saveAsTable(gold_table("DimCustomers", "dim"))
     print(f"  ✓ DimCustomers enriched: {df_customers_enriched.count()} rows")
     print(f"    Added: LifetimeRevenue, NetRevenue, ValueSegment, ActivityStatus, ReturnRate")
     print(f"    Added: R_Score, F_Score, M_Score, RFM_Score, RFM_Segment")
@@ -575,7 +558,7 @@ if df_employees is not None:
         )
     )
 
-    df_emp_enriched.write.mode("overwrite").format("delta").saveAsTable(gold_table("DimEmployees", "dim"))
+    df_emp_enriched.write.mode("overwrite").option("overwriteSchema", "true").format("delta").saveAsTable(gold_table("DimEmployees", "dim"))
     print(f"  ✓ DimEmployees enriched: {df_emp_enriched.count()} rows")
     print(f"    Added: TotalBasePay, BonusRatio, AvgOverallScore, PerformanceTier, TenureYears, TenureBand")
 else:
@@ -645,7 +628,7 @@ if df_orders is not None:
         .drop("PrevMonthRevenue")
     )
 
-    monthly_sales.write.mode("overwrite").format("delta").saveAsTable(gold_table("FactMonthlySalesSummary", "fact"))
+    monthly_sales.write.mode("overwrite").option("overwriteSchema", "true").format("delta").saveAsTable(gold_table("FactMonthlySalesSummary", "fact"))
     print(f"  ✓ FactMonthlySalesSummary: {monthly_sales.count()} rows")
     print(f"    Grain: Month × Channel × Book")
     print(f"    Includes: MoM growth, fulfillment rate, cancellation rate")
@@ -713,7 +696,7 @@ if df_inventory is not None:
         .drop("PrevQuantityOnHand", "PrevDaysOfSupply")
     )
 
-    df_inv_enriched.write.mode("overwrite").format("delta").saveAsTable(gold_table("FactInventory", "fact"))
+    df_inv_enriched.write.mode("overwrite").option("overwriteSchema", "true").format("delta").saveAsTable(gold_table("FactInventory", "fact"))
     print(f"  ✓ FactInventory enriched: {df_inv_enriched.count()} rows")
     print(f"    Added: QuantityChange, SupplyTrend, StockRisk, TurnoverIndicator")
 else:
@@ -737,8 +720,20 @@ print("  Enriching FactOrders with denormalized context")
 print("="*60)
 
 df_orders = dfs.get("FactOrders")
-df_books = spark.table(gold_table("DimBooks", "dim"))  # Read enriched version
-df_customers = spark.table(gold_table("DimCustomers", "dim"))  # Read enriched version
+
+if df_orders is not None:
+    # Read enriched dimensions from Gold (written by Cells 3 & 4)
+    try:
+        df_books = spark.table(gold_table("DimBooks", "dim"))
+        df_customers = spark.table(gold_table("DimCustomers", "dim"))
+    except Exception as e:
+        print(f"  ⚠ Could not read Gold dimension tables: {e}")
+        print("    Falling back to Silver dimensions")
+        df_books = dfs.get("DimBooks")
+        df_customers = dfs.get("DimCustomers")
+        if df_books is None or df_customers is None:
+            print("  ⚠ FactOrders enrichment skipped (missing DimBooks/DimCustomers)")
+            df_orders = None  # signal to skip
 
 if df_orders is not None:
     # Add book genre and imprint for filtering
@@ -751,21 +746,6 @@ if df_orders is not None:
     )
 
     # Add customer segment for analysis
-    customer_context = df_customers.select(
-        col("CustomerID"),
-        col("CustomerType"),
-        col("Region").alias("CustomerRegion"),
-        col("Country").alias("CustomerCountry")
-    )
-    # Only add enrichments if those columns exist
-    try:
-        customer_context = customer_context.withColumn(
-            "ValueSegment",
-            df_customers.select("ValueSegment").columns  # Check existence
-        )
-    except:
-        pass
-
     if "ValueSegment" in df_customers.columns:
         customer_context = df_customers.select(
             col("CustomerID"),
@@ -773,6 +753,13 @@ if df_orders is not None:
             col("Region").alias("CustomerRegion"),
             col("Country").alias("CustomerCountry"),
             col("ValueSegment").alias("CustomerValueSegment")
+        )
+    else:
+        customer_context = df_customers.select(
+            col("CustomerID"),
+            col("CustomerType"),
+            col("Region").alias("CustomerRegion"),
+            col("Country").alias("CustomerCountry")
         )
 
     df_orders_enriched = (df_orders
@@ -800,7 +787,7 @@ if df_orders is not None:
         "IsRepeatOrder", when(col("CustomerOrderSeq") > 1, lit(True)).otherwise(lit(False))
     )
 
-    df_orders_enriched.write.mode("overwrite").format("delta").saveAsTable(gold_table("FactOrders", "fact"))
+    df_orders_enriched.write.mode("overwrite").option("overwriteSchema", "true").format("delta").saveAsTable(gold_table("FactOrders", "fact"))
     print(f"  ✓ FactOrders enriched: {df_orders_enriched.count()} rows")
     print(f"    Added: BookGenre, BookImprint, CustomerRegion, CustomerRunningTotal, IsRepeatOrder")
 else:
@@ -859,11 +846,15 @@ if df_fin is not None and df_accounts is not None:
         when(col("Amount") < 0, col("Amount") * -1).otherwise(col("Amount"))
     )
 
-    df_fin_enriched.write.mode("overwrite").format("delta").saveAsTable(gold_table("FactFinancialTransactions", "fact"))
+    df_fin_enriched.write.mode("overwrite").option("overwriteSchema", "true").format("delta").saveAsTable(gold_table("FactFinancialTransactions", "fact"))
     print(f"  ✓ FactFinancialTransactions enriched: {df_fin_enriched.count()} rows")
     print(f"    Added: PLCategory, PLSubCategory, YTD_Amount, QTD_Amount, AbsAmount")
+elif df_fin is not None:
+    # Fallback: write unenriched table so Gold layer is always complete
+    df_fin.write.mode("overwrite").option("overwriteSchema", "true").format("delta").saveAsTable(gold_table("FactFinancialTransactions", "fact"))
+    print(f"  ⚠ DimAccounts not available — wrote unenriched FactFinancialTransactions: {df_fin.count()} rows")
 else:
-    print("  ⚠ FactFinancialTransactions or DimAccounts not available, skipping")
+    print("  ⚠ FactFinancialTransactions not available in Silver, skipping")
 
 # METADATA ********************
 
@@ -892,7 +883,7 @@ passthrough_dims = [
 for tbl in passthrough_dims:
     df = dfs.get(tbl)
     if df is not None:
-        df.write.mode("overwrite").format("delta").saveAsTable(gold_table(tbl, "dim"))
+        df.write.mode("overwrite").option("overwriteSchema", "true").format("delta").saveAsTable(gold_table(tbl, "dim"))
         print(f"  ✓ {gold_table(tbl, 'dim'):40s} {df.count():>8,} rows  (pass-through)")
     else:
         print(f"  ⚠ {tbl} not available in Silver, skipping")
@@ -905,7 +896,7 @@ passthrough_facts = [
 for tbl in passthrough_facts:
     df = dfs.get(tbl)
     if df is not None:
-        df.write.mode("overwrite").format("delta").saveAsTable(gold_table(tbl, "fact"))
+        df.write.mode("overwrite").option("overwriteSchema", "true").format("delta").saveAsTable(gold_table(tbl, "fact"))
         print(f"  ✓ {gold_table(tbl, 'fact'):40s} {df.count():>8,} rows  (pass-through)")
     else:
         print(f"  ⚠ {tbl} not available in Silver, skipping")
@@ -918,13 +909,48 @@ web_tables = [
 for tbl in web_tables:
     try:
         df = read_silver(tbl)  # reads from SilverLH.web.<tbl>
-        df.write.mode("overwrite").format("delta").saveAsTable(gold_table(tbl, "dim"))
+        df.write.mode("overwrite").option("overwriteSchema", "true").format("delta").saveAsTable(gold_table(tbl, "dim"))
         print(f"  ✓ {gold_table(tbl, 'dim'):40s} {df.count():>8,} rows  (web enrichment)")
     except Exception as e:
         print(f"  ⚠ {tbl} not available in Silver web schema: {e}")
 
 print(f"\n  Pass-through complete: {len(passthrough_dims)} dims, "
       f"{len(passthrough_facts)} facts, {len(web_tables)} web tables")
+
+# ── Safety net: ensure all semantic-model tables exist in Gold ──
+# The Power BI DirectLake model expects these tables; if any upstream step
+# failed we create an empty stub so the report loads without errors.
+_semantic_model_tables = {
+    "dim": ["DimDate", "DimAccounts", "DimCostCenters", "DimBooks",
+            "DimAuthors", "DimGeography", "DimCustomers", "DimEmployees",
+            "DimDepartments", "DimWarehouses"],
+    "fact": ["FactFinancialTransactions", "FactBudget", "FactOrders",
+             "FactInventory", "FactReturns", "FactPayroll",
+             "FactPerformanceReviews", "FactRecruitment"],
+}
+
+_stub_count = 0
+for _schema, _tables in _semantic_model_tables.items():
+    for _tbl in _tables:
+        _full = gold_table(_tbl, _schema)
+        try:
+            spark.table(_full)  # exists — nothing to do
+        except Exception:
+            # Table missing — create empty stub from Silver schema if available
+            _src = dfs.get(_tbl)
+            if _src is not None:
+                _src.limit(0).write.mode("overwrite").format("delta").option(
+                    "overwriteSchema", "true"
+                ).saveAsTable(_full)
+                print(f"  ⚠ Created empty stub: {_full} (upstream data unavailable)")
+            else:
+                # No Silver schema available — create a minimal 1-column table
+                spark.sql(f"CREATE TABLE IF NOT EXISTS {_full} (_placeholder STRING)")
+                print(f"  ⚠ Created placeholder table: {_full} (no Silver source)")
+            _stub_count += 1
+
+if _stub_count > 0:
+    print(f"\n  ⚠ {_stub_count} stub table(s) created — re-run the full pipeline to populate them")
 
 # METADATA ********************
 
@@ -989,7 +1015,7 @@ try:
         (year("CohortMonth") * 10000 + month("CohortMonth") * 100 + 1).cast(IntegerType())
     )
 
-    cohort_analysis.write.mode("overwrite").format("delta").saveAsTable(gold_table("GoldCohortAnalysis", "analytics"))
+    cohort_analysis.write.mode("overwrite").option("overwriteSchema", "true").format("delta").saveAsTable(gold_table("GoldCohortAnalysis", "analytics"))
     print(f"  ✓ GoldCohortAnalysis: {cohort_analysis.count()} rows")
     print(f"    Grain: CohortMonth × CohortIndex")
     print(f"    Includes: RetentionRate, CohortRevenue, AvgOrderValue")
@@ -1069,7 +1095,7 @@ try:
         )
     )
 
-    daily_anomalies.write.mode("overwrite").format("delta").saveAsTable(gold_table("GoldRevenueAnomalies", "analytics"))
+    daily_anomalies.write.mode("overwrite").option("overwriteSchema", "true").format("delta").saveAsTable(gold_table("GoldRevenueAnomalies", "analytics"))
     anomaly_count = daily_anomalies.filter(col("AnomalyFlag") != "Normal").count()
     print(f"  ✓ GoldRevenueAnomalies: {daily_anomalies.count()} rows")
     print(f"    Anomalies detected: {anomaly_count}")
@@ -1185,7 +1211,7 @@ try:
         .orderBy(col("SharedCustomers").desc())
     )
 
-    co_purchase_enriched.write.mode("overwrite").format("delta").saveAsTable(gold_table("GoldBookCoPurchase", "analytics"))
+    co_purchase_enriched.write.mode("overwrite").option("overwriteSchema", "true").format("delta").saveAsTable(gold_table("GoldBookCoPurchase", "analytics"))
     print(f"  ✓ GoldBookCoPurchase: {co_purchase_enriched.count()} pairs")
     cross_genre = co_purchase_enriched.filter(col("IsCrossGenre")).count()
     print(f"    Cross-genre pairs: {cross_genre}")
@@ -1301,21 +1327,24 @@ try:
         col("OrderMonth").alias("LastActualMonth")
     )
 
-    # Create forecast months
+    # Create forecast months — dynamically offset from last actual month
     from pyspark.sql.functions import lit as spark_lit
+    from dateutil.relativedelta import relativedelta
     forecast_rows = []
     channels_data = last_month_data.collect()
     for ch in channels_data:
-        base = float(ch["BaseForecast"]) if ch["BaseForecast"] else 0
-        growth = float(ch["AvgGrowth3m"]) if ch["AvgGrowth3m"] else 0
+        base = float(ch["BaseForecast"]) if ch["BaseForecast"] else 0.0
+        growth = float(ch["AvgGrowth3m"]) if ch["AvgGrowth3m"] else 0.0
+        last_month = ch["LastActualMonth"]  # java.sql.Date / datetime.date
         for offset in range(1, 4):
+            fc_date = last_month + relativedelta(months=offset)
             projected = base * ((1 + growth) ** offset)
             forecast_rows.append((
                 ch["Channel"],
-                f"2025-{offset:02d}-01",
-                round(projected, 2),
-                round(base, 2),
-                round(growth, 4),
+                fc_date.strftime("%Y-%m-01"),
+                float(round(projected, 2)),
+                float(round(base, 2)),
+                float(round(growth, 4)),
                 offset,
                 "Forecast"
             ))
@@ -1349,12 +1378,15 @@ try:
         )
 
         df_combined = actuals_for_union.unionByName(df_forecast)
-        df_combined.write.mode("overwrite").format("delta").saveAsTable(gold_table("GoldRevenueForecast", "analytics"))
+        df_combined.write.mode("overwrite").option("overwriteSchema", "true").format("delta").saveAsTable(gold_table("GoldRevenueForecast", "analytics"))
         fc_count = df_forecast.count()
         print(f"  ✓ GoldRevenueForecast: {df_combined.count()} rows "
               f"({df_combined.count() - fc_count} actuals + {fc_count} forecasts)")
         print(f"    Method: Weighted Moving Average + avg 3-month growth trend")
-        print(f"    Forecast horizon: Jan-Mar 2025")
+        # Determine forecast range label from actual data
+        fc_dates = [r[1] for r in forecast_rows]
+        fc_label = f"{min(fc_dates)} to {max(fc_dates)}" if fc_dates else "N/A"
+        print(f"    Forecast horizon: {fc_label}")
     else:
         print("  ⚠ No data available for forecasting")
 except Exception as e:

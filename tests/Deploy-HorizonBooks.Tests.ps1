@@ -670,6 +670,184 @@ Describe "Definition File Validation" -Tag "Definition" {
 }
 
 # ============================================================================
+# 4b. LAKEHOUSE SCHEMA VALIDATION  -  Column contract tests
+# ============================================================================
+Describe "Lakehouse Schema Contracts" -Tag "Unit", "Definition" {
+
+    BeforeAll {
+        $lhDir  = Join-Path $defDir "lakehouses"
+        $bronze = Get-Content (Join-Path $lhDir "BronzeLH.json") -Raw | ConvertFrom-Json
+        $silver = Get-Content (Join-Path $lhDir "SilverLH.json") -Raw | ConvertFrom-Json
+        $gold   = Get-Content (Join-Path $lhDir "GoldLH.json") -Raw | ConvertFrom-Json
+    }
+
+    Context "Bronze Schema Has Column Definitions" {
+        It "BronzeLH.json expectedContent.tables is an object, not an array" {
+            $bronze.expectedContent.tables | Should -BeOfType [PSCustomObject]
+        }
+        It "Every Bronze table has a columns property" {
+            $tableNames = $bronze.expectedContent.tables.PSObject.Properties.Name
+            foreach ($t in $tableNames) {
+                $bronze.expectedContent.tables.$t.columns | Should -Not -BeNullOrEmpty -Because "$t should have columns defined"
+            }
+        }
+        It "Bronze has exactly 17 tables" {
+            $bronze.expectedContent.tables.PSObject.Properties.Name.Count | Should -Be 17
+        }
+    }
+
+    Context "Silver Schema Has Column Definitions" {
+        It "SilverLH.json expectedTables is an object" {
+            $silver.expectedTables | Should -BeOfType [PSCustomObject]
+        }
+        It "Silver has 4 domain schemas (finance, hr, operations, web)" {
+            $schemas = $silver.expectedTables.PSObject.Properties.Name | Sort-Object
+            $schemas | Should -Be @("finance", "hr", "operations", "web")
+        }
+        It "Every Silver table has a columns property" {
+            foreach ($schema in $silver.expectedTables.PSObject.Properties.Name) {
+                $tables = $silver.expectedTables.$schema.PSObject.Properties.Name
+                foreach ($t in $tables) {
+                    $silver.expectedTables.$schema.$t.columns | Should -Not -BeNullOrEmpty -Because "$schema.$t should have columns defined"
+                }
+            }
+        }
+        It "Silver has at least 21 tables total" {
+            $count = 0
+            foreach ($schema in $silver.expectedTables.PSObject.Properties.Name) {
+                $count += $silver.expectedTables.$schema.PSObject.Properties.Name.Count
+            }
+            $count | Should -BeGreaterOrEqual 21
+        }
+    }
+
+    Context "Gold Schema Has Column Definitions" {
+        It "GoldLH.json expectedTables is an object" {
+            $gold.expectedTables | Should -BeOfType [PSCustomObject]
+        }
+        It "Gold has 3 schemas (dim, fact, analytics)" {
+            $schemas = $gold.expectedTables.PSObject.Properties.Name | Sort-Object
+            $schemas | Should -Be @("analytics", "dim", "fact")
+        }
+        It "Every Gold table has a columns property" {
+            foreach ($schema in $gold.expectedTables.PSObject.Properties.Name) {
+                $tables = $gold.expectedTables.$schema.PSObject.Properties.Name
+                foreach ($t in $tables) {
+                    $gold.expectedTables.$schema.$t.columns | Should -Not -BeNullOrEmpty -Because "$schema.$t should have columns defined"
+                }
+            }
+        }
+        It "Gold dim schema has at least 14 tables" {
+            $gold.expectedTables.dim.PSObject.Properties.Name.Count | Should -BeGreaterOrEqual 14
+        }
+        It "Gold fact schema has at least 9 tables" {
+            $gold.expectedTables.fact.PSObject.Properties.Name.Count | Should -BeGreaterOrEqual 9
+        }
+        It "Gold analytics schema has 4 generated tables" {
+            $gold.expectedTables.analytics.PSObject.Properties.Name.Count | Should -Be 4
+        }
+    }
+
+    Context "Bronze CSV Headers Match Lakehouse Column Definitions" {
+        $csvMapping = @(
+            @{ Domain = "Finance";    File = "DimAccounts.csv";              Table = "DimAccounts" },
+            @{ Domain = "Finance";    File = "DimCostCenters.csv";           Table = "DimCostCenters" },
+            @{ Domain = "Finance";    File = "FactBudget.csv";               Table = "FactBudget" },
+            @{ Domain = "Finance";    File = "FactFinancialTransactions.csv"; Table = "FactFinancialTransactions" },
+            @{ Domain = "HR";         File = "DimDepartments.csv";           Table = "DimDepartments" },
+            @{ Domain = "HR";         File = "DimEmployees.csv";             Table = "DimEmployees" },
+            @{ Domain = "HR";         File = "FactPayroll.csv";              Table = "FactPayroll" },
+            @{ Domain = "HR";         File = "FactPerformanceReviews.csv";   Table = "FactPerformanceReviews" },
+            @{ Domain = "HR";         File = "FactRecruitment.csv";          Table = "FactRecruitment" },
+            @{ Domain = "Operations"; File = "DimAuthors.csv";               Table = "DimAuthors" },
+            @{ Domain = "Operations"; File = "DimBooks.csv";                 Table = "DimBooks" },
+            @{ Domain = "Operations"; File = "DimCustomers.csv";             Table = "DimCustomers" },
+            @{ Domain = "Operations"; File = "DimGeography.csv";             Table = "DimGeography" },
+            @{ Domain = "Operations"; File = "DimWarehouses.csv";            Table = "DimWarehouses" },
+            @{ Domain = "Operations"; File = "FactInventory.csv";            Table = "FactInventory" },
+            @{ Domain = "Operations"; File = "FactOrders.csv";               Table = "FactOrders" },
+            @{ Domain = "Operations"; File = "FactReturns.csv";              Table = "FactReturns" }
+        )
+        It "<Domain>/<File> headers are subset of BronzeLH.<Table> columns" -ForEach $csvMapping {
+            $csvPath   = Join-Path $dataDir "$Domain\$File"
+            $header    = (Get-Content $csvPath -First 1) -split ','
+            $colNames  = $bronze.expectedContent.tables.$Table.columns.PSObject.Properties.Name
+            foreach ($h in $header) {
+                $h.Trim() | Should -BeIn $colNames -Because "CSV header '$($h.Trim())' should be defined in BronzeLH.$Table.columns"
+            }
+        }
+    }
+
+    Context "Column Type Format Validation" {
+        It "All column types use recognized SQL type patterns" {
+            $validTypes = '^(INT|BIGINT|SMALLINT|TINYINT|BOOLEAN|DATE|TIMESTAMP|DOUBLE|FLOAT|VARCHAR\(\d+\)|DECIMAL\(\d+,\d+\))$'
+            # Check Bronze
+            foreach ($t in $bronze.expectedContent.tables.PSObject.Properties.Name) {
+                foreach ($c in $bronze.expectedContent.tables.$t.columns.PSObject.Properties.Name) {
+                    $type = $bronze.expectedContent.tables.$t.columns.$c.type
+                    $type | Should -Match $validTypes -Because "Bronze.$t.$c type '$type' should be a valid SQL type"
+                }
+            }
+        }
+        It "All column nullable values are boolean" {
+            foreach ($t in $bronze.expectedContent.tables.PSObject.Properties.Name) {
+                foreach ($c in $bronze.expectedContent.tables.$t.columns.PSObject.Properties.Name) {
+                    $nullable = $bronze.expectedContent.tables.$t.columns.$c.nullable
+                    $nullable | Should -BeOfType [bool] -Because "Bronze.$t.$c.nullable should be boolean"
+                }
+            }
+        }
+    }
+
+    Context "Gold Generated Tables Have Tags" {
+        $generated = @("DimDate", "FactMonthlySalesSummary", "GoldCohortAnalysis", "GoldRevenueAnomalies", "GoldBookCoPurchase", "GoldRevenueForecast")
+        It "<_> is marked as generated" -ForEach $generated {
+            $found = $false
+            foreach ($schema in $gold.expectedTables.PSObject.Properties.Name) {
+                if ($gold.expectedTables.$schema.PSObject.Properties.Name -contains $_) {
+                    $gold.expectedTables.$schema.$_.generated | Should -Be $true -Because "$_ should be flagged as generated"
+                    $found = $true
+                }
+            }
+            $found | Should -Be $true -Because "$_ should exist in Gold schema"
+        }
+    }
+
+    Context "Gold Enriched Tables Have Computed Columns" {
+        It "DimBooks has computed 'TotalRevenue' column" {
+            $gold.expectedTables.dim.DimBooks.columns.TotalRevenue.computed | Should -Not -BeNullOrEmpty
+        }
+        It "DimCustomers has computed 'RFM_Segment' column" {
+            $gold.expectedTables.dim.DimCustomers.columns.RFM_Segment.computed | Should -Not -BeNullOrEmpty
+        }
+        It "DimEmployees has computed 'TenureBand' column" {
+            $gold.expectedTables.dim.DimEmployees.columns.TenureBand.computed | Should -Not -BeNullOrEmpty
+        }
+        It "FactOrders has computed 'IsRepeatOrder' column" {
+            $gold.expectedTables.fact.FactOrders.columns.IsRepeatOrder.computed | Should -Not -BeNullOrEmpty
+        }
+    }
+
+    Context "Views File Reference" {
+        It "GoldLH.json references CreateViews.sql" {
+            $gold.views | Should -Be "Lakehouse/CreateViews.sql"
+        }
+        It "CreateViews.sql file exists" {
+            Join-Path $projectRoot "Lakehouse\CreateViews.sql" | Should -Exist
+        }
+        It "CreateViews.sql defines 8 views" {
+            $viewContent = Get-Content (Join-Path $projectRoot "Lakehouse\CreateViews.sql") -Raw
+            $viewCount   = ([regex]::Matches($viewContent, 'CREATE OR REPLACE VIEW')).Count
+            $viewCount | Should -Be 8
+        }
+        It "CreateTables.sql no longer contains view definitions" {
+            $ddl = Get-Content (Join-Path $projectRoot "Lakehouse\CreateTables.sql") -Raw
+            $ddl | Should -Not -Match 'CREATE OR REPLACE VIEW'
+        }
+    }
+}
+
+# ============================================================================
 # 5. DATA QUALITY TESTS  -  CSV sample data validation
 # ============================================================================
 Describe "Sample Data Quality" -Tag "DataQuality" {

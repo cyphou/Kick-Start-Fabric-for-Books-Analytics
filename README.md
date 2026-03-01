@@ -98,6 +98,9 @@ Romance) and Non-Fiction (Tech, Lifestyle, Health, Education).
 │  │  Deploy-DataAgent.ps1          → Data Agent creation             │     │
 │  │  Deploy-PowerBI.ps1            → Semantic Model + Report deploy  │     │
 │  │  Validate-Deployment.ps1       → Post-deploy validation          │     │
+│  │  Upload-SampleData.ps1         → Standalone CSV upload to Bronze │     │
+│  │  Redeploy-Notebooks.ps1        → Re-deploy notebooks only        │     │
+│  │  Deploy-Diagnostic.ps1         → Diagnostic notebook deploy      │     │
 │  │  HorizonBooks_TaskFlow.json    → Fabric workspace task flow      │     │
 │  │                                                                  │     │
 │  │  tests/Deploy-HorizonBooks.Tests.ps1 → Pester test suite         │     │
@@ -219,9 +222,10 @@ The 4-notebook pipeline implements a medallion architecture with web data enrich
 | Notebook | Default LH | Source | Target | Key Operations |
 |---|---|---|---|---|
 | **01_BronzeToSilver** | BronzeLH | 17 CSV files (BronzeLH/Files/) | SilverLH (finance/hr/operations schemas) | Schema enforcement, data quality checks, deduplication, audit columns, dimension/fact-specific transforms |
-| **02_WebEnrichment** | SilverLH | 4 public APIs | SilverLH.web.* + enriched Silver tables | Exchange rates (frankfurter.app), holidays (date.nager.at), country indicators (restcountries.com), book metadata (openlibrary.org) |
-| **03_SilverToGold** | GoldLH | SilverLH tables (cross-LH reads) | GoldLH (dim/fact/analytics schemas) | DimDate with holidays, RFM segmentation, customer cohort analysis, revenue anomaly detection (Z-score), book co-purchasing patterns (market basket), revenue forecasting (EMA) |
-| **04_Forecasting** | GoldLH | GoldLH fact tables | GoldLH (analytics schema) | Holt-Winters time-series forecasting: sales revenue by channel, genre demand, financial P&L, inventory demand, workforce planning (6-month horizon, 95% confidence) |
+| **02_WebEnrichment** | SilverLH | 4 public APIs | SilverLH.web.* + enriched Silver tables | Exchange rates (frankfurter.app), holidays (date.nager.at), country indicators (restcountries.com), book metadata (openlibrary.org). **Static fallbacks** for all APIs ensure pipeline completes even when external services are unavailable. |
+| **03_SilverToGold** | GoldLH | SilverLH tables (cross-LH reads) | GoldLH (dim/fact/analytics schemas) | DimDate with holidays, RFM segmentation, customer cohort analysis, revenue anomaly detection (Z-score), book co-purchasing patterns (market basket), revenue forecasting (EMA). **Safety net** ensures all 18 semantic-model-required tables exist in Gold (creates empty stubs if upstream data is unavailable). |
+| **04_Forecasting** | GoldLH | GoldLH fact tables | GoldLH (analytics schema) | Holt-Winters time-series forecasting: sales revenue by channel, genre demand, financial P&L, inventory demand, workforce planning (6-month horizon, 95% confidence). **MLflow experiment tracking** with parent/child runs per forecast table. |
+| **05_DiagnosticCheck** | GoldLH | All 3 Lakehouses | — (read-only) | Post-deployment diagnostic: verifies all 23 semantic-model tables exist in Gold, 17 Silver source tables, and Bronze CSV files. Reports missing/empty tables for troubleshooting. |
 
 **Web APIs used** (all free, no authentication required):
 - **frankfurter.app** — Monthly exchange rates (16 currencies, FY2024–FY2026)
@@ -234,6 +238,33 @@ The 4-notebook pipeline implements a medallion architecture with web data enrich
 - `GoldRevenueAnomalies` — Daily revenue anomaly flags (30-day rolling Z-score)
 - `GoldBookCoPurchase` — Book pair affinities with Support, Confidence, and Lift metrics
 - `GoldRevenueForecast` — Channel revenue projection using weighted moving averages
+
+### Pipeline Resilience & Observability
+
+The pipeline is designed to be resilient to partial failures and observable via built-in tracking:
+
+**API Fallbacks (NB02):**
+- **frankfurter.app** — Falls back to static exchange rates if the API is unavailable or returns no data
+- **restcountries.com** — Falls back to a built-in dataset covering all 28 Horizon Books countries
+- **date.nager.at** — Continues with empty holiday data if unavailable
+- **openlibrary.org** — Skips book enrichment gracefully on API failure
+
+**Gold Layer Safety Net (NB03):**
+- After all Silver→Gold transforms, NB03 verifies that all 18 semantic-model-required tables (10 dim + 8 fact) exist in Gold
+- Any missing table is created as an empty stub with the correct schema, ensuring the Power BI report always loads without `Invalid object name` errors
+- Stub tables are logged with warnings; re-running the full pipeline populates them with real data
+
+**MLflow Experiment Tracking (NB04):**
+- Fabric's automatic `mlflow.autolog()` is disabled to prevent spurious failed experiment runs
+- A dedicated experiment `HorizonBooks_Forecasting` tracks all forecast runs
+- **Parent run** logs global parameters (horizon, confidence level, min history)
+- **Nested child runs** (one per forecast table) log model-specific parameters, metrics (row count, MAPE, elapsed time), and tags
+- Aggregate metrics are logged to the parent run upon completion
+
+**Diagnostic Notebook (NB05):**
+- Quick post-deployment check that verifies all Gold, Silver, and Bronze tables/files exist
+- Run standalone from the Fabric portal to troubleshoot data pipeline issues
+- Deploy with `deploy/Deploy-Diagnostic.ps1`
 
 ### Option C: PBIP in Power BI Desktop
 
@@ -301,8 +332,17 @@ Follow the detailed guide in `Dataflows/DataflowConfiguration.md`
 
 1. Open the Lakehouse **SQL Endpoint**
 2. Run `Lakehouse/GenerateDateDimension.sql` to create the DimDate table
-3. Run `Lakehouse/CreateTables.sql` (the views section) to create analytics views
-4. Verify all tables have data:
+3. Run `Lakehouse/CreateTables.sql` to create additional tables
+4. Run `Lakehouse/CreateViews.sql` to create 8 analytics views:
+   - `vw_BookSalesPerformance` — Book-level sales metrics
+   - `vw_MonthlyFinancialSummary` — P&L by account/period
+   - `vw_EmployeeCostAnalysis` — Payroll cost by employee/department
+   - `vw_InventoryHealth` — Inventory status with supply alerts
+   - `vw_CustomerOrderSummary` — Customer purchase summary
+   - `vw_ReturnAnalysis` — Return rate by book/customer
+   - `vw_GeographicSalesAnalysis` — Sales by geography
+   - `vw_InternationalSalesByRegion` — Regional international sales
+5. Verify all tables have data:
    ```sql
    SELECT 'DimAccounts' AS TableName, COUNT(*) AS RowCount FROM DimAccounts
    UNION ALL
@@ -380,13 +420,17 @@ FullDemoFabricBookUseCase/
 │   ├── Update-DataflowDestinations.ps1← Re-apply Lakehouse destinations to dataflows
 │   ├── Deploy-DataAgent.ps1           ← Data Agent creation helper
 │   ├── Validate-Deployment.ps1        ← Post-deploy validation checker
+│   ├── Upload-SampleData.ps1          ← Standalone CSV upload to BronzeLH (OneLake DFS)
+│   ├── Redeploy-Notebooks.ps1         ← Re-deploy notebooks without full redeploy
+│   ├── Deploy-Diagnostic.ps1          ← Deploy diagnostic notebook (NB05)
 │   └── HorizonBooks_TaskFlow.json     ← Importable Fabric Task Flow definition
 │
 ├── notebooks/                         ← PySpark Transformation Notebooks
 │   ├── 01_BronzeToSilver.py           ← Bronze→Silver (schema, quality, dedup)
-│   ├── 02_WebEnrichment.py            ← Web data from 4 public APIs (no auth)
-│   ├── 03_SilverToGold.py             ← Silver→Gold (RFM, cohort, anomaly, forecast)
-│   └── 04_Forecasting.py             ← Holt-Winters time-series forecasting
+│   ├── 02_WebEnrichment.py            ← Web data from 4 public APIs (with static fallbacks)
+│   ├── 03_SilverToGold.py             ← Silver→Gold (RFM, cohort, anomaly, forecast + safety net)
+│   ├── 04_Forecasting.py              ← Holt-Winters forecasting + MLflow experiment tracking
+│   └── 05_DiagnosticCheck.py          ← Post-deploy diagnostic (Gold/Silver/Bronze validation)
 │
 ├── tests/                             ← Pester Test Suite
 │   ├── Deploy-HorizonBooks.Tests.ps1  ← Unit + Integration tests
@@ -470,7 +514,8 @@ FullDemoFabricBookUseCase/
 │       └── FactReturns.csv            ← Returns (70 rows)
 │
 ├── Lakehouse/
-│   ├── CreateTables.sql               ← DDL + Views
+│   ├── CreateTables.sql               ← DDL for tables
+│   ├── CreateViews.sql                ← 8 analytics views (sales, finance, inventory, etc.)
 │   └── GenerateDateDimension.sql      ← Date Dimension Generator
 │
 ├── SemanticModel/
@@ -590,7 +635,7 @@ Once deployed, the workspace is organized into **folders** and a **visual task f
 |--------|----------|
 | **01 - Data Storage** | BronzeLH, SilverLH, GoldLH (+ SQL Endpoints), StagingLH, StagingWH |
 | **02 - Data Ingestion** | (Reserved for future connectors) |
-| **03 - Data Transformation** | NB01_BronzeToSilver, NB02_WebEnrichment, NB03_SilverToGold, NB04_Forecasting, HorizonBooks_SparkEnv |
+| **03 - Data Transformation** | NB01_BronzeToSilver, NB02_WebEnrichment, NB03_SilverToGold, NB04_Forecasting, NB05_DiagnosticCheck, HorizonBooks_SparkEnv |
 | **04 - Orchestration** | HorizonBooks Data Pipeline |
 | **05 - Analytics** | HorizonBooksAnalytics Semantic Model |
 | **Root** | 3 Dataflow Gen2 items (cannot be placed in folders — Fabric limitation) |

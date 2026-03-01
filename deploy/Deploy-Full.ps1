@@ -50,6 +50,9 @@
 .PARAMETER SemanticModelName
     Name for the Semantic Model. Defaults to HorizonBooksModel.
 
+.PARAMETER SkipNotebookRun
+    If set, skips running the Bronze-to-Silver notebook (step 4). Deploy-only mode.
+
 .PARAMETER SkipPipelineRun
     If set, creates the pipeline but does not trigger it (deploy-only mode).
 
@@ -92,6 +95,9 @@ param(
 
     [Parameter(Mandatory = $false)]
     [string]$ReportName = "HorizonBooksAnalytics",
+
+    [Parameter(Mandatory = $false)]
+    [switch]$SkipNotebookRun,
 
     [Parameter(Mandatory = $false)]
     [switch]$SkipPipelineRun,
@@ -649,6 +655,7 @@ Write-Host "  Silver Lakehouse: $SilverLakehouseName" -ForegroundColor White
 Write-Host "  Gold Lakehouse  : $GoldLakehouseName" -ForegroundColor White
 Write-Host "  Semantic Model  : $SemanticModelName" -ForegroundColor White
 Write-Host "  Data Folder     : $dataFolder" -ForegroundColor White
+Write-Host "  Notebook Run    : $(if ($SkipNotebookRun) { 'Skipped' } else { 'Yes (auto)' })" -ForegroundColor White
 Write-Host "  Pipeline Run    : $(if ($SkipPipelineRun) { 'Skipped' } else { 'Yes (auto)' })" -ForegroundColor White
 Write-Host "  Data Agent      : $(if ($SkipDataAgent) { 'Skipped' } else { 'Yes' })" -ForegroundColor White
 Write-Host "  Validation      : $(if ($SkipValidation) { 'Skipped' } else { 'Yes' })" -ForegroundColor White
@@ -884,8 +891,49 @@ Measure-Step "3. Deploy Notebooks" {
 # META     }
 # META   }
 "@
-        $depPattern = '# META\s+"dependencies":\s*\{[ \t]*\}'
-        $rawContent = $rawContent -replace $depPattern, $lakehouseMeta.Trim()
+        # Replace dependencies block with new lakehouse metadata.
+        # Handles both empty `"dependencies": {}` and full multi-line blocks.
+        $depPatternSimple = '# META\s+"dependencies":\s*\{[ \t]*\}'
+        if ($rawContent -match $depPatternSimple) {
+            $rawContent = $rawContent -replace $depPatternSimple, $lakehouseMeta.Trim()
+        }
+        else {
+            # Multi-line dependencies: normalize to {} first (brace-counting)
+            $srcLines = $rawContent.Split("`n")
+            $outLines = [System.Collections.Generic.List[string]]::new()
+            $inDeps = $false; $depBrace = 0
+            foreach ($srcLine in $srcLines) {
+                if (-not $inDeps -and $srcLine -match '# META.*"dependencies"') {
+                    $inDeps = $true; $depBrace = 0
+                    foreach ($ch in $srcLine.ToCharArray()) {
+                        if ($ch -eq '{') { $depBrace++ }
+                        if ($ch -eq '}') { $depBrace-- }
+                    }
+                    if ($depBrace -le 0) {
+                        # Was single-line after all — keep it
+                        $outLines.Add($srcLine)
+                        $inDeps = $false
+                    }
+                    else {
+                        # Multi-line — replace with empty one-liner
+                        $outLines.Add('# META   "dependencies": {}')
+                    }
+                    continue
+                }
+                if ($inDeps) {
+                    foreach ($ch in $srcLine.ToCharArray()) {
+                        if ($ch -eq '{') { $depBrace++ }
+                        if ($ch -eq '}') { $depBrace-- }
+                    }
+                    if ($depBrace -le 0) { $inDeps = $false }
+                    continue  # skip multi-line dependency content
+                }
+                $outLines.Add($srcLine)
+            }
+            $rawContent = $outLines -join "`n"
+            # Now inject via the simple pattern
+            $rawContent = $rawContent -replace $depPatternSimple, $lakehouseMeta.Trim()
+        }
         $rawContent = $rawContent -replace "`r`n", "`n"
         $nbBase64   = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($rawContent))
 
@@ -923,6 +971,11 @@ Measure-Step "3. Deploy Notebooks" {
 # ------------------------------------------------------------------
 Measure-Step "4. Run BronzeToSilver" {
     Write-Step "4/12" "Running Notebook 01: Bronze to Silver"
+
+    if ($SkipNotebookRun) {
+        Write-Info "Notebook run skipped (-SkipNotebookRun). Trigger manually from the Fabric portal."
+        return
+    }
 
     $nb01Id = $script:notebookIds["HorizonBooks_01_BronzeToSilver"]
     if (-not $nb01Id) {
@@ -1471,16 +1524,52 @@ Measure-Step "10. Workspace Folders" {
     }
 
     # Helper: move item to folder via POST /items/{id}/move with targetFolderId
+    # Includes retry logic with exponential backoff for 429 throttling
     function Move-ItemToFolder {
         param([string]$ItemId, [string]$ItemName, [string]$FolderId, [string]$FolderName, [string]$WsId, [string]$Token)
-        try {
-            Invoke-RestMethod -Method Post `
-                -Uri "$FabricApiBase/workspaces/$WsId/items/$ItemId/move" `
-                -Headers @{ "Authorization" = "Bearer $Token"; "Content-Type" = "application/json" } `
-                -Body (@{ targetFolderId = $FolderId } | ConvertTo-Json -Depth 3) | Out-Null
-            Write-Info "  Moved $ItemName -> $FolderName/"
+        $maxRetries = 5
+        $retryCount = 0
+        $delay = 5  # initial delay in seconds
+        while ($true) {
+            try {
+                Invoke-RestMethod -Method Post `
+                    -Uri "$FabricApiBase/workspaces/$WsId/items/$ItemId/move" `
+                    -Headers @{ "Authorization" = "Bearer $Token"; "Content-Type" = "application/json" } `
+                    -Body (@{ targetFolderId = $FolderId } | ConvertTo-Json -Depth 3) | Out-Null
+                Write-Info "  Moved $ItemName -> $FolderName/"
+                Start-Sleep -Seconds 2  # Proactive throttle: space out move calls
+                return
+            }
+            catch {
+                $statusCode = $null
+                if ($_.Exception.Response) {
+                    $statusCode = [int]$_.Exception.Response.StatusCode
+                }
+                if ($statusCode -eq 429 -and $retryCount -lt $maxRetries) {
+                    $retryCount++
+                    # Check for Retry-After header
+                    $retryAfter = $delay
+                    if ($_.Exception.Response.Headers) {
+                        $raHeader = $_.Exception.Response.Headers | Where-Object { $_.Key -eq 'Retry-After' } | Select-Object -ExpandProperty Value -First 1
+                        if ($raHeader) {
+                            $parsedRa = 0
+                            if ([int]::TryParse($raHeader, [ref]$parsedRa) -and $parsedRa -gt 0) {
+                                $retryAfter = $parsedRa
+                            }
+                        }
+                    }
+                    Write-Info "  Throttled (429) moving $ItemName — retrying in ${retryAfter}s (attempt $retryCount/$maxRetries)"
+                    Start-Sleep -Seconds $retryAfter
+                    $delay = [Math]::Min($delay * 2, 60)
+                    # Refresh token in case it expired during wait
+                    $Token = Get-FabricToken
+                }
+                else {
+                    Write-Warn "  Could not move $ItemName to $FolderName/ : $($_.Exception.Message)"
+                    return
+                }
+            }
         }
-        catch { Write-Warn "  Could not move $ItemName to $FolderName/ : $($_.Exception.Message)" }
     }
 
     $fabricToken = Get-FabricToken
