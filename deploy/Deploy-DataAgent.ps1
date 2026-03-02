@@ -22,7 +22,10 @@ param(
     [string]$WorkspaceId,
 
     [Parameter(Mandatory = $false)]
-    [string]$AgentName = "HorizonBooks DataAgent"
+    [string]$AgentName = "HorizonBooks DataAgent",
+
+    [Parameter(Mandatory = $false)]
+    [string]$ParentFolderName = "05 - Analytics"
 )
 
 $ErrorActionPreference = "Stop"
@@ -49,12 +52,29 @@ Write-Host ""
 
 $fabricToken = Get-FabricToken
 
+# ── Resolve parent folder ──
+$folderId = $null
+if ($ParentFolderName) {
+    Write-Info "Resolving folder '$ParentFolderName'..."
+    $allItems = (Invoke-RestMethod -Uri "$FabricApiBase/workspaces/$WorkspaceId/items" `
+        -Headers @{Authorization = "Bearer $fabricToken"}).value
+    $folder = $allItems | Where-Object { $_.type -eq "Folder" -and $_.displayName -eq $ParentFolderName } | Select-Object -First 1
+    if ($folder) {
+        $folderId = $folder.id
+        Write-Success "Folder found: $folderId"
+    } else {
+        Write-Warn "Folder '$ParentFolderName' not found – deploying to workspace root."
+    }
+}
+
 # Create Data Agent item
 $agentBody = @{
     displayName = $AgentName
     type        = "DataAgent"
     description = "Natural-language data exploration agent for Horizon Books Publishing & Distribution. Covers Finance (P&L, Budget), HR (Workforce, Payroll, Recruitment), and Operations (Orders, Inventory, Returns) across 15+ international markets."
-} | ConvertTo-Json -Depth 5
+}
+if ($folderId) { $agentBody["folderId"] = $folderId }
+$agentBody = $agentBody | ConvertTo-Json -Depth 5
 
 $agentId = $null
 try {
@@ -108,6 +128,28 @@ catch {
 }
 
 if ($agentId) {
+    # Move to folder if needed
+    if ($ParentFolderName -and -not $folderId) {
+        # Try the known folder IDs
+        $knownFolders = @{
+            "05 - Analytics" = "ad3ca0c1-06db-4653-a3e6-05c20dcc835c"
+        }
+        if ($knownFolders.ContainsKey($ParentFolderName)) {
+            $targetFolder = $knownFolders[$ParentFolderName]
+            Write-Info "Moving Data Agent to folder '$ParentFolderName'..."
+            try {
+                $moveBody = @{ folderId = $targetFolder } | ConvertTo-Json
+                Invoke-WebRequest -Method Post `
+                    -Uri "$FabricApiBase/workspaces/$WorkspaceId/items/$agentId/move" `
+                    -Headers @{Authorization = "Bearer $fabricToken"; "Content-Type" = "application/json"} `
+                    -Body $moveBody -UseBasicParsing -ErrorAction Stop | Out-Null
+                Write-Success "Moved to folder '$ParentFolderName'"
+            } catch {
+                Write-Warn "Could not move to folder: $($_.Exception.Message)"
+            }
+        }
+    }
+
     Write-Host ""
     Write-Host "  Data Agent deployed successfully!" -ForegroundColor Green
     Write-Host "  Next steps:" -ForegroundColor Yellow
