@@ -1,7 +1,7 @@
 table 'Books'
 	lineageTag: 10000004-0001-0001-0001-000000000001
 
-	column BookID
+	column 'Book ID'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: BookID
@@ -17,7 +17,7 @@ table 'Books'
 
 		annotation SummarizationSetBy = Automatic
 
-	column AuthorID
+	column 'Author ID'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: AuthorID
@@ -33,7 +33,7 @@ table 'Books'
 
 		annotation SummarizationSetBy = Automatic
 
-	column SubGenre
+	column 'Sub Genre'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: SubGenre
@@ -49,7 +49,7 @@ table 'Books'
 
 		annotation SummarizationSetBy = Automatic
 
-	column PublishDate
+	column 'Publish Date'
 		dataType: dateTime
 		summarizeBy: none
 		sourceColumn: PublishDate
@@ -57,7 +57,7 @@ table 'Books'
 
 		annotation SummarizationSetBy = Automatic
 
-	column ListPrice
+	column 'List Price'
 		dataType: double
 		summarizeBy: sum
 		sourceColumn: ListPrice
@@ -73,7 +73,7 @@ table 'Books'
 
 		annotation SummarizationSetBy = Automatic
 
-	column PageCount
+	column 'Page Count'
 		dataType: int64
 		summarizeBy: sum
 		sourceColumn: PageCount
@@ -81,7 +81,7 @@ table 'Books'
 
 		annotation SummarizationSetBy = Automatic
 
-	column PrintRunSize
+	column 'Print Run Size'
 		dataType: int64
 		summarizeBy: sum
 		sourceColumn: PrintRunSize
@@ -89,7 +89,7 @@ table 'Books'
 
 		annotation SummarizationSetBy = Automatic
 
-	column ImprintName
+	column 'Imprint Name'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: ImprintName

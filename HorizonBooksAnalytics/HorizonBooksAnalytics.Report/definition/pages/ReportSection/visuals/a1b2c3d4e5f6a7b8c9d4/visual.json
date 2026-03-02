@@ -1,69 +1,69 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.5.0/schema.json",
-  "name": "a1b2c3d4e5f6a7b8c9d4",
-  "position": {
-    "x": 0,
-    "y": 90,
-    "width": 640,
-    "height": 290
-  },
-  "visual": {
-    "visualType": "clusteredColumnChart",
-    "query": {
-      "queryState": {
-        "Category": {
-          "projections": [
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Date"
-                    }
-                  },
-                  "Property": "FiscalQuarter"
-                }
-              },
-              "queryRef": "Date.FiscalQuarter",
-              "active": true
-            }
-          ]
-        },
-        "Y": {
-          "projections": [
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Financial Transactions"
-                    }
-                  },
-                  "Property": "Total Revenue"
-                }
-              },
-              "queryRef": "Financial Transactions.Total Revenue",
-              "active": true
-            }
-          ]
-        }
-      }
-    },
-    "objects": {
-      "title": [
-        {
-          "properties": {
-            "text": {
-              "expr": {
-                "Literal": {
-                  "Value": "'Revenue by Quarter'"
-                }
-              }
-            }
-          }
-        }
-      ]
-    },
-    "drillFilterOtherVisuals": true
-  }
+    "$schema":  "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.5.0/schema.json",
+    "name":  "a1b2c3d4e5f6a7b8c9d4",
+    "position":  {
+                     "x":  10,
+                     "y":  153,
+                     "width":  620,
+                     "height":  270
+                 },
+    "visual":  {
+                   "visualType":  "clusteredColumnChart",
+                   "query":  {
+                                 "queryState":  {
+                                                    "Category":  {
+                                                                     "projections":  [
+                                                                                         {
+                                                                                             "field":  {
+                                                                                                           "Column":  {
+                                                                                                                          "Expression":  {
+                                                                                                                                             "SourceRef":  {
+                                                                                                                                                               "Entity":  "Date"
+                                                                                                                                                           }
+                                                                                                                                         },
+                                                                                                                          "Property":  "Fiscal Quarter"
+                                                                                                                      }
+                                                                                                       },
+                                                                                             "queryRef":  "Date.Fiscal Quarter",
+                                                                                             "active":  true
+                                                                                         }
+                                                                                     ]
+                                                                 },
+                                                    "Y":  {
+                                                              "projections":  [
+                                                                                  {
+                                                                                      "field":  {
+                                                                                                    "Measure":  {
+                                                                                                                    "Expression":  {
+                                                                                                                                       "SourceRef":  {
+                                                                                                                                                         "Entity":  "Financial Transactions"
+                                                                                                                                                     }
+                                                                                                                                   },
+                                                                                                                    "Property":  "Total Revenue"
+                                                                                                                }
+                                                                                                },
+                                                                                      "queryRef":  "Financial Transactions.Total Revenue",
+                                                                                      "active":  true
+                                                                                  }
+                                                                              ]
+                                                          }
+                                                }
+                             },
+                   "objects":  {
+                                   "title":  [
+                                                 {
+                                                     "properties":  {
+                                                                        "text":  {
+                                                                                     "expr":  {
+                                                                                                  "Literal":  {
+                                                                                                                  "Value":  "\u0027Revenue by Quarter\u0027"
+                                                                                                              }
+                                                                                              }
+                                                                                 }
+                                                                    }
+                                                 }
+                                             ]
+                               },
+                   "drillFilterOtherVisuals":  true
+               }
 }

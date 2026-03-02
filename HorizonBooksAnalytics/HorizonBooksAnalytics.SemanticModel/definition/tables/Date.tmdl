@@ -1,7 +1,7 @@
 table 'Date'
 	lineageTag: 10000001-0001-0001-0001-000000000001
 
-	column DateKey
+	column 'Date Key'
 		dataType: int64
 		summarizeBy: none
 		sourceColumn: DateKey
@@ -9,7 +9,7 @@ table 'Date'
 
 		annotation SummarizationSetBy = Automatic
 
-	column FullDate
+	column 'Full Date'
 		dataType: dateTime
 		summarizeBy: none
 		sourceColumn: FullDate
@@ -17,7 +17,7 @@ table 'Date'
 
 		annotation SummarizationSetBy = Automatic
 
-	column DayOfMonth
+	column 'Day of Month'
 		dataType: int64
 		summarizeBy: none
 		sourceColumn: DayOfMonth
@@ -25,7 +25,7 @@ table 'Date'
 
 		annotation SummarizationSetBy = Automatic
 
-	column DayOfWeek
+	column 'Day of Week'
 		dataType: int64
 		summarizeBy: none
 		sourceColumn: DayOfWeek
@@ -33,7 +33,7 @@ table 'Date'
 
 		annotation SummarizationSetBy = Automatic
 
-	column DayName
+	column 'Day Name'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: DayName
@@ -41,7 +41,7 @@ table 'Date'
 
 		annotation SummarizationSetBy = Automatic
 
-	column MonthNumber
+	column 'Month Number'
 		dataType: int64
 		summarizeBy: none
 		sourceColumn: MonthNumber
@@ -49,7 +49,7 @@ table 'Date'
 
 		annotation SummarizationSetBy = Automatic
 
-	column MonthName
+	column 'Month Name'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: MonthName
@@ -65,7 +65,7 @@ table 'Date'
 
 		annotation SummarizationSetBy = Automatic
 
-	column QuarterName
+	column 'Quarter Name'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: QuarterName
@@ -81,7 +81,7 @@ table 'Date'
 
 		annotation SummarizationSetBy = Automatic
 
-	column FiscalYear
+	column 'Fiscal Year'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: FiscalYear
@@ -89,7 +89,7 @@ table 'Date'
 
 		annotation SummarizationSetBy = Automatic
 
-	column FiscalQuarter
+	column 'Fiscal Quarter'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: FiscalQuarter
@@ -97,7 +97,7 @@ table 'Date'
 
 		annotation SummarizationSetBy = Automatic
 
-	column IsWeekend
+	column 'Is Weekend'
 		dataType: boolean
 		summarizeBy: none
 		sourceColumn: IsWeekend
@@ -105,7 +105,7 @@ table 'Date'
 
 		annotation SummarizationSetBy = Automatic
 
-	column IsHoliday
+	column 'Is Holiday'
 		dataType: boolean
 		summarizeBy: none
 		sourceColumn: IsHoliday

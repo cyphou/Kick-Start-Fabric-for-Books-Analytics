@@ -1,0 +1,47 @@
+{
+  "name": "Diagnostic Notebook Deployment",
+  "description": "Deploy the diagnostic check notebook (NB05) that validates data quality, table existence, and pipeline health across all 3 Lakehouses in the Medallion Architecture.",
+  "tasks": [
+    {
+      "id": "task-01",
+      "name": "Resolve Lakehouse IDs",
+      "description": "Look up BronzeLH, SilverLH, and GoldLH Lakehouse IDs from workspace items via Fabric REST API.",
+      "taskType": "General"
+    },
+    {
+      "id": "task-02",
+      "name": "Read Notebook Source",
+      "description": "Read 05_DiagnosticCheck.py source file from the notebooks/ folder in the project repository.",
+      "taskType": "General"
+    },
+    {
+      "id": "task-03",
+      "name": "Inject Lakehouse Metadata",
+      "description": "Inject META dependencies block into notebook source with GoldLH as default Lakehouse and all 3 lakehouses (BronzeLH, SilverLH, GoldLH) as known dependencies.",
+      "taskType": "Prepare data"
+    },
+    {
+      "id": "task-04",
+      "name": "Deploy Diagnostic Notebook",
+      "description": "Create or reuse HorizonBooks_05_DiagnosticCheck notebook item and upload Base64-encoded definition via POST /items/{id}/updateDefinition.",
+      "taskType": "Develop"
+    }
+  ],
+  "connectors": [
+    {
+      "id": "conn-01",
+      "startTaskId": "task-01",
+      "endTaskId": "task-03"
+    },
+    {
+      "id": "conn-02",
+      "startTaskId": "task-02",
+      "endTaskId": "task-03"
+    },
+    {
+      "id": "conn-03",
+      "startTaskId": "task-03",
+      "endTaskId": "task-04"
+    }
+  ]
+}

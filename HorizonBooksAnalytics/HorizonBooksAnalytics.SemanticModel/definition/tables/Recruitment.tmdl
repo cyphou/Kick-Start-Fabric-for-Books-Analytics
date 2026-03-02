@@ -6,27 +6,27 @@ table 'Recruitment'
 		displayFolder: HR \ Recruitment
 		lineageTag: 20000008-0001-0001-0001-100000000001
 
-	measure 'Avg Time to Fill' = CALCULATE(AVERAGE('Recruitment'[TimeToFillDays]),'Recruitment'[Status] = "Filled")
+	measure 'Avg Time to Fill' = CALCULATE(AVERAGE('Recruitment'[Time to Fill Days]),'Recruitment'[Status] = "Filled")
 		formatString: 0.0
 		displayFolder: HR \ Recruitment
 		lineageTag: 20000008-0001-0001-0001-100000000002
 
-	measure 'Offer Acceptance Rate' = DIVIDE(SUM('Recruitment'[OfferAccepted]),SUM('Recruitment'[OffersExtended]),0)
+	measure 'Offer Acceptance Rate' = DIVIDE(SUM('Recruitment'[Offer Accepted]),SUM('Recruitment'[Offers Extended]),0)
 		formatString: 0.0%;-0.0%;0.0%
 		displayFolder: HR \ Recruitment
 		lineageTag: 20000008-0001-0001-0001-100000000003
 
-	measure 'Application to Interview Rate' = DIVIDE(SUM('Recruitment'[Interviewed]),SUM('Recruitment'[ApplicationsReceived]),0)
+	measure 'Application to Interview Rate' = DIVIDE(SUM('Recruitment'[Interviewed]),SUM('Recruitment'[Applications Received]),0)
 		formatString: 0.0%;-0.0%;0.0%
 		displayFolder: HR \ Recruitment
 		lineageTag: 20000008-0001-0001-0001-100000000004
 
-	measure 'Cost per Hire' = DIVIDE(CALCULATE(ABS(SUM('Financial Transactions'[Amount])), 'Accounts'[AccountID] = 1050),CALCULATE(COUNTROWS('Recruitment'), 'Recruitment'[Status] = "Filled"),0)
+	measure 'Cost per Hire' = DIVIDE(CALCULATE(ABS(SUM('Financial Transactions'[Amount])), 'Accounts'[Account ID] = 1050),CALCULATE(COUNTROWS('Recruitment'), 'Recruitment'[Status] = "Filled"),0)
 		formatString: $#,0.00
 		displayFolder: HR \ Recruitment
 		lineageTag: 20000008-0001-0001-0001-100000000005
 
-	column RequisitionID
+	column 'Requisition ID'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: RequisitionID
@@ -34,7 +34,7 @@ table 'Recruitment'
 
 		annotation SummarizationSetBy = Automatic
 
-	column DepartmentID
+	column 'Department ID'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: DepartmentID
@@ -42,7 +42,7 @@ table 'Recruitment'
 
 		annotation SummarizationSetBy = Automatic
 
-	column JobTitle
+	column 'Job Title'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: JobTitle
@@ -50,7 +50,7 @@ table 'Recruitment'
 
 		annotation SummarizationSetBy = Automatic
 
-	column OpenDate
+	column 'Open Date'
 		dataType: dateTime
 		summarizeBy: none
 		sourceColumn: OpenDate
@@ -58,7 +58,7 @@ table 'Recruitment'
 
 		annotation SummarizationSetBy = Automatic
 
-	column CloseDate
+	column 'Close Date'
 		dataType: dateTime
 		summarizeBy: none
 		sourceColumn: CloseDate
@@ -74,7 +74,7 @@ table 'Recruitment'
 
 		annotation SummarizationSetBy = Automatic
 
-	column ApplicationsReceived
+	column 'Applications Received'
 		dataType: int64
 		summarizeBy: sum
 		sourceColumn: ApplicationsReceived
@@ -90,7 +90,7 @@ table 'Recruitment'
 
 		annotation SummarizationSetBy = Automatic
 
-	column OffersExtended
+	column 'Offers Extended'
 		dataType: int64
 		summarizeBy: sum
 		sourceColumn: OffersExtended
@@ -98,7 +98,7 @@ table 'Recruitment'
 
 		annotation SummarizationSetBy = Automatic
 
-	column OfferAccepted
+	column 'Offer Accepted'
 		dataType: int64
 		summarizeBy: sum
 		sourceColumn: OfferAccepted
@@ -106,7 +106,7 @@ table 'Recruitment'
 
 		annotation SummarizationSetBy = Automatic
 
-	column HiringManagerID
+	column 'Hiring Manager ID'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: HiringManagerID
@@ -114,7 +114,7 @@ table 'Recruitment'
 
 		annotation SummarizationSetBy = Automatic
 
-	column SalaryRangeMin
+	column 'Salary Range Min'
 		dataType: double
 		summarizeBy: sum
 		sourceColumn: SalaryRangeMin
@@ -122,7 +122,7 @@ table 'Recruitment'
 
 		annotation SummarizationSetBy = Automatic
 
-	column SalaryRangeMax
+	column 'Salary Range Max'
 		dataType: double
 		summarizeBy: sum
 		sourceColumn: SalaryRangeMax
@@ -130,7 +130,7 @@ table 'Recruitment'
 
 		annotation SummarizationSetBy = Automatic
 
-	column TimeToFillDays
+	column 'Time to Fill Days'
 		dataType: int64
 		summarizeBy: sum
 		sourceColumn: TimeToFillDays

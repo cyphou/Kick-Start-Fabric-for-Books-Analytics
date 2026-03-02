@@ -1,0 +1,32 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.5.0/schema.json",
+  "name": "ffheader00000000000001",
+  "position": { "x": 10, "y": 4, "z": 10000, "width": 620, "height": 52 },
+  "visual": {
+    "visualType": "textbox",
+    "drillFilterOtherVisuals": true,
+    "objects": {
+      "general": [{
+        "properties": {
+          "paragraphs": [
+            {
+              "textRuns": [{
+                "value": "📦  Horizon Books",
+                "textStyle": { "fontFamily": "Georgia", "fontSize": "20px", "fontWeight": "bold", "color": "#5B2C3F" }
+              }, {
+                "value": "  |  Inventory & Ops",
+                "textStyle": { "fontFamily": "Georgia", "fontSize": "13px", "color": "#8B5E3C" }
+              }]
+            },
+            {
+              "textRuns": [{
+                "value": "────────────────────────────────────────────────────────────────────────────────",
+                "textStyle": { "fontFamily": "Georgia", "fontSize": "6px", "color": "#C7944A" }
+              }]
+            }
+          ]
+        }
+      }]
+    }
+  }
+}

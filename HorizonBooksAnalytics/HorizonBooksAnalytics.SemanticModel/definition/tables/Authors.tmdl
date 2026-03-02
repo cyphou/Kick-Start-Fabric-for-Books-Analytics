@@ -1,7 +1,7 @@
 table 'Authors'
 	lineageTag: 10000005-0001-0001-0001-000000000001
 
-	column AuthorID
+	column 'Author ID'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: AuthorID
@@ -9,7 +9,7 @@ table 'Authors'
 
 		annotation SummarizationSetBy = Automatic
 
-	column FirstName
+	column 'First Name'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: FirstName
@@ -17,7 +17,7 @@ table 'Authors'
 
 		annotation SummarizationSetBy = Automatic
 
-	column LastName
+	column 'Last Name'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: LastName
@@ -25,7 +25,7 @@ table 'Authors'
 
 		annotation SummarizationSetBy = Automatic
 
-	column PenName
+	column 'Pen Name'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: PenName
@@ -33,7 +33,7 @@ table 'Authors'
 
 		annotation SummarizationSetBy = Automatic
 
-	column AgentName
+	column 'Agent Name'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: AgentName
@@ -41,7 +41,7 @@ table 'Authors'
 
 		annotation SummarizationSetBy = Automatic
 
-	column AgentCompany
+	column 'Agent Company'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: AgentCompany
@@ -49,7 +49,7 @@ table 'Authors'
 
 		annotation SummarizationSetBy = Automatic
 
-	column ContractStartDate
+	column 'Contract Start Date'
 		dataType: dateTime
 		summarizeBy: none
 		sourceColumn: ContractStartDate
@@ -57,7 +57,7 @@ table 'Authors'
 
 		annotation SummarizationSetBy = Automatic
 
-	column ContractEndDate
+	column 'Contract End Date'
 		dataType: dateTime
 		summarizeBy: none
 		sourceColumn: ContractEndDate
@@ -65,7 +65,7 @@ table 'Authors'
 
 		annotation SummarizationSetBy = Automatic
 
-	column RoyaltyRate
+	column 'Royalty Rate'
 		dataType: double
 		summarizeBy: sum
 		sourceColumn: RoyaltyRate
@@ -73,7 +73,7 @@ table 'Authors'
 
 		annotation SummarizationSetBy = Automatic
 
-	column AdvanceAmount
+	column 'Advance Amount'
 		dataType: double
 		summarizeBy: sum
 		sourceColumn: AdvanceAmount
@@ -97,7 +97,7 @@ table 'Authors'
 
 		annotation SummarizationSetBy = Automatic
 
-	column BookCount
+	column 'Book Count'
 		dataType: int64
 		summarizeBy: sum
 		sourceColumn: BookCount

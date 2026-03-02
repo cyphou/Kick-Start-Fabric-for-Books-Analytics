@@ -1,0 +1,58 @@
+{
+  "name": "Notebooks Deployment",
+  "description": "Deploy or redeploy 4 Spark Notebooks with correct Lakehouse bindings for the 3-Lakehouse Medallion Architecture (BronzeLH, SilverLH, GoldLH). Each notebook receives META dependencies metadata for its default and known lakehouses.",
+  "tasks": [
+    {
+      "id": "task-01",
+      "name": "Resolve Lakehouse IDs",
+      "description": "Look up all 3 Lakehouse IDs (BronzeLH, SilverLH, GoldLH) from workspace items via Fabric REST API.",
+      "taskType": "General"
+    },
+    {
+      "id": "task-02",
+      "name": "Deploy NB01 BronzeToSilver",
+      "description": "Deploy HorizonBooks_01_BronzeToSilver notebook from 01_BronzeToSilver.py. Default Lakehouse: BronzeLH. Injects META dependencies block with all 3 lakehouses.",
+      "taskType": "Develop"
+    },
+    {
+      "id": "task-03",
+      "name": "Deploy NB02 WebEnrichment",
+      "description": "Deploy HorizonBooks_02_WebEnrichment notebook from 02_WebEnrichment.py. Default Lakehouse: SilverLH. Injects META dependencies block with all 3 lakehouses.",
+      "taskType": "Develop"
+    },
+    {
+      "id": "task-04",
+      "name": "Deploy NB03 SilverToGold",
+      "description": "Deploy HorizonBooks_03_SilverToGold notebook from 03_SilverToGold.py. Default Lakehouse: GoldLH. Injects META dependencies block with all 3 lakehouses.",
+      "taskType": "Develop"
+    },
+    {
+      "id": "task-05",
+      "name": "Deploy NB04 Forecasting",
+      "description": "Deploy HorizonBooks_04_Forecasting notebook from 04_Forecasting.py. Default Lakehouse: GoldLH. Injects META dependencies block with all 3 lakehouses.",
+      "taskType": "Develop"
+    }
+  ],
+  "connectors": [
+    {
+      "id": "conn-01",
+      "startTaskId": "task-01",
+      "endTaskId": "task-02"
+    },
+    {
+      "id": "conn-02",
+      "startTaskId": "task-01",
+      "endTaskId": "task-03"
+    },
+    {
+      "id": "conn-03",
+      "startTaskId": "task-01",
+      "endTaskId": "task-04"
+    },
+    {
+      "id": "conn-04",
+      "startTaskId": "task-01",
+      "endTaskId": "task-05"
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "name": "Sample Data Upload",
+  "description": "Upload 17 CSV sample data files (Finance, HR, Operations) to BronzeLH Lakehouse Files/ area via OneLake DFS API for the Horizon Books demo.",
+  "tasks": [
+    {
+      "id": "task-01",
+      "name": "Authenticate OneLake",
+      "description": "Obtain Azure Storage access token for OneLake DFS API via Get-AzAccessToken -ResourceTypeName Storage.",
+      "taskType": "General"
+    },
+    {
+      "id": "task-02",
+      "name": "Create Files Directory",
+      "description": "Create the Files/ directory structure in BronzeLH via idempotent PUT ?resource=directory on OneLake DFS endpoint.",
+      "taskType": "Store data"
+    },
+    {
+      "id": "task-03",
+      "name": "Upload Finance CSVs",
+      "description": "Upload 4 Finance CSV files (DimAccounts, DimCostCenters, FactFinancialTransactions, FactBudget) to BronzeLH Files/Finance/ via PUT/PATCH/PATCH (create/append/flush).",
+      "taskType": "Get data"
+    },
+    {
+      "id": "task-04",
+      "name": "Upload HR CSVs",
+      "description": "Upload 5 HR CSV files (DimEmployees, DimDepartments, FactPayroll, FactPerformanceReviews, FactRecruitment) to BronzeLH Files/HR/.",
+      "taskType": "Get data"
+    },
+    {
+      "id": "task-05",
+      "name": "Upload Operations CSVs",
+      "description": "Upload 8 Operations CSV files (DimBooks, DimAuthors, DimCustomers, DimGeography, DimWarehouses, FactOrders, FactInventory, FactReturns) to BronzeLH Files/Operations/.",
+      "taskType": "Get data"
+    }
+  ],
+  "connectors": [
+    {
+      "id": "conn-01",
+      "startTaskId": "task-01",
+      "endTaskId": "task-02"
+    },
+    {
+      "id": "conn-02",
+      "startTaskId": "task-02",
+      "endTaskId": "task-03"
+    },
+    {
+      "id": "conn-03",
+      "startTaskId": "task-02",
+      "endTaskId": "task-04"
+    },
+    {
+      "id": "conn-04",
+      "startTaskId": "task-02",
+      "endTaskId": "task-05"
+    }
+  ]
+}

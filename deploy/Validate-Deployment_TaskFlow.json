@@ -1,0 +1,74 @@
+{
+  "name": "Deployment Validation",
+  "description": "Comprehensive post-deployment validation of all Horizon Books Fabric items, connections, lakehouse tables, and Gold layer schema integrity.",
+  "tasks": [
+    {
+      "id": "task-01",
+      "name": "List Workspace Items",
+      "description": "Retrieve all items in the workspace via Fabric REST API to verify presence of expected Fabric artifacts.",
+      "taskType": "General"
+    },
+    {
+      "id": "task-02",
+      "name": "Validate Item Presence",
+      "description": "Check for existence of all 10+ expected items: 3 Lakehouses, 4 Notebooks, 3 Dataflows, 1 DataPipeline, 1 SemanticModel, 1 Report, 1 DataAgent (optional).",
+      "taskType": "General"
+    },
+    {
+      "id": "task-03",
+      "name": "Validate Dataflow Connections",
+      "description": "Verify all 3 DataFlow Gen2 connections are bound with OAuth2 credentials for data refresh capability.",
+      "taskType": "General"
+    },
+    {
+      "id": "task-04",
+      "name": "Validate Lakehouse Tables",
+      "description": "Check BronzeLH and SilverLH contain expected Delta tables from data ingestion and Bronze-to-Silver transformation.",
+      "taskType": "General"
+    },
+    {
+      "id": "task-05",
+      "name": "Verify Gold Tables",
+      "description": "Verify all 23 Gold tables exist in GoldLH across 3 schemas (dim: 10, fact: 8, analytics: 5) with correct columns via INFORMATION_SCHEMA.COLUMNS queries.",
+      "taskType": "General"
+    },
+    {
+      "id": "task-06",
+      "name": "Report Validation Summary",
+      "description": "Generate pass/fail summary report for all validation checks with detailed status per item.",
+      "taskType": "General"
+    }
+  ],
+  "connectors": [
+    {
+      "id": "conn-01",
+      "startTaskId": "task-01",
+      "endTaskId": "task-02"
+    },
+    {
+      "id": "conn-02",
+      "startTaskId": "task-02",
+      "endTaskId": "task-03"
+    },
+    {
+      "id": "conn-03",
+      "startTaskId": "task-02",
+      "endTaskId": "task-04"
+    },
+    {
+      "id": "conn-04",
+      "startTaskId": "task-04",
+      "endTaskId": "task-05"
+    },
+    {
+      "id": "conn-05",
+      "startTaskId": "task-03",
+      "endTaskId": "task-06"
+    },
+    {
+      "id": "conn-06",
+      "startTaskId": "task-05",
+      "endTaskId": "task-06"
+    }
+  ]
+}

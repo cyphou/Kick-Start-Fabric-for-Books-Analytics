@@ -3,9 +3,9 @@
   "name": "b1b2c3d4e5f6a7b8c9d7",
   "position": {
     "x": 640,
-    "y": 380,
+    "y": 418,
     "width": 640,
-    "height": 260
+    "height": 249
   },
   "visual": {
     "visualType": "matrix",
@@ -21,10 +21,10 @@
                       "Entity": "Accounts"
                     }
                   },
-                  "Property": "AccountCategory"
+                  "Property": "Account Category"
                 }
               },
-              "queryRef": "Accounts.AccountCategory",
+              "queryRef": "Accounts.Account Category",
               "active": true
             }
           ]

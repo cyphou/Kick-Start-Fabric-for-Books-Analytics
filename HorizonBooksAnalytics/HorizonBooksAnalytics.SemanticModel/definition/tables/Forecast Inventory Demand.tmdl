@@ -1,27 +1,27 @@
 table 'Forecast Inventory Demand'
 	lineageTag: 30000004-0001-0001-0001-000000000001
 
-	measure 'Forecast Demand Units' = IF(HASONEVALUE('Forecast Inventory Demand'[RecordType]), SUM('Forecast Inventory Demand'[UnitsDemanded]), BLANK())
+	measure 'Forecast Demand Units' = IF(HASONEVALUE('Forecast Inventory Demand'[Record Type]), SUM('Forecast Inventory Demand'[Units Demanded]), BLANK())
 		formatString: #,0
 		displayFolder: Forecasting \ Inventory
 		lineageTag: 30000004-0001-0001-0001-100000000001
 
 	measure 'Stock Coverage Months' =
 		CALCULATE(
-			AVERAGE('Forecast Inventory Demand'[StockCoverMonths]),
-			'Forecast Inventory Demand'[RecordType] = "Forecast",
-			'Forecast Inventory Demand'[ForecastHorizon] = 1
+			AVERAGE('Forecast Inventory Demand'[Stock Cover Months]),
+			'Forecast Inventory Demand'[Record Type] = "Forecast",
+			'Forecast Inventory Demand'[Forecast Horizon] = 1
 		)
 		formatString: 0.0
 		displayFolder: Forecasting \ Inventory
 		lineageTag: 30000004-0001-0001-0001-100000000002
 
-	measure 'Cumulative Forecast Demand' = IF(HASONEVALUE('Forecast Inventory Demand'[RecordType]), SUM('Forecast Inventory Demand'[CumulativeDemand]), BLANK())
+	measure 'Cumulative Forecast Demand' = IF(HASONEVALUE('Forecast Inventory Demand'[Record Type]), SUM('Forecast Inventory Demand'[Cumulative Demand]), BLANK())
 		formatString: #,0
 		displayFolder: Forecasting \ Inventory
 		lineageTag: 30000004-0001-0001-0001-100000000003
 
-	column ForecastMonth
+	column 'Forecast Month'
 		dataType: dateTime
 		formatString: yyyy-MM-dd
 		summarizeBy: none
@@ -30,7 +30,7 @@ table 'Forecast Inventory Demand'
 
 		annotation SummarizationSetBy = Automatic
 
-	column WarehouseID
+	column 'Warehouse ID'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: WarehouseID
@@ -38,7 +38,7 @@ table 'Forecast Inventory Demand'
 
 		annotation SummarizationSetBy = Automatic
 
-	column UnitsDemanded
+	column 'Units Demanded'
 		dataType: double
 		summarizeBy: sum
 		sourceColumn: UnitsDemanded
@@ -54,7 +54,7 @@ table 'Forecast Inventory Demand'
 
 		annotation SummarizationSetBy = Automatic
 
-	column LowerBound
+	column 'Lower Bound'
 		dataType: double
 		summarizeBy: sum
 		sourceColumn: LowerBound
@@ -62,7 +62,7 @@ table 'Forecast Inventory Demand'
 
 		annotation SummarizationSetBy = Automatic
 
-	column UpperBound
+	column 'Upper Bound'
 		dataType: double
 		summarizeBy: sum
 		sourceColumn: UpperBound
@@ -70,7 +70,7 @@ table 'Forecast Inventory Demand'
 
 		annotation SummarizationSetBy = Automatic
 
-	column ForecastHorizon
+	column 'Forecast Horizon'
 		dataType: int64
 		summarizeBy: none
 		sourceColumn: ForecastHorizon
@@ -78,7 +78,7 @@ table 'Forecast Inventory Demand'
 
 		annotation SummarizationSetBy = Automatic
 
-	column RecordType
+	column 'Record Type'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: RecordType
@@ -86,7 +86,7 @@ table 'Forecast Inventory Demand'
 
 		annotation SummarizationSetBy = Automatic
 
-	column ForecastModel
+	column 'Forecast Model'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: ForecastModel
@@ -94,7 +94,7 @@ table 'Forecast Inventory Demand'
 
 		annotation SummarizationSetBy = Automatic
 
-	column CurrentStock
+	column 'Current Stock'
 		dataType: double
 		summarizeBy: sum
 		sourceColumn: CurrentStock
@@ -102,7 +102,7 @@ table 'Forecast Inventory Demand'
 
 		annotation SummarizationSetBy = Automatic
 
-	column CumulativeDemand
+	column 'Cumulative Demand'
 		dataType: double
 		summarizeBy: sum
 		sourceColumn: CumulativeDemand
@@ -110,7 +110,7 @@ table 'Forecast Inventory Demand'
 
 		annotation SummarizationSetBy = Automatic
 
-	column StockCoverMonths
+	column 'Stock Cover Months'
 		dataType: double
 		summarizeBy: average
 		sourceColumn: StockCoverMonths

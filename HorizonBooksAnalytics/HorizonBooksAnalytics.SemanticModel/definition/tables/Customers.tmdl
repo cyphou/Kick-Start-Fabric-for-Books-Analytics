@@ -1,7 +1,7 @@
 table 'Customers'
 	lineageTag: 10000007-0001-0001-0001-000000000001
 
-	column CustomerID
+	column 'Customer ID'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: CustomerID
@@ -9,7 +9,7 @@ table 'Customers'
 
 		annotation SummarizationSetBy = Automatic
 
-	column CustomerName
+	column 'Customer Name'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: CustomerName
@@ -17,7 +17,7 @@ table 'Customers'
 
 		annotation SummarizationSetBy = Automatic
 
-	column CustomerType
+	column 'Customer Type'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: CustomerType
@@ -25,7 +25,7 @@ table 'Customers'
 
 		annotation SummarizationSetBy = Automatic
 
-	column ContactEmail
+	column 'Contact Email'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: ContactEmail
@@ -68,7 +68,7 @@ table 'Customers'
 
 		annotation SummarizationSetBy = Automatic
 
-	column GeoID
+	column 'Geo ID'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: GeoID
@@ -76,7 +76,7 @@ table 'Customers'
 
 		annotation SummarizationSetBy = Automatic
 
-	column CreditLimit
+	column 'Credit Limit'
 		dataType: double
 		summarizeBy: sum
 		sourceColumn: CreditLimit
@@ -84,7 +84,7 @@ table 'Customers'
 
 		annotation SummarizationSetBy = Automatic
 
-	column PaymentTerms
+	column 'Payment Terms'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: PaymentTerms
@@ -92,7 +92,7 @@ table 'Customers'
 
 		annotation SummarizationSetBy = Automatic
 
-	column IsActive
+	column 'Is Active'
 		dataType: boolean
 		summarizeBy: none
 		sourceColumn: IsActive
@@ -100,7 +100,7 @@ table 'Customers'
 
 		annotation SummarizationSetBy = Automatic
 
-	column AccountOpenDate
+	column 'Account Open Date'
 		dataType: dateTime
 		summarizeBy: none
 		sourceColumn: AccountOpenDate

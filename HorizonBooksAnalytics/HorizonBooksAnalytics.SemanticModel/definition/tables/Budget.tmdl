@@ -1,12 +1,12 @@
 table 'Budget'
 	lineageTag: 20000002-0001-0001-0001-000000000001
 
-	measure 'Budget Amount' = SUM('Budget'[BudgetAmount])
+	measure 'Budget Amount' = SUM('Budget'[Budgeted Amount])
 		formatString: $#,0;($#,0)
 		displayFolder: Finance \ Budget
 		lineageTag: 20000002-0001-0001-0001-100000000001
 
-	measure 'Actual Amount' = SUM('Budget'[ActualAmount])
+	measure 'Actual Amount' = SUM('Budget'[Actual Spent])
 		formatString: $#,0;($#,0)
 		displayFolder: Finance \ Budget
 		lineageTag: 20000002-0001-0001-0001-100000000002
@@ -26,7 +26,7 @@ table 'Budget'
 		displayFolder: Finance \ Budget
 		lineageTag: 20000002-0001-0001-0001-100000000005
 
-	column BudgetID
+	column 'Budget ID'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: BudgetID
@@ -34,7 +34,7 @@ table 'Budget'
 
 		annotation SummarizationSetBy = Automatic
 
-	column FiscalYear
+	column 'Fiscal Year'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: FiscalYear
@@ -42,7 +42,7 @@ table 'Budget'
 
 		annotation SummarizationSetBy = Automatic
 
-	column FiscalQuarter
+	column 'Fiscal Quarter'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: FiscalQuarter
@@ -50,7 +50,7 @@ table 'Budget'
 
 		annotation SummarizationSetBy = Automatic
 
-	column FiscalMonth
+	column 'Fiscal Month'
 		dataType: int64
 		summarizeBy: none
 		sourceColumn: FiscalMonth
@@ -58,7 +58,7 @@ table 'Budget'
 
 		annotation SummarizationSetBy = Automatic
 
-	column AccountID
+	column 'Account ID'
 		dataType: int64
 		summarizeBy: none
 		sourceColumn: AccountID
@@ -66,7 +66,7 @@ table 'Budget'
 
 		annotation SummarizationSetBy = Automatic
 
-	column CostCenterID
+	column 'Cost Center ID'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: CostCenterID
@@ -74,7 +74,7 @@ table 'Budget'
 
 		annotation SummarizationSetBy = Automatic
 
-	column BudgetAmount
+	column 'Budgeted Amount'
 		dataType: double
 		summarizeBy: sum
 		sourceColumn: BudgetAmount
@@ -82,7 +82,7 @@ table 'Budget'
 
 		annotation SummarizationSetBy = Automatic
 
-	column ActualAmount
+	column 'Actual Spent'
 		dataType: double
 		summarizeBy: sum
 		sourceColumn: ActualAmount
@@ -98,7 +98,7 @@ table 'Budget'
 
 		annotation SummarizationSetBy = Automatic
 
-	column VariancePct
+	column 'Variance %'
 		dataType: double
 		summarizeBy: sum
 		sourceColumn: VariancePct

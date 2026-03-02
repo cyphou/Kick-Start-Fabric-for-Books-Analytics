@@ -1,69 +1,69 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.5.0/schema.json",
-  "name": "a1b2c3d4e5f6a7b8c9d5",
-  "position": {
-    "x": 640,
-    "y": 90,
-    "width": 640,
-    "height": 290
-  },
-  "visual": {
-    "visualType": "donutChart",
-    "query": {
-      "queryState": {
-        "Category": {
-          "projections": [
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Orders"
-                    }
-                  },
-                  "Property": "Channel"
-                }
-              },
-              "queryRef": "Orders.Channel",
-              "active": true
-            }
-          ]
-        },
-        "Y": {
-          "projections": [
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Orders"
-                    }
-                  },
-                  "Property": "Order Revenue"
-                }
-              },
-              "queryRef": "Orders.Order Revenue",
-              "active": true
-            }
-          ]
-        }
-      }
-    },
-    "objects": {
-      "title": [
-        {
-          "properties": {
-            "text": {
-              "expr": {
-                "Literal": {
-                  "Value": "'Revenue by Channel'"
-                }
-              }
-            }
-          }
-        }
-      ]
-    },
-    "drillFilterOtherVisuals": true
-  }
+    "$schema":  "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.5.0/schema.json",
+    "name":  "a1b2c3d4e5f6a7b8c9d5",
+    "position":  {
+                     "x":  640,
+                     "y":  153,
+                     "width":  630,
+                     "height":  270
+                 },
+    "visual":  {
+                   "visualType":  "donutChart",
+                   "query":  {
+                                 "queryState":  {
+                                                    "Category":  {
+                                                                     "projections":  [
+                                                                                         {
+                                                                                             "field":  {
+                                                                                                           "Column":  {
+                                                                                                                          "Expression":  {
+                                                                                                                                             "SourceRef":  {
+                                                                                                                                                               "Entity":  "Orders"
+                                                                                                                                                           }
+                                                                                                                                         },
+                                                                                                                          "Property":  "Channel"
+                                                                                                                      }
+                                                                                                       },
+                                                                                             "queryRef":  "Orders.Channel",
+                                                                                             "active":  true
+                                                                                         }
+                                                                                     ]
+                                                                 },
+                                                    "Y":  {
+                                                              "projections":  [
+                                                                                  {
+                                                                                      "field":  {
+                                                                                                    "Measure":  {
+                                                                                                                    "Expression":  {
+                                                                                                                                       "SourceRef":  {
+                                                                                                                                                         "Entity":  "Orders"
+                                                                                                                                                     }
+                                                                                                                                   },
+                                                                                                                    "Property":  "Order Revenue"
+                                                                                                                }
+                                                                                                },
+                                                                                      "queryRef":  "Orders.Order Revenue",
+                                                                                      "active":  true
+                                                                                  }
+                                                                              ]
+                                                          }
+                                                }
+                             },
+                   "objects":  {
+                                   "title":  [
+                                                 {
+                                                     "properties":  {
+                                                                        "text":  {
+                                                                                     "expr":  {
+                                                                                                  "Literal":  {
+                                                                                                                  "Value":  "\u0027Revenue by Channel\u0027"
+                                                                                                              }
+                                                                                              }
+                                                                                 }
+                                                                    }
+                                                 }
+                                             ]
+                               },
+                   "drillFilterOtherVisuals":  true
+               }
 }

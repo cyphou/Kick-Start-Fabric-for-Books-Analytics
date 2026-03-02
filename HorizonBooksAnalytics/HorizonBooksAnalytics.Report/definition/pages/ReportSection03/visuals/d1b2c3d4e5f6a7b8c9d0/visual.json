@@ -3,9 +3,9 @@
   "name": "d1b2c3d4e5f6a7b8c9d0",
   "position": {
     "x": 0,
-    "y": 0,
+    "y": 62,
     "width": 427,
-    "height": 80
+    "height": 72
   },
   "visual": {
     "visualType": "card",
@@ -21,10 +21,10 @@
                       "Entity": "Books"
                     }
                   },
-                  "Property": "BookID"
+                  "Property": "Book ID"
                 }
               },
-              "queryRef": "Books.BookID",
+              "queryRef": "Books.Book ID",
               "active": true
             }
           ]

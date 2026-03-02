@@ -1,135 +1,135 @@
 relationship FactFinancialTransactions_TransactionDate_DimDate
-	fromColumn: 'Financial Transactions'.TransactionDate
-	toColumn: 'Date'.FullDate
+	fromColumn: 'Financial Transactions'.'Transaction Date'
+	toColumn: 'Date'.'Full Date'
 	crossFilteringBehavior: oneDirection
 
 relationship FactFinancialTransactions_AccountID_DimAccounts
-	fromColumn: 'Financial Transactions'.AccountID
-	toColumn: 'Accounts'.AccountID
+	fromColumn: 'Financial Transactions'.'Account ID'
+	toColumn: 'Accounts'.'Account ID'
 	crossFilteringBehavior: oneDirection
 
 relationship FactFinancialTransactions_CostCenterID_DimCostCenters
-	fromColumn: 'Financial Transactions'.CostCenterID
-	toColumn: 'Cost Centers'.CostCenterID
+	fromColumn: 'Financial Transactions'.'Cost Center ID'
+	toColumn: 'Cost Centers'.'Cost Center ID'
 	crossFilteringBehavior: oneDirection
 
 relationship FactFinancialTransactions_BookID_DimBooks
-	fromColumn: 'Financial Transactions'.BookID
-	toColumn: 'Books'.BookID
+	fromColumn: 'Financial Transactions'.'Book ID'
+	toColumn: 'Books'.'Book ID'
 	crossFilteringBehavior: oneDirection
 
 relationship FactBudget_AccountID_DimAccounts
-	fromColumn: 'Budget'.AccountID
-	toColumn: 'Accounts'.AccountID
+	fromColumn: 'Budget'.'Account ID'
+	toColumn: 'Accounts'.'Account ID'
 	crossFilteringBehavior: oneDirection
 
 relationship FactBudget_CostCenterID_DimCostCenters
-	fromColumn: 'Budget'.CostCenterID
-	toColumn: 'Cost Centers'.CostCenterID
+	fromColumn: 'Budget'.'Cost Center ID'
+	toColumn: 'Cost Centers'.'Cost Center ID'
 	crossFilteringBehavior: oneDirection
 
 relationship FactOrders_OrderDate_DimDate
-	fromColumn: 'Orders'.OrderDate
-	toColumn: 'Date'.FullDate
+	fromColumn: 'Orders'.'Order Date'
+	toColumn: 'Date'.'Full Date'
 	crossFilteringBehavior: oneDirection
 
 relationship FactOrders_BookID_DimBooks
-	fromColumn: 'Orders'.BookID
-	toColumn: 'Books'.BookID
+	fromColumn: 'Orders'.'Book ID'
+	toColumn: 'Books'.'Book ID'
 	crossFilteringBehavior: oneDirection
 
 relationship FactOrders_CustomerID_DimCustomers
-	fromColumn: 'Orders'.CustomerID
-	toColumn: 'Customers'.CustomerID
+	fromColumn: 'Orders'.'Customer ID'
+	toColumn: 'Customers'.'Customer ID'
 	crossFilteringBehavior: oneDirection
 
 relationship FactOrders_SalesRepID_DimEmployees
-	fromColumn: 'Orders'.SalesRepID
-	toColumn: 'Employees'.EmployeeID
+	fromColumn: 'Orders'.'Sales Rep ID'
+	toColumn: 'Employees'.'Employee ID'
 	crossFilteringBehavior: oneDirection
 
 relationship FactOrders_WarehouseID_DimWarehouses
-	fromColumn: 'Orders'.WarehouseID
-	toColumn: 'Warehouses'.WarehouseID
+	fromColumn: 'Orders'.'Warehouse ID'
+	toColumn: 'Warehouses'.'Warehouse ID'
 	crossFilteringBehavior: oneDirection
 
 relationship FactInventory_BookID_DimBooks
-	fromColumn: 'Inventory'.BookID
-	toColumn: 'Books'.BookID
+	fromColumn: 'Inventory'.'Book ID'
+	toColumn: 'Books'.'Book ID'
 	crossFilteringBehavior: oneDirection
 
 relationship FactInventory_WarehouseID_DimWarehouses
-	fromColumn: 'Inventory'.WarehouseID
-	toColumn: 'Warehouses'.WarehouseID
+	fromColumn: 'Inventory'.'Warehouse ID'
+	toColumn: 'Warehouses'.'Warehouse ID'
 	crossFilteringBehavior: oneDirection
 
 relationship FactInventory_SnapshotDate_DimDate
-	fromColumn: 'Inventory'.SnapshotDate
-	toColumn: 'Date'.FullDate
+	fromColumn: 'Inventory'.'Snapshot Date'
+	toColumn: 'Date'.'Full Date'
 	crossFilteringBehavior: oneDirection
 
 relationship FactReturns_BookID_DimBooks
-	fromColumn: 'Returns'.BookID
-	toColumn: 'Books'.BookID
+	fromColumn: 'Returns'.'Book ID'
+	toColumn: 'Books'.'Book ID'
 	crossFilteringBehavior: oneDirection
 
 relationship FactReturns_CustomerID_DimCustomers
-	fromColumn: 'Returns'.CustomerID
-	toColumn: 'Customers'.CustomerID
+	fromColumn: 'Returns'.'Customer ID'
+	toColumn: 'Customers'.'Customer ID'
 	crossFilteringBehavior: oneDirection
 
 relationship FactReturns_ReturnDate_DimDate
-	fromColumn: 'Returns'.ReturnDate
-	toColumn: 'Date'.FullDate
+	fromColumn: 'Returns'.'Return Date'
+	toColumn: 'Date'.'Full Date'
 	crossFilteringBehavior: oneDirection
 
 relationship FactPayroll_EmployeeID_DimEmployees
-	fromColumn: 'Payroll'.EmployeeID
-	toColumn: 'Employees'.EmployeeID
+	fromColumn: 'Payroll'.'Employee ID'
+	toColumn: 'Employees'.'Employee ID'
 	crossFilteringBehavior: oneDirection
 
 relationship FactPayroll_PayDate_DimDate
-	fromColumn: 'Payroll'.PayDate
-	toColumn: 'Date'.FullDate
+	fromColumn: 'Payroll'.'Pay Date'
+	toColumn: 'Date'.'Full Date'
 	crossFilteringBehavior: oneDirection
 
 relationship FactPerformanceReviews_EmployeeID_DimEmployees
-	fromColumn: 'Performance Reviews'.EmployeeID
-	toColumn: 'Employees'.EmployeeID
+	fromColumn: 'Performance Reviews'.'Employee ID'
+	toColumn: 'Employees'.'Employee ID'
 	crossFilteringBehavior: oneDirection
 
 relationship FactRecruitment_DepartmentID_DimDepartments
-	fromColumn: 'Recruitment'.DepartmentID
-	toColumn: 'Departments'.DepartmentID
+	fromColumn: 'Recruitment'.'Department ID'
+	toColumn: 'Departments'.'Department ID'
 	crossFilteringBehavior: oneDirection
 
 relationship DimEmployees_DepartmentID_DimDepartments
-	fromColumn: 'Employees'.DepartmentID
-	toColumn: 'Departments'.DepartmentID
+	fromColumn: 'Employees'.'Department ID'
+	toColumn: 'Departments'.'Department ID'
 	crossFilteringBehavior: oneDirection
 
 relationship DimBooks_AuthorID_DimAuthors
-	fromColumn: 'Books'.AuthorID
-	toColumn: 'Authors'.AuthorID
+	fromColumn: 'Books'.'Author ID'
+	toColumn: 'Authors'.'Author ID'
 	crossFilteringBehavior: oneDirection
 
 relationship DimCustomers_GeoID_DimGeography
-	fromColumn: 'Customers'.GeoID
-	toColumn: 'Geography'.GeoID
+	fromColumn: 'Customers'.'Geo ID'
+	toColumn: 'Geography'.'Geo ID'
 	crossFilteringBehavior: oneDirection
 
 relationship DimEmployees_GeoID_DimGeography
-	fromColumn: 'Employees'.GeoID
-	toColumn: 'Geography'.GeoID
+	fromColumn: 'Employees'.'Geo ID'
+	toColumn: 'Geography'.'Geo ID'
 	crossFilteringBehavior: oneDirection
 	isActive: false
 
 relationship FactPerformanceReviews_ReviewDate_DimDate
-	fromColumn: 'Performance Reviews'.ReviewDate
-	toColumn: 'Date'.FullDate
+	fromColumn: 'Performance Reviews'.'Review Date'
+	toColumn: 'Date'.'Full Date'
 	crossFilteringBehavior: oneDirection
 
 relationship FactRecruitment_OpenDate_DimDate
-	fromColumn: 'Recruitment'.OpenDate
-	toColumn: 'Date'.FullDate
+	fromColumn: 'Recruitment'.'Open Date'
+	toColumn: 'Date'.'Full Date'
 	crossFilteringBehavior: oneDirection

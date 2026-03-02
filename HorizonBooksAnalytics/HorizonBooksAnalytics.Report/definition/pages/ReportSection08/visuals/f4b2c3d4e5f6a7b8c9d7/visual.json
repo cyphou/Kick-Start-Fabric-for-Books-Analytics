@@ -3,9 +3,9 @@
   "name": "f4b2c3d4e5f6a7b8c9d7",
   "position": {
     "x": 640,
-    "y": 360,
+    "y": 385,
     "width": 640,
-    "height": 200
+    "height": 183
   },
   "visual": {
     "visualType": "tableEx",
@@ -49,10 +49,10 @@
                       "Entity": "Departments"
                     }
                   },
-                  "Property": "DepartmentName"
+                  "Property": "Department Name"
                 }
               },
-              "queryRef": "Departments.DepartmentName",
+              "queryRef": "Departments.Department Name",
               "active": true
             },
             {
@@ -63,10 +63,10 @@
                       "Entity": "Performance Reviews"
                     }
                   },
-                  "Property": "PerformanceRating"
+                  "Property": "Performance Rating"
                 }
               },
-              "queryRef": "Performance Reviews.PerformanceRating",
+              "queryRef": "Performance Reviews.Performance Rating",
               "active": true
             },
             {

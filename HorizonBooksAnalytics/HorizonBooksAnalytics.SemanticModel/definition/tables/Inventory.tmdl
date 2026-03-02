@@ -1,26 +1,26 @@
 table 'Inventory'
 	lineageTag: 20000004-0001-0001-0001-000000000001
 
-	measure 'Current Inventory Value' = CALCULATE(SUM('Inventory'[TotalInventoryValue]),LASTDATE('Inventory'[SnapshotDate]))
+	measure 'Current Inventory Value' = CALCULATE(SUM('Inventory'[Total Inventory Value]),LASTDATE('Inventory'[Snapshot Date]))
 		formatString: $#,0;($#,0)
 		displayFolder: Operations \ Inventory
 		lineageTag: 20000004-0001-0001-0001-100000000001
 
-	measure 'Current Units on Hand' = CALCULATE(SUM('Inventory'[QuantityOnHand]),LASTDATE('Inventory'[SnapshotDate]))
+	measure 'Current Units on Hand' = CALCULATE(SUM('Inventory'[Quantity on Hand]),LASTDATE('Inventory'[Snapshot Date]))
 		formatString: #,0
 		displayFolder: Operations \ Inventory
 		lineageTag: 20000004-0001-0001-0001-100000000002
 
-	measure 'Avg Days of Supply' = CALCULATE(AVERAGE('Inventory'[DaysOfSupply]),LASTDATE('Inventory'[SnapshotDate]))
+	measure 'Avg Days of Supply' = CALCULATE(AVERAGE('Inventory'[Days of Supply]),LASTDATE('Inventory'[Snapshot Date]))
 		formatString: 0.0
 		displayFolder: Operations \ Inventory
 		lineageTag: 20000004-0001-0001-0001-100000000003
 
 	measure 'Low Stock Items' =
 		CALCULATE(
-			DISTINCTCOUNT('Inventory'[BookID]),
+			DISTINCTCOUNT('Inventory'[Book ID]),
 			'Inventory'[Status] IN {"Low Stock", "Critical"},
-			LASTDATE('Inventory'[SnapshotDate])
+			LASTDATE('Inventory'[Snapshot Date])
 		)
 		formatString: #,0
 		displayFolder: Operations \ Inventory
@@ -31,7 +31,7 @@ table 'Inventory'
 		displayFolder: Operations \ Inventory
 		lineageTag: 20000004-0001-0001-0001-100000000005
 
-	column InventoryID
+	column 'Inventory ID'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: InventoryID
@@ -39,7 +39,7 @@ table 'Inventory'
 
 		annotation SummarizationSetBy = Automatic
 
-	column BookID
+	column 'Book ID'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: BookID
@@ -47,7 +47,7 @@ table 'Inventory'
 
 		annotation SummarizationSetBy = Automatic
 
-	column WarehouseID
+	column 'Warehouse ID'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: WarehouseID
@@ -55,7 +55,7 @@ table 'Inventory'
 
 		annotation SummarizationSetBy = Automatic
 
-	column SnapshotDate
+	column 'Snapshot Date'
 		dataType: dateTime
 		summarizeBy: none
 		sourceColumn: SnapshotDate
@@ -63,7 +63,7 @@ table 'Inventory'
 
 		annotation SummarizationSetBy = Automatic
 
-	column QuantityOnHand
+	column 'Quantity on Hand'
 		dataType: int64
 		summarizeBy: sum
 		sourceColumn: QuantityOnHand
@@ -71,7 +71,7 @@ table 'Inventory'
 
 		annotation SummarizationSetBy = Automatic
 
-	column QuantityReserved
+	column 'Quantity Reserved'
 		dataType: int64
 		summarizeBy: sum
 		sourceColumn: QuantityReserved
@@ -79,7 +79,7 @@ table 'Inventory'
 
 		annotation SummarizationSetBy = Automatic
 
-	column QuantityAvailable
+	column 'Quantity Available'
 		dataType: int64
 		summarizeBy: sum
 		sourceColumn: QuantityAvailable
@@ -87,7 +87,7 @@ table 'Inventory'
 
 		annotation SummarizationSetBy = Automatic
 
-	column ReorderPoint
+	column 'Reorder Point'
 		dataType: int64
 		summarizeBy: sum
 		sourceColumn: ReorderPoint
@@ -95,7 +95,7 @@ table 'Inventory'
 
 		annotation SummarizationSetBy = Automatic
 
-	column ReorderQuantity
+	column 'Reorder Quantity'
 		dataType: int64
 		summarizeBy: sum
 		sourceColumn: ReorderQuantity
@@ -103,7 +103,7 @@ table 'Inventory'
 
 		annotation SummarizationSetBy = Automatic
 
-	column UnitCost
+	column 'Unit Cost'
 		dataType: double
 		summarizeBy: sum
 		sourceColumn: UnitCost
@@ -111,7 +111,7 @@ table 'Inventory'
 
 		annotation SummarizationSetBy = Automatic
 
-	column TotalInventoryValue
+	column 'Total Inventory Value'
 		dataType: double
 		summarizeBy: sum
 		sourceColumn: TotalInventoryValue
@@ -119,7 +119,7 @@ table 'Inventory'
 
 		annotation SummarizationSetBy = Automatic
 
-	column DaysOfSupply
+	column 'Days of Supply'
 		dataType: int64
 		summarizeBy: sum
 		sourceColumn: DaysOfSupply

@@ -1,7 +1,7 @@
 table 'Cost Centers'
 	lineageTag: 10000003-0001-0001-0001-000000000001
 
-	column CostCenterID
+	column 'Cost Center ID'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: CostCenterID
@@ -9,7 +9,7 @@ table 'Cost Centers'
 
 		annotation SummarizationSetBy = Automatic
 
-	column CostCenterName
+	column 'Cost Center Name'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: CostCenterName
@@ -25,7 +25,7 @@ table 'Cost Centers'
 
 		annotation SummarizationSetBy = Automatic
 
-	column DivisionHead
+	column 'Division Head'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: DivisionHead

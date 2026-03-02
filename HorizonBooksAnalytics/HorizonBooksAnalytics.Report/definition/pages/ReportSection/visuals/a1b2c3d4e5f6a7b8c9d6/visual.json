@@ -1,107 +1,107 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.5.0/schema.json",
-  "name": "a1b2c3d4e5f6a7b8c9d6",
-  "position": {
-    "x": 0,
-    "y": 390,
-    "width": 1280,
-    "height": 280
-  },
-  "visual": {
-    "visualType": "tableEx",
-    "query": {
-      "queryState": {
-        "Values": {
-          "projections": [
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Books"
-                    }
-                  },
-                  "Property": "Title"
-                }
-              },
-              "queryRef": "Books.Title",
-              "active": true
-            },
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Authors"
-                    }
-                  },
-                  "Property": "LastName"
-                }
-              },
-              "queryRef": "Authors.LastName",
-              "active": true
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Orders"
-                    }
-                  },
-                  "Property": "Order Revenue"
-                }
-              },
-              "queryRef": "Orders.Order Revenue",
-              "active": true
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Orders"
-                    }
-                  },
-                  "Property": "Total Units Sold"
-                }
-              },
-              "queryRef": "Orders.Total Units Sold",
-              "active": true
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Returns"
-                    }
-                  },
-                  "Property": "Return Rate"
-                }
-              },
-              "queryRef": "Returns.Return Rate",
-              "active": true
-            }
-          ]
-        }
-      }
-    },
-    "objects": {
-      "title": [
-        {
-          "properties": {
-            "text": {
-              "expr": {
-                "Literal": {
-                  "Value": "'Top 10 Books by Revenue'"
-                }
-              }
-            }
-          }
-        }
-      ]
-    },
-    "drillFilterOtherVisuals": true
-  }
+    "$schema":  "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.5.0/schema.json",
+    "name":  "a1b2c3d4e5f6a7b8c9d6",
+    "position":  {
+                     "x":  10,
+                     "y":  429,
+                     "width":  1260,
+                     "height":  285
+                 },
+    "visual":  {
+                   "visualType":  "tableEx",
+                   "query":  {
+                                 "queryState":  {
+                                                    "Values":  {
+                                                                   "projections":  [
+                                                                                       {
+                                                                                           "field":  {
+                                                                                                         "Column":  {
+                                                                                                                        "Expression":  {
+                                                                                                                                           "SourceRef":  {
+                                                                                                                                                             "Entity":  "Books"
+                                                                                                                                                         }
+                                                                                                                                       },
+                                                                                                                        "Property":  "Title"
+                                                                                                                    }
+                                                                                                     },
+                                                                                           "queryRef":  "Books.Title",
+                                                                                           "active":  true
+                                                                                       },
+                                                                                       {
+                                                                                           "field":  {
+                                                                                                         "Column":  {
+                                                                                                                        "Expression":  {
+                                                                                                                                           "SourceRef":  {
+                                                                                                                                                             "Entity":  "Authors"
+                                                                                                                                                         }
+                                                                                                                                       },
+                                                                                                                        "Property":  "Last Name"
+                                                                                                                    }
+                                                                                                     },
+                                                                                           "queryRef":  "Authors.Last Name",
+                                                                                           "active":  true
+                                                                                       },
+                                                                                       {
+                                                                                           "field":  {
+                                                                                                         "Measure":  {
+                                                                                                                         "Expression":  {
+                                                                                                                                            "SourceRef":  {
+                                                                                                                                                              "Entity":  "Orders"
+                                                                                                                                                          }
+                                                                                                                                        },
+                                                                                                                         "Property":  "Order Revenue"
+                                                                                                                     }
+                                                                                                     },
+                                                                                           "queryRef":  "Orders.Order Revenue",
+                                                                                           "active":  true
+                                                                                       },
+                                                                                       {
+                                                                                           "field":  {
+                                                                                                         "Measure":  {
+                                                                                                                         "Expression":  {
+                                                                                                                                            "SourceRef":  {
+                                                                                                                                                              "Entity":  "Orders"
+                                                                                                                                                          }
+                                                                                                                                        },
+                                                                                                                         "Property":  "Total Units Sold"
+                                                                                                                     }
+                                                                                                     },
+                                                                                           "queryRef":  "Orders.Total Units Sold",
+                                                                                           "active":  true
+                                                                                       },
+                                                                                       {
+                                                                                           "field":  {
+                                                                                                         "Measure":  {
+                                                                                                                         "Expression":  {
+                                                                                                                                            "SourceRef":  {
+                                                                                                                                                              "Entity":  "Returns"
+                                                                                                                                                          }
+                                                                                                                                        },
+                                                                                                                         "Property":  "Return Rate"
+                                                                                                                     }
+                                                                                                     },
+                                                                                           "queryRef":  "Returns.Return Rate",
+                                                                                           "active":  true
+                                                                                       }
+                                                                                   ]
+                                                               }
+                                                }
+                             },
+                   "objects":  {
+                                   "title":  [
+                                                 {
+                                                     "properties":  {
+                                                                        "text":  {
+                                                                                     "expr":  {
+                                                                                                  "Literal":  {
+                                                                                                                  "Value":  "\u0027Top 10 Books by Revenue\u0027"
+                                                                                                              }
+                                                                                              }
+                                                                                 }
+                                                                    }
+                                                 }
+                                             ]
+                               },
+                   "drillFilterOtherVisuals":  true
+               }
 }

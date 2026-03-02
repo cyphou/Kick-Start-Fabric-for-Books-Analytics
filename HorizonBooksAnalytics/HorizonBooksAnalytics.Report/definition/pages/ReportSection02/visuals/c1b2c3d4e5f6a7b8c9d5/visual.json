@@ -3,9 +3,9 @@
   "name": "c1b2c3d4e5f6a7b8c9d5",
   "position": {
     "x": 640,
-    "y": 430,
+    "y": 471,
     "width": 640,
-    "height": 250
+    "height": 242
   },
   "visual": {
     "visualType": "tableEx",
@@ -21,10 +21,10 @@
                       "Entity": "Accounts"
                     }
                   },
-                  "Property": "AccountCategory"
+                  "Property": "Account Category"
                 }
               },
-              "queryRef": "Accounts.AccountCategory",
+              "queryRef": "Accounts.Account Category",
               "active": true
             },
             {
@@ -35,10 +35,10 @@
                       "Entity": "Accounts"
                     }
                   },
-                  "Property": "AccountName"
+                  "Property": "Account Name"
                 }
               },
-              "queryRef": "Accounts.AccountName",
+              "queryRef": "Accounts.Account Name",
               "active": true
             },
             {

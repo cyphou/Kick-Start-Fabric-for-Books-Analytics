@@ -1,7 +1,7 @@
 table 'Forecast Workforce'
 	lineageTag: 30000005-0001-0001-0001-000000000001
 
-	measure 'Forecast Workforce Value' = IF(HASONEVALUE('Forecast Workforce'[RecordType]), SUM('Forecast Workforce'[Value]), BLANK())
+	measure 'Forecast Workforce Value' = IF(HASONEVALUE('Forecast Workforce'[Record Type]), SUM('Forecast Workforce'[Value]), BLANK())
 		formatString: #,0
 		displayFolder: Forecasting \ Workforce
 		lineageTag: 30000005-0001-0001-0001-100000000001
@@ -33,7 +33,7 @@ table 'Forecast Workforce'
 		displayFolder: Forecasting \ Workforce
 		lineageTag: 30000005-0001-0001-0001-100000000004
 
-	column ForecastMonth
+	column 'Forecast Month'
 		dataType: dateTime
 		formatString: yyyy-MM-dd
 		summarizeBy: none
@@ -58,7 +58,7 @@ table 'Forecast Workforce'
 
 		annotation SummarizationSetBy = Automatic
 
-	column LowerBound
+	column 'Lower Bound'
 		dataType: double
 		summarizeBy: sum
 		sourceColumn: LowerBound
@@ -66,7 +66,7 @@ table 'Forecast Workforce'
 
 		annotation SummarizationSetBy = Automatic
 
-	column UpperBound
+	column 'Upper Bound'
 		dataType: double
 		summarizeBy: sum
 		sourceColumn: UpperBound
@@ -74,7 +74,7 @@ table 'Forecast Workforce'
 
 		annotation SummarizationSetBy = Automatic
 
-	column ForecastHorizon
+	column 'Forecast Horizon'
 		dataType: int64
 		summarizeBy: none
 		sourceColumn: ForecastHorizon
@@ -82,7 +82,7 @@ table 'Forecast Workforce'
 
 		annotation SummarizationSetBy = Automatic
 
-	column RecordType
+	column 'Record Type'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: RecordType
@@ -90,7 +90,7 @@ table 'Forecast Workforce'
 
 		annotation SummarizationSetBy = Automatic
 
-	column ForecastModel
+	column 'Forecast Model'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: ForecastModel

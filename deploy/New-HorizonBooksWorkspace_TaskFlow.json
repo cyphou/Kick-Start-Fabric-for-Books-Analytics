@@ -1,0 +1,47 @@
+{
+  "name": "Workspace Provisioning",
+  "description": "Create or reuse a Fabric workspace for the Horizon Books Analytics demo, optionally assign to a capacity and upload a custom workspace logo.",
+  "tasks": [
+    {
+      "id": "task-01",
+      "name": "Authenticate to Azure",
+      "description": "Verify Azure context via Get-AzContext. If not connected, prompt to run Connect-AzAccount for Fabric REST API access.",
+      "taskType": "General"
+    },
+    {
+      "id": "task-02",
+      "name": "Create Workspace",
+      "description": "Create 'Horizon Books Analytics' workspace via POST /v1/workspaces. Idempotent — reuses existing workspace if found by name.",
+      "taskType": "General"
+    },
+    {
+      "id": "task-03",
+      "name": "Assign to Capacity",
+      "description": "Assign workspace to specified F-SKU capacity via POST /workspaces/{id}/assignToCapacity (skipped if no CapacityId provided).",
+      "taskType": "General"
+    },
+    {
+      "id": "task-04",
+      "name": "Upload Workspace Logo",
+      "description": "Upload custom workspace logo from assets/workspace-logo.png via Power BI REST API POST /groups/{id}/uploadCustomGroupImage (skippable).",
+      "taskType": "General"
+    }
+  ],
+  "connectors": [
+    {
+      "id": "conn-01",
+      "startTaskId": "task-01",
+      "endTaskId": "task-02"
+    },
+    {
+      "id": "conn-02",
+      "startTaskId": "task-02",
+      "endTaskId": "task-03"
+    },
+    {
+      "id": "conn-03",
+      "startTaskId": "task-03",
+      "endTaskId": "task-04"
+    }
+  ]
+}

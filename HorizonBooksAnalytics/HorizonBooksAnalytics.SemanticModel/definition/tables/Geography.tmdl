@@ -1,7 +1,7 @@
 table 'Geography'
 	lineageTag: 10000006-0001-0001-0001-000000000001
 
-	column GeoID
+	column 'Geo ID'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: GeoID
@@ -18,7 +18,7 @@ table 'Geography'
 
 		annotation SummarizationSetBy = Automatic
 
-	column StateProvince
+	column 'State Province'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: StateProvince
@@ -53,7 +53,7 @@ table 'Geography'
 
 		annotation SummarizationSetBy = Automatic
 
-	column SubRegion
+	column 'Sub Region'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: SubRegion
@@ -79,7 +79,7 @@ table 'Geography'
 
 		annotation SummarizationSetBy = Automatic
 
-	column TimeZone
+	column 'Time Zone'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: TimeZone
@@ -103,7 +103,7 @@ table 'Geography'
 
 		annotation SummarizationSetBy = Automatic
 
-	column IsCapital
+	column 'Is Capital'
 		dataType: boolean
 		summarizeBy: none
 		sourceColumn: IsCapital

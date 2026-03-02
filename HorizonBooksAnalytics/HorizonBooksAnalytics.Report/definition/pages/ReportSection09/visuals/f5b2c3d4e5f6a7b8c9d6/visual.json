@@ -3,9 +3,9 @@
   "name": "f5b2c3d4e5f6a7b8c9d6",
   "position": {
     "x": 0,
-    "y": 560,
+    "y": 566,
     "width": 1280,
-    "height": 160
+    "height": 147
   },
   "visual": {
     "visualType": "tableEx",
@@ -35,10 +35,10 @@
                       "Entity": "Departments"
                     }
                   },
-                  "Property": "DepartmentName"
+                  "Property": "Department Name"
                 }
               },
-              "queryRef": "Departments.DepartmentName",
+              "queryRef": "Departments.Department Name",
               "active": true
             },
             {
@@ -49,10 +49,10 @@
                       "Entity": "Recruitment"
                     }
                   },
-                  "Property": "JobTitle"
+                  "Property": "Job Title"
                 }
               },
-              "queryRef": "Recruitment.JobTitle",
+              "queryRef": "Recruitment.Job Title",
               "active": true
             },
             {

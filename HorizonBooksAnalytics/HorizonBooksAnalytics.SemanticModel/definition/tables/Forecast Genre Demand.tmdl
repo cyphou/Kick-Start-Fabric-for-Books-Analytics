@@ -1,25 +1,25 @@
 table 'Forecast Genre Demand'
 	lineageTag: 30000002-0001-0001-0001-000000000001
 
-	measure 'Forecast Unit Demand' = IF(HASONEVALUE('Forecast Genre Demand'[RecordType]), SUM('Forecast Genre Demand'[UnitDemand]), BLANK())
+	measure 'Forecast Unit Demand' = IF(HASONEVALUE('Forecast Genre Demand'[Record Type]), SUM('Forecast Genre Demand'[Unit Demand]), BLANK())
 		formatString: #,0
 		displayFolder: Forecasting \ Genre
 		lineageTag: 30000002-0001-0001-0001-100000000001
 
-	measure 'Forecast Genre Revenue' = IF(HASONEVALUE('Forecast Genre Demand'[RecordType]), SUM('Forecast Genre Demand'[Revenue]), BLANK())
+	measure 'Forecast Genre Revenue' = IF(HASONEVALUE('Forecast Genre Demand'[Record Type]), SUM('Forecast Genre Demand'[Revenue]), BLANK())
 		formatString: $#,0;($#,0)
 		displayFolder: Forecasting \ Genre
 		lineageTag: 30000002-0001-0001-0001-100000000002
 
 	measure 'Demand Confidence Range' =
-		VAR _lower = SUM('Forecast Genre Demand'[LowerBound])
-		VAR _upper = SUM('Forecast Genre Demand'[UpperBound])
+		VAR _lower = SUM('Forecast Genre Demand'[Lower Bound])
+		VAR _upper = SUM('Forecast Genre Demand'[Upper Bound])
 		RETURN _upper - _lower
 		formatString: #,0
 		displayFolder: Forecasting \ Genre
 		lineageTag: 30000002-0001-0001-0001-100000000003
 
-	column ForecastMonth
+	column 'Forecast Month'
 		dataType: dateTime
 		formatString: yyyy-MM-dd
 		summarizeBy: none
@@ -36,7 +36,7 @@ table 'Forecast Genre Demand'
 
 		annotation SummarizationSetBy = Automatic
 
-	column UnitDemand
+	column 'Unit Demand'
 		dataType: double
 		summarizeBy: sum
 		sourceColumn: UnitDemand
@@ -52,7 +52,7 @@ table 'Forecast Genre Demand'
 
 		annotation SummarizationSetBy = Automatic
 
-	column LowerBound
+	column 'Lower Bound'
 		dataType: double
 		summarizeBy: sum
 		sourceColumn: LowerBound
@@ -60,7 +60,7 @@ table 'Forecast Genre Demand'
 
 		annotation SummarizationSetBy = Automatic
 
-	column UpperBound
+	column 'Upper Bound'
 		dataType: double
 		summarizeBy: sum
 		sourceColumn: UpperBound
@@ -68,7 +68,7 @@ table 'Forecast Genre Demand'
 
 		annotation SummarizationSetBy = Automatic
 
-	column ForecastHorizon
+	column 'Forecast Horizon'
 		dataType: int64
 		summarizeBy: none
 		sourceColumn: ForecastHorizon
@@ -76,7 +76,7 @@ table 'Forecast Genre Demand'
 
 		annotation SummarizationSetBy = Automatic
 
-	column RecordType
+	column 'Record Type'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: RecordType
@@ -84,7 +84,7 @@ table 'Forecast Genre Demand'
 
 		annotation SummarizationSetBy = Automatic
 
-	column ForecastModel
+	column 'Forecast Model'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: ForecastModel

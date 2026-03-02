@@ -1,0 +1,63 @@
+{
+  "name": "Power BI Deployment",
+  "description": "Deploy Semantic Model (Direct Lake TMDL on GoldLH) and Power BI Report (PBIR, 10 pages) with automated folder organization under '05 - Analytics'.",
+  "tasks": [
+    {
+      "id": "task-01",
+      "name": "Resolve GoldLH Endpoint",
+      "description": "Look up GoldLH Lakehouse and resolve its SQL endpoint connection string. Wait up to 120s for endpoint provisioning if needed.",
+      "taskType": "General"
+    },
+    {
+      "id": "task-02",
+      "name": "Create Folder Structure",
+      "description": "Create or resolve workspace folder hierarchy: '05 - Analytics' > 'Semantic Model' + 'Report' subfolders.",
+      "taskType": "General"
+    },
+    {
+      "id": "task-03",
+      "name": "Deploy Semantic Model",
+      "description": "Deploy HorizonBooksModel Semantic Model from TMDL definition files. Substitute SQL endpoint and lakehouse name placeholders. 23 tables, 27 relationships, 96 DAX measures. Strip UTF-8 BOM from TMDL files.",
+      "taskType": "Develop"
+    },
+    {
+      "id": "task-04",
+      "name": "Deploy Power BI Report",
+      "description": "Deploy HorizonBooksAnalytics Report from PBIR definition. Rewrite definition.pbir from byPath to byConnection referencing semantic model ID. Remap RegisteredResources to StaticResources. 10-page report.",
+      "taskType": "Visualize data"
+    },
+    {
+      "id": "task-05",
+      "name": "Organize in Folders",
+      "description": "Move Semantic Model to 'Semantic Model' subfolder and Report to 'Report' subfolder under '05 - Analytics'.",
+      "taskType": "General"
+    }
+  ],
+  "connectors": [
+    {
+      "id": "conn-01",
+      "startTaskId": "task-01",
+      "endTaskId": "task-02"
+    },
+    {
+      "id": "conn-02",
+      "startTaskId": "task-01",
+      "endTaskId": "task-03"
+    },
+    {
+      "id": "conn-03",
+      "startTaskId": "task-02",
+      "endTaskId": "task-03"
+    },
+    {
+      "id": "conn-04",
+      "startTaskId": "task-03",
+      "endTaskId": "task-04"
+    },
+    {
+      "id": "conn-05",
+      "startTaskId": "task-04",
+      "endTaskId": "task-05"
+    }
+  ]
+}

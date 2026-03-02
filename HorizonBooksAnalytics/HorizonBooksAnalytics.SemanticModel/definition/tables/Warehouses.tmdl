@@ -1,7 +1,7 @@
 table 'Warehouses'
 	lineageTag: 1000000a-0001-0001-0001-000000000001
 
-	column WarehouseID
+	column 'Warehouse ID'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: WarehouseID
@@ -9,7 +9,7 @@ table 'Warehouses'
 
 		annotation SummarizationSetBy = Automatic
 
-	column WarehouseName
+	column 'Warehouse Name'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: WarehouseName
@@ -52,7 +52,7 @@ table 'Warehouses'
 
 		annotation SummarizationSetBy = Automatic
 
-	column SquareFootage
+	column 'Square Footage'
 		dataType: int64
 		summarizeBy: sum
 		sourceColumn: SquareFootage
@@ -60,7 +60,7 @@ table 'Warehouses'
 
 		annotation SummarizationSetBy = Automatic
 
-	column MaxCapacityUnits
+	column 'Max Capacity Units'
 		dataType: int64
 		summarizeBy: sum
 		sourceColumn: MaxCapacityUnits
@@ -68,7 +68,7 @@ table 'Warehouses'
 
 		annotation SummarizationSetBy = Automatic
 
-	column CurrentUtilization
+	column 'Current Utilization'
 		dataType: double
 		summarizeBy: sum
 		sourceColumn: CurrentUtilization
@@ -76,7 +76,7 @@ table 'Warehouses'
 
 		annotation SummarizationSetBy = Automatic
 
-	column ManagerID
+	column 'Manager ID'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: ManagerID
@@ -84,7 +84,7 @@ table 'Warehouses'
 
 		annotation SummarizationSetBy = Automatic
 
-	column MonthlyRent
+	column 'Monthly Rent'
 		dataType: double
 		summarizeBy: sum
 		sourceColumn: MonthlyRent
@@ -92,7 +92,7 @@ table 'Warehouses'
 
 		annotation SummarizationSetBy = Automatic
 
-	column IsActive
+	column 'Is Active'
 		dataType: boolean
 		summarizeBy: none
 		sourceColumn: IsActive

@@ -1,12 +1,12 @@
 table 'Performance Reviews'
 	lineageTag: 20000007-0001-0001-0001-000000000001
 
-	measure 'Avg Performance Score' = AVERAGE('Performance Reviews'[OverallScore])
+	measure 'Avg Performance Score' = AVERAGE('Performance Reviews'[Overall Score])
 		formatString: 0.0
 		displayFolder: HR \ Performance
 		lineageTag: 20000007-0001-0001-0001-100000000001
 
-	measure 'Top Performers' = CALCULATE(COUNTROWS('Performance Reviews'),'Performance Reviews'[PerformanceRating] IN {"Exceeds Expectations", "Outstanding"})
+	measure 'Top Performers' = CALCULATE(COUNTROWS('Performance Reviews'),'Performance Reviews'[Performance Rating] IN {"Exceeds Expectations", "Outstanding"})
 		formatString: #,0
 		displayFolder: HR \ Performance
 		lineageTag: 20000007-0001-0001-0001-100000000002
@@ -16,7 +16,7 @@ table 'Performance Reviews'
 		displayFolder: HR \ Performance
 		lineageTag: 20000007-0001-0001-0001-100000000003
 
-	column ReviewID
+	column 'Review ID'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: ReviewID
@@ -24,7 +24,7 @@ table 'Performance Reviews'
 
 		annotation SummarizationSetBy = Automatic
 
-	column EmployeeID
+	column 'Employee ID'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: EmployeeID
@@ -32,7 +32,7 @@ table 'Performance Reviews'
 
 		annotation SummarizationSetBy = Automatic
 
-	column ReviewDate
+	column 'Review Date'
 		dataType: dateTime
 		summarizeBy: none
 		sourceColumn: ReviewDate
@@ -40,7 +40,7 @@ table 'Performance Reviews'
 
 		annotation SummarizationSetBy = Automatic
 
-	column ReviewerID
+	column 'Reviewer ID'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: ReviewerID
@@ -48,7 +48,7 @@ table 'Performance Reviews'
 
 		annotation SummarizationSetBy = Automatic
 
-	column PerformanceRating
+	column 'Performance Rating'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: PerformanceRating
@@ -56,7 +56,7 @@ table 'Performance Reviews'
 
 		annotation SummarizationSetBy = Automatic
 
-	column GoalsMet
+	column 'Goals Met'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: GoalsMet
@@ -72,7 +72,7 @@ table 'Performance Reviews'
 
 		annotation SummarizationSetBy = Automatic
 
-	column AreasForImprovement
+	column 'Areas for Improvement'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: AreasForImprovement
@@ -80,7 +80,7 @@ table 'Performance Reviews'
 
 		annotation SummarizationSetBy = Automatic
 
-	column OverallScore
+	column 'Overall Score'
 		dataType: double
 		summarizeBy: sum
 		sourceColumn: OverallScore

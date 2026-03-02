@@ -1,12 +1,12 @@
 table 'Payroll'
 	lineageTag: 20000006-0001-0001-0001-000000000001
 
-	measure 'Total Payroll Cost' = SUM('Payroll'[NetPay])
+	measure 'Total Payroll Cost' = SUM('Payroll'[Net Pay])
 		formatString: $#,0;($#,0)
 		displayFolder: HR \ Compensation
 		lineageTag: 20000006-0001-0001-0001-100000000001
 
-	measure 'Total Base Salary' = SUM('Payroll'[BaseSalary])
+	measure 'Total Base Salary' = SUM('Payroll'[Base Salary])
 		formatString: $#,0;($#,0)
 		displayFolder: HR \ Compensation
 		lineageTag: 20000006-0001-0001-0001-100000000002
@@ -21,7 +21,7 @@ table 'Payroll'
 		displayFolder: HR \ Compensation
 		lineageTag: 20000006-0001-0001-0001-100000000004
 
-	measure 'Avg Salary per Employee' = DIVIDE([Total Base Salary],DISTINCTCOUNT('Payroll'[EmployeeID]),0)
+	measure 'Avg Salary per Employee' = DIVIDE([Total Base Salary],DISTINCTCOUNT('Payroll'[Employee ID]),0)
 		formatString: $#,0.00
 		displayFolder: HR \ Compensation
 		lineageTag: 20000006-0001-0001-0001-100000000005
@@ -36,7 +36,7 @@ table 'Payroll'
 		displayFolder: HR \ Compensation
 		lineageTag: 20000006-0001-0001-0001-100000000007
 
-	column PayrollID
+	column 'Payroll ID'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: PayrollID
@@ -44,7 +44,7 @@ table 'Payroll'
 
 		annotation SummarizationSetBy = Automatic
 
-	column EmployeeID
+	column 'Employee ID'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: EmployeeID
@@ -52,7 +52,7 @@ table 'Payroll'
 
 		annotation SummarizationSetBy = Automatic
 
-	column PayPeriodStart
+	column 'Pay Period Start'
 		dataType: dateTime
 		summarizeBy: none
 		sourceColumn: PayPeriodStart
@@ -60,7 +60,7 @@ table 'Payroll'
 
 		annotation SummarizationSetBy = Automatic
 
-	column PayPeriodEnd
+	column 'Pay Period End'
 		dataType: dateTime
 		summarizeBy: none
 		sourceColumn: PayPeriodEnd
@@ -68,7 +68,7 @@ table 'Payroll'
 
 		annotation SummarizationSetBy = Automatic
 
-	column BaseSalary
+	column 'Base Salary'
 		dataType: double
 		summarizeBy: sum
 		sourceColumn: BaseSalary
@@ -100,7 +100,7 @@ table 'Payroll'
 
 		annotation SummarizationSetBy = Automatic
 
-	column NetPay
+	column 'Net Pay'
 		dataType: double
 		summarizeBy: sum
 		sourceColumn: NetPay
@@ -108,7 +108,7 @@ table 'Payroll'
 
 		annotation SummarizationSetBy = Automatic
 
-	column PayDate
+	column 'Pay Date'
 		dataType: dateTime
 		summarizeBy: none
 		sourceColumn: PayDate

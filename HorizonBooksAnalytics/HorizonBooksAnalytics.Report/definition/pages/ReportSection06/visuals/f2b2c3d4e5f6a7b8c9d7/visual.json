@@ -3,9 +3,9 @@
   "name": "f2b2c3d4e5f6a7b8c9d7",
   "position": {
     "x": 0,
-    "y": 360,
+    "y": 385,
     "width": 1280,
-    "height": 170
+    "height": 156
   },
   "visual": {
     "visualType": "lineChart",
@@ -39,10 +39,10 @@
                       "Entity": "Inventory"
                     }
                   },
-                  "Property": "QuantityOnHand"
+                  "Property": "Quantity On Hand"
                 }
               },
-              "queryRef": "Inventory.QuantityOnHand",
+              "queryRef": "Inventory.Quantity On Hand",
               "active": true
             }
           ]

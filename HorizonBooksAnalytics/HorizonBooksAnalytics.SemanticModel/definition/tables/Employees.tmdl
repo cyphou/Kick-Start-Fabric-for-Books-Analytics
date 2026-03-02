@@ -1,22 +1,22 @@
 table 'Employees'
 	lineageTag: 10000008-0001-0001-0001-000000000001
 
-	measure 'Total Headcount' = CALCULATE(COUNTROWS('Employees'),'Employees'[IsActive] = TRUE())
+	measure 'Total Headcount' = CALCULATE(COUNTROWS('Employees'),'Employees'[Is Active] = TRUE())
 		formatString: #,0
 		displayFolder: HR \ Workforce
 		lineageTag: 10000008-0001-0001-0001-100000000001
 
-	measure 'Full Time Employees' = CALCULATE(COUNTROWS('Employees'),'Employees'[IsActive] = TRUE(),'Employees'[EmploymentType] = "Full-Time")
+	measure 'Full Time Employees' = CALCULATE(COUNTROWS('Employees'),'Employees'[Is Active] = TRUE(),'Employees'[Employment Type] = "Full-Time")
 		formatString: #,0
 		displayFolder: HR \ Workforce
 		lineageTag: 10000008-0001-0001-0001-100000000002
 
-	measure 'Part Time & Contract' = CALCULATE(COUNTROWS('Employees'),'Employees'[IsActive] = TRUE(),'Employees'[EmploymentType] IN {"Part-Time", "Contract"})
+	measure 'Part Time & Contract' = CALCULATE(COUNTROWS('Employees'),'Employees'[Is Active] = TRUE(),'Employees'[Employment Type] IN {"Part-Time", "Contract"})
 		formatString: #,0
 		displayFolder: HR \ Workforce
 		lineageTag: 10000008-0001-0001-0001-100000000003
 
-	measure 'Avg Tenure Years' = AVERAGEX(FILTER('Employees', 'Employees'[IsActive] = TRUE()),DATEDIFF('Employees'[HireDate], TODAY(), YEAR))
+	measure 'Avg Tenure Years' = AVERAGEX(FILTER('Employees', 'Employees'[Is Active] = TRUE()),DATEDIFF('Employees'[Hire Date], TODAY(), YEAR))
 		formatString: 0.0
 		displayFolder: HR \ Workforce
 		lineageTag: 10000008-0001-0001-0001-100000000004
@@ -26,7 +26,7 @@ table 'Employees'
 		displayFolder: HR \ Workforce
 		lineageTag: 10000008-0001-0001-0001-100000000005
 
-	column EmployeeID
+	column 'Employee ID'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: EmployeeID
@@ -34,7 +34,7 @@ table 'Employees'
 
 		annotation SummarizationSetBy = Automatic
 
-	column FirstName
+	column 'First Name'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: FirstName
@@ -42,7 +42,7 @@ table 'Employees'
 
 		annotation SummarizationSetBy = Automatic
 
-	column LastName
+	column 'Last Name'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: LastName
@@ -58,7 +58,7 @@ table 'Employees'
 
 		annotation SummarizationSetBy = Automatic
 
-	column HireDate
+	column 'Hire Date'
 		dataType: dateTime
 		summarizeBy: none
 		sourceColumn: HireDate
@@ -66,7 +66,7 @@ table 'Employees'
 
 		annotation SummarizationSetBy = Automatic
 
-	column DepartmentID
+	column 'Department ID'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: DepartmentID
@@ -74,7 +74,7 @@ table 'Employees'
 
 		annotation SummarizationSetBy = Automatic
 
-	column JobTitle
+	column 'Job Title'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: JobTitle
@@ -82,7 +82,7 @@ table 'Employees'
 
 		annotation SummarizationSetBy = Automatic
 
-	column ManagerID
+	column 'Manager ID'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: ManagerID
@@ -90,7 +90,7 @@ table 'Employees'
 
 		annotation SummarizationSetBy = Automatic
 
-	column EmploymentType
+	column 'Employment Type'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: EmploymentType
@@ -106,7 +106,7 @@ table 'Employees'
 
 		annotation SummarizationSetBy = Automatic
 
-	column GeoID
+	column 'Geo ID'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: GeoID
@@ -114,7 +114,7 @@ table 'Employees'
 
 		annotation SummarizationSetBy = Automatic
 
-	column IsActive
+	column 'Is Active'
 		dataType: boolean
 		summarizeBy: none
 		sourceColumn: IsActive

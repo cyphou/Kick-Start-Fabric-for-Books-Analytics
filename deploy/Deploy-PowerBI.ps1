@@ -716,7 +716,9 @@ if (-not $SkipReport) {
                         Write-Info "  Operation: $($pollData.status) ($($rptPolled)s)"
                         if ($pollData.status -eq "Succeeded") { break }
                         if ($pollData.status -eq "Failed") {
-                            Write-Warn "Report creation LRO failed - will try updating existing item"
+                            $errDetail = $pollData | ConvertTo-Json -Depth 10 -Compress
+                            Write-Warn "Report creation LRO failed: $errDetail"
+                            Write-Warn "Will try updating existing item"
                             $rptLroFailed = $true
                             break
                         }

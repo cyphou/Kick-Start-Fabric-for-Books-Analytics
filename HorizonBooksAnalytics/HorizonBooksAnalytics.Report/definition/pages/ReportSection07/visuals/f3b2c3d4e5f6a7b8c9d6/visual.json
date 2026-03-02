@@ -3,9 +3,9 @@
   "name": "f3b2c3d4e5f6a7b8c9d6",
   "position": {
     "x": 0,
-    "y": 380,
+    "y": 422,
     "width": 480,
-    "height": 300
+    "height": 290
   },
   "visual": {
     "visualType": "pieChart",
@@ -39,10 +39,10 @@
                       "Entity": "Employees"
                     }
                   },
-                  "Property": "EmployeeID"
+                  "Property": "Employee ID"
                 }
               },
-              "queryRef": "Employees.EmployeeID",
+              "queryRef": "Employees.Employee ID",
               "active": true
             }
           ]

@@ -3,9 +3,9 @@
   "name": "b1b2c3d4e5f6a7b8c9d5",
   "position": {
     "x": 0,
-    "y": 90,
+    "y": 144,
     "width": 1280,
-    "height": 280
+    "height": 268
   },
   "visual": {
     "visualType": "waterfallChart",
@@ -21,10 +21,10 @@
                       "Entity": "Accounts"
                     }
                   },
-                  "Property": "AccountCategory"
+                  "Property": "Account Category"
                 }
               },
-              "queryRef": "Accounts.AccountCategory",
+              "queryRef": "Accounts.Account Category",
               "active": true
             }
           ]

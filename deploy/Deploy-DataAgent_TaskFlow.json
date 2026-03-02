@@ -1,0 +1,47 @@
+{
+  "name": "Data Agent Deployment",
+  "description": "Deploy a Fabric Data Agent for natural-language data exploration over the HorizonBooks Semantic Model. Requires F64+ capacity (not available on trial).",
+  "tasks": [
+    {
+      "id": "task-01",
+      "name": "Resolve Folder",
+      "description": "Look up or create the '05 - Analytics' workspace folder to organize the Data Agent alongside the Semantic Model and Report.",
+      "taskType": "General"
+    },
+    {
+      "id": "task-02",
+      "name": "Create Data Agent",
+      "description": "Create HorizonBooks DataAgent item via POST /workspaces/{id}/items with type DataAgent. Requires F64+ capacity.",
+      "taskType": "Develop"
+    },
+    {
+      "id": "task-03",
+      "name": "Move to Folder",
+      "description": "Move DataAgent to the '05 - Analytics' workspace folder for consistent organization.",
+      "taskType": "General"
+    },
+    {
+      "id": "task-04",
+      "name": "Manual Configuration",
+      "description": "User must open the Data Agent in Fabric portal: add HorizonBooksModel as data source, configure AI instructions for natural-language queries.",
+      "taskType": "General"
+    }
+  ],
+  "connectors": [
+    {
+      "id": "conn-01",
+      "startTaskId": "task-01",
+      "endTaskId": "task-02"
+    },
+    {
+      "id": "conn-02",
+      "startTaskId": "task-02",
+      "endTaskId": "task-03"
+    },
+    {
+      "id": "conn-03",
+      "startTaskId": "task-03",
+      "endTaskId": "task-04"
+    }
+  ]
+}

@@ -1,0 +1,90 @@
+{
+  "name": "Data Pipeline Deployment",
+  "description": "Deploy 3 Dataflow Gen2 items (DF_Finance, DF_HR, DF_Operations) with Lakehouse data destinations and 1 orchestration Data Pipeline (PL_HorizonBooks_Orchestration) that chains DataFlows and 4 Notebooks sequentially.",
+  "tasks": [
+    {
+      "id": "task-01",
+      "name": "Resolve Prerequisites",
+      "description": "Look up BronzeLH Lakehouse ID and verify 4 HorizonBooks notebooks (NB01-NB04) exist in the workspace.",
+      "taskType": "General"
+    },
+    {
+      "id": "task-02",
+      "name": "Create DF_Finance Dataflow",
+      "description": "Create HorizonBooks_DF_Finance DataFlow Gen2 with Power Query M mashup for 4 tables (DimAccounts, DimCostCenters, FactFinancialTransactions, FactBudget) targeting BronzeLH.",
+      "taskType": "Get data"
+    },
+    {
+      "id": "task-03",
+      "name": "Create DF_HR Dataflow",
+      "description": "Create HorizonBooks_DF_HR DataFlow Gen2 with Power Query M mashup for 5 tables (DimEmployees, DimDepartments, FactPayroll, FactPerformanceReviews, FactRecruitment) targeting BronzeLH.",
+      "taskType": "Get data"
+    },
+    {
+      "id": "task-04",
+      "name": "Create DF_Operations Dataflow",
+      "description": "Create HorizonBooks_DF_Operations DataFlow Gen2 with Power Query M mashup for 8 tables (DimBooks, DimAuthors, DimCustomers, DimGeography, DimWarehouses, FactOrders, FactInventory, FactReturns) targeting BronzeLH.",
+      "taskType": "Get data"
+    },
+    {
+      "id": "task-05",
+      "name": "Organize Dataflows",
+      "description": "Move all 3 dataflows into the '02 - Data Ingestion' workspace folder.",
+      "taskType": "General"
+    },
+    {
+      "id": "task-06",
+      "name": "Create Orchestration Pipeline",
+      "description": "Create PL_HorizonBooks_Orchestration Data Pipeline with 7 activities: 3 RefreshDataflow (parallel, no dependencies) → NB01 BronzeToSilver → NB02 WebEnrichment → NB03 SilverToGold → NB04 Forecasting (sequential chain).",
+      "taskType": "Develop"
+    },
+    {
+      "id": "task-07",
+      "name": "Validate Connections",
+      "description": "Verify dataflow OAuth2 connections are bound. Prompt user to configure credentials via portal if connections are unbound.",
+      "taskType": "General"
+    }
+  ],
+  "connectors": [
+    {
+      "id": "conn-01",
+      "startTaskId": "task-01",
+      "endTaskId": "task-02"
+    },
+    {
+      "id": "conn-02",
+      "startTaskId": "task-01",
+      "endTaskId": "task-03"
+    },
+    {
+      "id": "conn-03",
+      "startTaskId": "task-01",
+      "endTaskId": "task-04"
+    },
+    {
+      "id": "conn-04",
+      "startTaskId": "task-02",
+      "endTaskId": "task-05"
+    },
+    {
+      "id": "conn-05",
+      "startTaskId": "task-03",
+      "endTaskId": "task-05"
+    },
+    {
+      "id": "conn-06",
+      "startTaskId": "task-04",
+      "endTaskId": "task-05"
+    },
+    {
+      "id": "conn-07",
+      "startTaskId": "task-05",
+      "endTaskId": "task-06"
+    },
+    {
+      "id": "conn-08",
+      "startTaskId": "task-06",
+      "endTaskId": "task-07"
+    }
+  ]
+}

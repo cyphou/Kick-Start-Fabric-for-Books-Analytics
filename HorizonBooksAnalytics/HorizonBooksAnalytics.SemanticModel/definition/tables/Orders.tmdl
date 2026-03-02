@@ -1,7 +1,7 @@
 table 'Orders'
 	lineageTag: 20000003-0001-0001-0001-000000000001
 
-	measure 'Total Orders' = DISTINCTCOUNT('Orders'[OrderID])
+	measure 'Total Orders' = DISTINCTCOUNT('Orders'[Order ID])
 		formatString: #,0
 		displayFolder: Operations \ Orders
 		lineageTag: 20000003-0001-0001-0001-100000000001
@@ -11,7 +11,7 @@ table 'Orders'
 		displayFolder: Operations \ Orders
 		lineageTag: 20000003-0001-0001-0001-100000000002
 
-	measure 'Order Revenue' = SUM('Orders'[TotalAmount])
+	measure 'Order Revenue' = SUM('Orders'[Total Amount])
 		formatString: $#,0;($#,0)
 		displayFolder: Operations \ Orders
 		lineageTag: 20000003-0001-0001-0001-100000000003
@@ -56,17 +56,17 @@ table 'Orders'
 		displayFolder: Operations \ Channels
 		lineageTag: 20000003-0001-0001-0001-100000000011
 
-	measure 'Active Customers' = DISTINCTCOUNT('Orders'[CustomerID])
+	measure 'Active Customers' = DISTINCTCOUNT('Orders'[Customer ID])
 		formatString: #,0
 		displayFolder: Operations \ Customers
 		lineageTag: 20000003-0001-0001-0001-100000000012
 
 	measure 'New Customers' =
 		CALCULATE(
-			DISTINCTCOUNT('Orders'[CustomerID]),
+			DISTINCTCOUNT('Orders'[Customer ID]),
 			FILTER(
-				VALUES('Orders'[CustomerID]),
-				CALCULATE(MIN('Orders'[OrderDate])) >= MIN('Date'[FullDate])
+				VALUES('Orders'[Customer ID]),
+				CALCULATE(MIN('Orders'[Order Date])) >= MIN('Date'[Full Date])
 			)
 		)
 		formatString: #,0
@@ -78,12 +78,12 @@ table 'Orders'
 		displayFolder: Operations \ Customers
 		lineageTag: 20000003-0001-0001-0001-100000000014
 
-	measure 'Avg Ship Days' = AVERAGE(DATEDIFF('Orders'[OrderDate], 'Orders'[ShipDate], DAY))
+	measure 'Avg Ship Days' = AVERAGE(DATEDIFF('Orders'[Order Date], 'Orders'[Ship Date], DAY))
 		formatString: 0.0
 		displayFolder: Operations \ Fulfillment
 		lineageTag: 20000003-0001-0001-0001-100000000015
 
-	measure 'Avg Delivery Days' = AVERAGE(DATEDIFF('Orders'[OrderDate], 'Orders'[DeliveryDate], DAY))
+	measure 'Avg Delivery Days' = AVERAGE(DATEDIFF('Orders'[Order Date], 'Orders'[Delivery Date], DAY))
 		formatString: 0.0
 		displayFolder: Operations \ Fulfillment
 		lineageTag: 20000003-0001-0001-0001-100000000016
@@ -92,7 +92,7 @@ table 'Orders'
 		DIVIDE(
 			CALCULATE(
 				COUNTROWS('Orders'),
-				DATEDIFF('Orders'[OrderDate], 'Orders'[DeliveryDate], DAY) <= 7
+				DATEDIFF('Orders'[Order Date], 'Orders'[Delivery Date], DAY) <= 7
 			),
 			COUNTROWS('Orders'),
 			0
@@ -101,22 +101,22 @@ table 'Orders'
 		displayFolder: Operations \ Fulfillment
 		lineageTag: 20000003-0001-0001-0001-100000000017
 
-	measure 'International Customer Count' = CALCULATE(DISTINCTCOUNT('Customers'[CustomerID]),'Geography'[Country] <> "United States")
+	measure 'International Customer Count' = CALCULATE(DISTINCTCOUNT('Customers'[Customer ID]),'Geography'[Country] <> "United States")
 		formatString: #,0
 		displayFolder: Geographic
 		lineageTag: 20000003-0001-0001-0001-100000000018
 
-	measure 'Domestic Customer Count' = CALCULATE(DISTINCTCOUNT('Customers'[CustomerID]),'Geography'[Country] = "United States")
+	measure 'Domestic Customer Count' = CALCULATE(DISTINCTCOUNT('Customers'[Customer ID]),'Geography'[Country] = "United States")
 		formatString: #,0
 		displayFolder: Geographic
 		lineageTag: 20000003-0001-0001-0001-100000000019
 
-	measure 'Intl Revenue' = CALCULATE(SUM('Orders'[TotalAmount]),'Geography'[Country] <> "United States")
+	measure 'Intl Revenue' = CALCULATE(SUM('Orders'[Total Amount]),'Geography'[Country] <> "United States")
 		formatString: $#,0;($#,0)
 		displayFolder: Geographic
 		lineageTag: 20000003-0001-0001-0001-100000000020
 
-	measure 'Domestic Revenue' = CALCULATE(SUM('Orders'[TotalAmount]),'Geography'[Country] = "United States")
+	measure 'Domestic Revenue' = CALCULATE(SUM('Orders'[Total Amount]),'Geography'[Country] = "United States")
 		formatString: $#,0;($#,0)
 		displayFolder: Geographic
 		lineageTag: 20000003-0001-0001-0001-100000000021
@@ -141,12 +141,12 @@ table 'Orders'
 		displayFolder: Geographic
 		lineageTag: 20000003-0001-0001-0001-100000000025
 
-	measure 'Employee Locations' = CALCULATE(DISTINCTCOUNT('Geography'[City]),USERELATIONSHIP('Employees'[GeoID],'Geography'[GeoID]),VALUES('Employees'[EmployeeID]))
+	measure 'Employee Locations' = CALCULATE(DISTINCTCOUNT('Geography'[City]),USERELATIONSHIP('Employees'[Geo ID],'Geography'[Geo ID]),VALUES('Employees'[Employee ID]))
 		formatString: #,0
 		displayFolder: Geographic
 		lineageTag: 20000003-0001-0001-0001-100000000026
 
-	column OrderID
+	column 'Order ID'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: OrderID
@@ -154,7 +154,7 @@ table 'Orders'
 
 		annotation SummarizationSetBy = Automatic
 
-	column OrderDate
+	column 'Order Date'
 		dataType: dateTime
 		summarizeBy: none
 		sourceColumn: OrderDate
@@ -162,7 +162,7 @@ table 'Orders'
 
 		annotation SummarizationSetBy = Automatic
 
-	column CustomerID
+	column 'Customer ID'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: CustomerID
@@ -170,7 +170,7 @@ table 'Orders'
 
 		annotation SummarizationSetBy = Automatic
 
-	column BookID
+	column 'Book ID'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: BookID
@@ -186,7 +186,7 @@ table 'Orders'
 
 		annotation SummarizationSetBy = Automatic
 
-	column UnitPrice
+	column 'Unit Price'
 		dataType: double
 		summarizeBy: sum
 		sourceColumn: UnitPrice
@@ -202,7 +202,7 @@ table 'Orders'
 
 		annotation SummarizationSetBy = Automatic
 
-	column TotalAmount
+	column 'Total Amount'
 		dataType: double
 		summarizeBy: sum
 		sourceColumn: TotalAmount
@@ -210,7 +210,7 @@ table 'Orders'
 
 		annotation SummarizationSetBy = Automatic
 
-	column OrderStatus
+	column 'Order Status'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: OrderStatus
@@ -218,7 +218,7 @@ table 'Orders'
 
 		annotation SummarizationSetBy = Automatic
 
-	column ShipDate
+	column 'Ship Date'
 		dataType: dateTime
 		summarizeBy: none
 		sourceColumn: ShipDate
@@ -226,7 +226,7 @@ table 'Orders'
 
 		annotation SummarizationSetBy = Automatic
 
-	column DeliveryDate
+	column 'Delivery Date'
 		dataType: dateTime
 		summarizeBy: none
 		sourceColumn: DeliveryDate
@@ -234,7 +234,7 @@ table 'Orders'
 
 		annotation SummarizationSetBy = Automatic
 
-	column WarehouseID
+	column 'Warehouse ID'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: WarehouseID
@@ -242,7 +242,7 @@ table 'Orders'
 
 		annotation SummarizationSetBy = Automatic
 
-	column SalesRepID
+	column 'Sales Rep ID'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: SalesRepID

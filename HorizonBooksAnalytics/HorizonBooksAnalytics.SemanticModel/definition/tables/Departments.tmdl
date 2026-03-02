@@ -1,7 +1,7 @@
 table 'Departments'
 	lineageTag: 10000009-0001-0001-0001-000000000001
 
-	column DepartmentID
+	column 'Department ID'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: DepartmentID
@@ -9,7 +9,7 @@ table 'Departments'
 
 		annotation SummarizationSetBy = Automatic
 
-	column DepartmentName
+	column 'Department Name'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: DepartmentName
@@ -17,7 +17,7 @@ table 'Departments'
 
 		annotation SummarizationSetBy = Automatic
 
-	column DepartmentHead
+	column 'Department Head'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: DepartmentHead
@@ -25,7 +25,7 @@ table 'Departments'
 
 		annotation SummarizationSetBy = Automatic
 
-	column HeadCount
+	column 'Head Count'
 		dataType: int64
 		summarizeBy: sum
 		sourceColumn: HeadCount
@@ -33,7 +33,7 @@ table 'Departments'
 
 		annotation SummarizationSetBy = Automatic
 
-	column AnnualBudget
+	column 'Annual Budget'
 		dataType: double
 		summarizeBy: sum
 		sourceColumn: AnnualBudget

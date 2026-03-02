@@ -3,9 +3,9 @@
   "name": "d1b2c3d4e5f6a7b8c9d5",
   "position": {
     "x": 0,
-    "y": 390,
+    "y": 409,
     "width": 1280,
-    "height": 170
+    "height": 154
   },
   "visual": {
     "visualType": "areaChart",
@@ -21,10 +21,10 @@
                       "Entity": "Date"
                     }
                   },
-                  "Property": "MonthName"
+                  "Property": "Month Name"
                 }
               },
-              "queryRef": "Date.MonthName",
+              "queryRef": "Date.Month Name",
               "active": true
             }
           ]

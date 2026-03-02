@@ -6,7 +6,7 @@ table 'Returns'
 		displayFolder: Operations \ Returns
 		lineageTag: 20000005-0001-0001-0001-100000000001
 
-	measure 'Total Refunds' = SUM('Returns'[RefundAmount])
+	measure 'Total Refunds' = SUM('Returns'[Refund Amount])
 		formatString: $#,0;($#,0)
 		displayFolder: Operations \ Returns
 		lineageTag: 20000005-0001-0001-0001-100000000002
@@ -26,7 +26,7 @@ table 'Returns'
 		displayFolder: Operations \ Returns
 		lineageTag: 20000005-0001-0001-0001-100000000005
 
-	column ReturnID
+	column 'Return ID'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: ReturnID
@@ -34,7 +34,7 @@ table 'Returns'
 
 		annotation SummarizationSetBy = Automatic
 
-	column OrderID
+	column 'Order ID'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: OrderID
@@ -42,7 +42,7 @@ table 'Returns'
 
 		annotation SummarizationSetBy = Automatic
 
-	column BookID
+	column 'Book ID'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: BookID
@@ -50,7 +50,7 @@ table 'Returns'
 
 		annotation SummarizationSetBy = Automatic
 
-	column CustomerID
+	column 'Customer ID'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: CustomerID
@@ -58,7 +58,7 @@ table 'Returns'
 
 		annotation SummarizationSetBy = Automatic
 
-	column ReturnDate
+	column 'Return Date'
 		dataType: dateTime
 		summarizeBy: none
 		sourceColumn: ReturnDate
@@ -82,7 +82,7 @@ table 'Returns'
 
 		annotation SummarizationSetBy = Automatic
 
-	column ReturnStatus
+	column 'Return Status'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: ReturnStatus
@@ -90,7 +90,7 @@ table 'Returns'
 
 		annotation SummarizationSetBy = Automatic
 
-	column RefundAmount
+	column 'Refund Amount'
 		dataType: double
 		summarizeBy: sum
 		sourceColumn: RefundAmount
@@ -106,7 +106,7 @@ table 'Returns'
 
 		annotation SummarizationSetBy = Automatic
 
-	column RestockStatus
+	column 'Restock Status'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: RestockStatus

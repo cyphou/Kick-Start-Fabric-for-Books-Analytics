@@ -1,0 +1,155 @@
+{
+  "name": "Full Deployment Pipeline",
+  "description": "Fully automated end-to-end deployment of the Horizon Books demo to Microsoft Fabric. 4 phases, 12 steps: Provision (Lakehouses, CSV upload, Notebooks) → Execute (NB01 run, Dataflows + Pipeline deploy, Pipeline run, SQL setup) → Model & AI (Semantic Model, Report, Folders, DataAgent) → Validate.",
+  "tasks": [
+    {
+      "id": "task-01",
+      "name": "Create 3 Lakehouses",
+      "description": "Phase 1 Step 1: Create 3 schema-enabled Lakehouses (BronzeLH, SilverLH, GoldLH) and wait for GoldLH SQL endpoint provisioning (up to 180s).",
+      "taskType": "Store data"
+    },
+    {
+      "id": "task-02",
+      "name": "Upload CSV Files",
+      "description": "Phase 1 Step 2: Upload 17 CSV files to BronzeLH Files/ via OneLake DFS API (Finance: 4, HR: 5, Operations: 8).",
+      "taskType": "Get data"
+    },
+    {
+      "id": "task-03",
+      "name": "Deploy 4 Notebooks",
+      "description": "Phase 1 Step 3: Deploy 4 Spark Notebooks (BronzeToSilver, WebEnrichment, SilverToGold, Forecasting) each bound to its default Lakehouse.",
+      "taskType": "Develop"
+    },
+    {
+      "id": "task-04",
+      "name": "Run Bronze-to-Silver",
+      "description": "Phase 2 Step 4: Execute NB01_BronzeToSilver notebook to clean, validate, deduplicate raw data from BronzeLH into SilverLH (skippable).",
+      "taskType": "Prepare data"
+    },
+    {
+      "id": "task-05",
+      "name": "Deploy Dataflows & Pipeline",
+      "description": "Phase 2 Step 5: Create 3 Dataflow Gen2 items (DF_Finance, DF_HR, DF_Operations) and 1 Data Pipeline (PL_HorizonBooks_Orchestration). Validate OAuth2 connections.",
+      "taskType": "Develop"
+    },
+    {
+      "id": "task-06",
+      "name": "Run Orchestration Pipeline",
+      "description": "Phase 2 Step 6: Trigger PL_HorizonBooks_Orchestration pipeline: 3 DataFlows (parallel) → NB01 → NB02 → NB03 → NB04 (sequential). 30min timeout (skippable).",
+      "taskType": "General"
+    },
+    {
+      "id": "task-07",
+      "name": "Execute SQL Scripts",
+      "description": "Phase 2 Step 7: Deploy and run temp SQL setup notebook on GoldLH to execute CreateTables.sql + GenerateDateDimension.sql (DimDate table + supplementary tables).",
+      "taskType": "Prepare data"
+    },
+    {
+      "id": "task-08",
+      "name": "Deploy Semantic Model",
+      "description": "Phase 3 Step 8: Deploy HorizonBooksModel Semantic Model (Direct Lake on GoldLH SQL endpoint, TMDL definition, 23 tables, 27 relationships, 96 DAX measures).",
+      "taskType": "Develop"
+    },
+    {
+      "id": "task-09",
+      "name": "Deploy Power BI Report",
+      "description": "Phase 3 Step 9: Deploy HorizonBooksAnalytics Power BI Report (PBIR, 10 pages, bound to Semantic Model, remaps RegisteredResources).",
+      "taskType": "Visualize data"
+    },
+    {
+      "id": "task-10",
+      "name": "Organize Workspace Folders",
+      "description": "Phase 3 Step 10: Create and organize items into 5 workspace folders (01-Data Storage, 02-Data Ingestion, 03-Data Transformation, 04-Orchestration, 05-Analytics).",
+      "taskType": "General"
+    },
+    {
+      "id": "task-11",
+      "name": "Deploy Data Agent",
+      "description": "Phase 3 Step 11: Deploy HorizonBooks DataAgent for natural-language data exploration (requires F64+ capacity, skippable on trial).",
+      "taskType": "Develop"
+    },
+    {
+      "id": "task-12",
+      "name": "Validate Deployment",
+      "description": "Phase 4 Step 12: Run deployment validation checks — verify all expected items exist, dataflow connections are bound, lakehouse tables present (skippable).",
+      "taskType": "General"
+    }
+  ],
+  "connectors": [
+    {
+      "id": "conn-01",
+      "startTaskId": "task-01",
+      "endTaskId": "task-02"
+    },
+    {
+      "id": "conn-02",
+      "startTaskId": "task-01",
+      "endTaskId": "task-03"
+    },
+    {
+      "id": "conn-03",
+      "startTaskId": "task-02",
+      "endTaskId": "task-04"
+    },
+    {
+      "id": "conn-04",
+      "startTaskId": "task-03",
+      "endTaskId": "task-04"
+    },
+    {
+      "id": "conn-05",
+      "startTaskId": "task-03",
+      "endTaskId": "task-05"
+    },
+    {
+      "id": "conn-06",
+      "startTaskId": "task-04",
+      "endTaskId": "task-05"
+    },
+    {
+      "id": "conn-07",
+      "startTaskId": "task-05",
+      "endTaskId": "task-06"
+    },
+    {
+      "id": "conn-08",
+      "startTaskId": "task-06",
+      "endTaskId": "task-07"
+    },
+    {
+      "id": "conn-09",
+      "startTaskId": "task-07",
+      "endTaskId": "task-08"
+    },
+    {
+      "id": "conn-10",
+      "startTaskId": "task-08",
+      "endTaskId": "task-09"
+    },
+    {
+      "id": "conn-11",
+      "startTaskId": "task-08",
+      "endTaskId": "task-10"
+    },
+    {
+      "id": "conn-12",
+      "startTaskId": "task-08",
+      "endTaskId": "task-11"
+    },
+    {
+      "id": "conn-13",
+      "startTaskId": "task-09",
+      "endTaskId": "task-12"
+    },
+    {
+      "id": "conn-14",
+      "startTaskId": "task-10",
+      "endTaskId": "task-12"
+    },
+    {
+      "id": "conn-15",
+      "startTaskId": "task-11",
+      "endTaskId": "task-12"
+    }
+  ]
+}
