@@ -63,10 +63,81 @@ SILVER_TABLE_SCHEMAS = {
     "WebCountryIndicators": "web", "WebBookMetadata": "web",
 }
 
+# ── Expected CamelCase column names for every Silver table ──
+# Fabric Dataflows auto-lowercase; NB01 normalizes but we keep this map
+# as a safety net so Gold always has correct casing for DirectLake / TMDL.
+_CAMEL_CASE_COLUMNS = {
+    "DimAccounts":     ["AccountID","AccountName","AccountType","AccountCategory",
+                        "ParentAccountID","IsActive"],
+    "DimCostCenters":  ["CostCenterID","CostCenterName","Department","DivisionHead"],
+    "DimBooks":        ["BookID","Title","AuthorID","Genre","SubGenre","ISBN",
+                        "PublishDate","ListPrice","Format","PageCount","PrintRunSize",
+                        "ImprintName","Status"],
+    "DimAuthors":      ["AuthorID","FirstName","LastName","PenName","AgentName",
+                        "AgentCompany","ContractStartDate","ContractEndDate",
+                        "RoyaltyRate","AdvanceAmount","Genre","Nationality","BookCount"],
+    "DimGeography":    ["GeoID","City","StateProvince","Country","Continent","Region",
+                        "SubRegion","Latitude","Longitude","TimeZone","Currency",
+                        "Population","IsCapital"],
+    "DimCustomers":    ["CustomerID","CustomerName","CustomerType","ContactEmail",
+                        "City","State","Country","Region","GeoID","CreditLimit",
+                        "PaymentTerms","IsActive","AccountOpenDate"],
+    "DimEmployees":    ["EmployeeID","FirstName","LastName","Email","HireDate",
+                        "DepartmentID","JobTitle","ManagerID","EmploymentType",
+                        "Location","GeoID","IsActive"],
+    "DimDepartments":  ["DepartmentID","DepartmentName","DepartmentHead",
+                        "HeadCount","AnnualBudget","Location"],
+    "DimWarehouses":   ["WarehouseID","WarehouseName","Address","City","State",
+                        "Country","SquareFootage","MaxCapacityUnits",
+                        "CurrentUtilization","ManagerID","MonthlyRent","IsActive"],
+    "FactFinancialTransactions": ["TransactionID","TransactionDate","AccountID",
+                        "BookID","Amount","Currency","TransactionType","FiscalYear",
+                        "FiscalQuarter","FiscalMonth","CostCenterID","Description",
+                        "DateKey"],
+    "FactBudget":      ["BudgetID","FiscalYear","FiscalQuarter","FiscalMonth",
+                        "AccountID","CostCenterID","BudgetAmount","ActualAmount",
+                        "Variance","VariancePct"],
+    "FactOrders":      ["OrderID","OrderDate","CustomerID","BookID","Quantity",
+                        "UnitPrice","Discount","TotalAmount","OrderStatus",
+                        "ShipDate","DeliveryDate","WarehouseID","SalesRepID",
+                        "Channel","DateKey","FulfillmentDays","DeliveryDays"],
+    "FactInventory":   ["InventoryID","BookID","WarehouseID","SnapshotDate",
+                        "QuantityOnHand","QuantityReserved","QuantityAvailable",
+                        "ReorderPoint","ReorderQuantity","UnitCost",
+                        "TotalInventoryValue","DaysOfSupply","Status",
+                        "DateKey","NeedsReorder"],
+    "FactReturns":     ["ReturnID","OrderID","BookID","CustomerID","ReturnDate",
+                        "Quantity","Reason","ReturnStatus","RefundAmount",
+                        "Condition","RestockStatus","DateKey"],
+    "FactPayroll":     ["PayrollID","EmployeeID","PayPeriodStart","PayPeriodEnd",
+                        "BaseSalary","Bonus","Overtime","Deductions","NetPay",
+                        "PayDate","DateKey","GrossPay","NetPayCalc","DeductionRate"],
+    "FactPerformanceReviews": ["ReviewID","EmployeeID","ReviewDate","ReviewerID",
+                        "PerformanceRating","GoalsMet","Strengths",
+                        "AreasForImprovement","OverallScore","DateKey"],
+    "FactRecruitment": ["RequisitionID","DepartmentID","JobTitle","OpenDate",
+                        "CloseDate","Status","ApplicationsReceived","Interviewed",
+                        "OffersExtended","OfferAccepted","HiringManagerID",
+                        "SalaryRangeMin","SalaryRangeMax","TimeToFillDays",
+                        "DateKey","HireRate","InterviewRate"],
+}
+
 def read_silver(name):
     """Read a table from SilverLH using cross-lakehouse naming."""
     schema = SILVER_TABLE_SCHEMAS.get(name, "dbo")
-    return spark.table(f"{SILVER_LH}.{schema}.{name}")
+    df = spark.table(f"{SILVER_LH}.{schema}.{name}")
+    # ── Normalize column names to CamelCase ──
+    # Fabric Dataflows auto-lowercase column names; NB01 fixes this but
+    # guard against stale Silver tables that have not been re-written yet.
+    if name in _CAMEL_CASE_COLUMNS:
+        _lookup = {c.lower(): c for c in _CAMEL_CASE_COLUMNS[name]}
+        for actual in list(df.columns):
+            if actual.startswith("_"):
+                continue          # skip audit columns (_ingested_at etc.)
+            expected = _lookup.get(actual.lower())
+            if expected and expected != actual:
+                df = df.withColumnRenamed(actual, expected)
+    return df
 
 def gold_table(name, gold_schema):
     """Return schema-qualified Gold table name."""
@@ -167,16 +238,18 @@ dim_date = date_df.select(
     year("FullDate").alias("Year"),
 
     # Fiscal calendar (July start)
-    when(month("FullDate") >= 7, year("FullDate") + 1).otherwise(year("FullDate")).alias("FiscalYear"),
+    # FiscalYearNum kept as int for computation; FiscalYear output as string "FY20xx" for TMDL
+    when(month("FullDate") >= 7, year("FullDate") + 1).otherwise(year("FullDate")).alias("FiscalYearNum"),
     concat(
         lit("FY"),
         when(month("FullDate") >= 7, year("FullDate") + 1).otherwise(year("FullDate"))
-    ).alias("FiscalYearLabel"),
+    ).alias("FiscalYear"),
+    # FiscalQuarterNum kept as int; FiscalQuarter output as string "FQn" for TMDL
     when(month("FullDate") >= 7,
          ((month("FullDate") - 7) / 3 + 1).cast(IntegerType())
     ).otherwise(
          ((month("FullDate") + 5) / 3 + 1).cast(IntegerType())
-    ).alias("FiscalQuarter"),
+    ).alias("FiscalQuarterNum"),
     concat(
         lit("FQ"),
         when(month("FullDate") >= 7,
@@ -184,7 +257,7 @@ dim_date = date_df.select(
         ).otherwise(
              ((month("FullDate") + 5) / 3 + 1).cast(IntegerType())
         )
-    ).alias("FiscalQuarterLabel"),
+    ).alias("FiscalQuarter"),
 
     # Relative flags — dynamic at runtime via current_date()
     when(
@@ -699,8 +772,12 @@ if df_inventory is not None:
     df_inv_enriched.write.mode("overwrite").option("overwriteSchema", "true").format("delta").saveAsTable(gold_table("FactInventory", "fact"))
     print(f"  ✓ FactInventory enriched: {df_inv_enriched.count()} rows")
     print(f"    Added: QuantityChange, SupplyTrend, StockRisk, TurnoverIndicator")
+elif df_inventory is not None:
+    # Fallback: write unenriched table so Gold layer is always complete
+    df_inventory.write.mode("overwrite").option("overwriteSchema", "true").format("delta").saveAsTable(gold_table("FactInventory", "fact"))
+    print(f"  ✓ FactInventory (unenriched fallback): {df_inventory.count()} rows")
 else:
-    print("  ⚠ FactInventory not available, skipping")
+    print("  ⚠ FactInventory not available in Silver, skipping (safety net will create stub)")
 
 # METADATA ********************
 
@@ -720,6 +797,7 @@ print("  Enriching FactOrders with denormalized context")
 print("="*60)
 
 df_orders = dfs.get("FactOrders")
+df_orders_raw = df_orders  # keep reference for fallback
 
 if df_orders is not None:
     # Read enriched dimensions from Gold (written by Cells 3 & 4)
@@ -733,7 +811,7 @@ if df_orders is not None:
         df_customers = dfs.get("DimCustomers")
         if df_books is None or df_customers is None:
             print("  ⚠ FactOrders enrichment skipped (missing DimBooks/DimCustomers)")
-            df_orders = None  # signal to skip
+            df_orders = None  # signal to skip enrichment (fallback will still write raw)
 
 if df_orders is not None:
     # Add book genre and imprint for filtering
@@ -790,8 +868,12 @@ if df_orders is not None:
     df_orders_enriched.write.mode("overwrite").option("overwriteSchema", "true").format("delta").saveAsTable(gold_table("FactOrders", "fact"))
     print(f"  ✓ FactOrders enriched: {df_orders_enriched.count()} rows")
     print(f"    Added: BookGenre, BookImprint, CustomerRegion, CustomerRunningTotal, IsRepeatOrder")
+elif df_orders_raw is not None:
+    # Fallback: write unenriched table so Gold layer is always complete
+    df_orders_raw.write.mode("overwrite").option("overwriteSchema", "true").format("delta").saveAsTable(gold_table("FactOrders", "fact"))
+    print(f"  ✓ FactOrders (unenriched fallback): {df_orders_raw.count()} rows")
 else:
-    print("  ⚠ FactOrders not available, skipping")
+    print("  ⚠ FactOrders not available in Silver, skipping (safety net will create stub)")
 
 # METADATA ********************
 

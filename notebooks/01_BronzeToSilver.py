@@ -411,6 +411,18 @@ def ingest_bronze_with_quality(table_name, schema=None, source_table=None):
             read_opts = read_opts.option("inferSchema", "true")
         df_raw = read_opts.csv(csv_path)
 
+    # ── Normalize column names to CamelCase ──
+    # Fabric Dataflows auto-lowercase column names when writing to Lakehouse
+    # tables.  Map them back to the expected CamelCase from our schema defs
+    # so that downstream Silver/Gold tables and the TMDL DirectLake model
+    # all agree on column casing.
+    if schema:
+        _camel = {f.name.lower(): f.name for f in schema.fields}
+        for _actual in list(df_raw.columns):
+            _expected = _camel.get(_actual.lower())
+            if _expected and _expected != _actual:
+                df_raw = df_raw.withColumnRenamed(_actual, _expected)
+
     raw_count = df_raw.count()
     log_quality(table_name, "raw_rows", raw_count)
     print(f"  Raw rows: {raw_count}")

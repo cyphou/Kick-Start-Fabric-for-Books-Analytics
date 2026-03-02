@@ -31,7 +31,7 @@ table ForecastInventoryDemand
 		annotation SummarizationSetBy = Automatic
 
 	column WarehouseID
-		dataType: int64
+		dataType: string
 		summarizeBy: none
 		sourceColumn: WarehouseID
 		lineageTag: 30000004-0001-0001-0001-200000000002
