@@ -78,12 +78,12 @@ table 'Orders'
 		displayFolder: Operations \ Customers
 		lineageTag: 20000003-0001-0001-0001-100000000014
 
-	measure 'Avg Ship Days' = AVERAGE(DATEDIFF('Orders'[Order Date], 'Orders'[Ship Date], DAY))
+	measure 'Avg Ship Days' = AVERAGEX('Orders', DATEDIFF('Orders'[Order Date], 'Orders'[Ship Date], DAY))
 		formatString: 0.0
 		displayFolder: Operations \ Fulfillment
 		lineageTag: 20000003-0001-0001-0001-100000000015
 
-	measure 'Avg Delivery Days' = AVERAGE(DATEDIFF('Orders'[Order Date], 'Orders'[Delivery Date], DAY))
+	measure 'Avg Delivery Days' = AVERAGEX('Orders', DATEDIFF('Orders'[Order Date], 'Orders'[Delivery Date], DAY))
 		formatString: 0.0
 		displayFolder: Operations \ Fulfillment
 		lineageTag: 20000003-0001-0001-0001-100000000016
