@@ -102,7 +102,7 @@ Import-Module (Join-Path $PSScriptRoot 'HorizonBooks.psm1') -Force
 $scriptDir   = if ($PSScriptRoot) { $PSScriptRoot } else { Split-Path -Parent $MyInvocation.MyCommand.Path }
 $projectRoot = Split-Path -Parent $scriptDir
 
-$FabricApiBase = $script:FabricApiBase
+if (-not $FabricApiBase) { $FabricApiBase = "https://api.fabric.microsoft.com/v1" }
 
 # ============================================================================
 #                           MAIN DEPLOYMENT
@@ -163,9 +163,9 @@ while ($waited -lt $maxWait) {
             Write-Success "SQL endpoint: $sqlEndpoint"
             break
         }
-        Write-Info "  SQL endpoint not ready ($($waited)s)..."
+        Write-Info ("  SQL endpoint not ready ({0}s)..." -f $waited)
     }
-    catch { Write-Info "  Waiting ($($waited)s)..." }
+    catch { Write-Info ("  Waiting ({0}s)..." -f $waited) }
     Start-Sleep -Seconds 15; $waited += 15
 }
 if (-not $sqlEndpoint) {
@@ -318,7 +318,7 @@ try {
                     $fabricToken = Get-FabricToken
                     $pollData = Invoke-RestMethod -Method Get -Uri $smOpUrl `
                         -Headers @{ "Authorization" = "Bearer $fabricToken" }
-                    Write-Info "  Operation: $($pollData.status) ($($smPolled)s)"
+                    Write-Info ("  Operation: {0} ({1}s)" -f $pollData.status, $smPolled)
                     if ($pollData.status -eq "Succeeded") { break }
                     if ($pollData.status -eq "Failed") {
                         $errDetail = $pollData | ConvertTo-Json -Depth 10 -Compress
@@ -490,7 +490,7 @@ function Deploy-PbirReport {
                         $fabricToken = Get-FabricToken
                         $pollData = Invoke-RestMethod -Method Get -Uri $rptOpUrl `
                             -Headers @{ "Authorization" = "Bearer $fabricToken" }
-                        Write-Info "  Operation: $($pollData.status) ($($rptPolled)s)"
+                        Write-Info ("  Operation: {0} ({1}s)" -f $pollData.status, $rptPolled)
                         if ($pollData.status -eq "Succeeded") { break }
                         if ($pollData.status -eq "Failed") {
                             Write-Warn "Report creation LRO failed - will try update"

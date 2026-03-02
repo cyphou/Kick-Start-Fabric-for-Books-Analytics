@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Shared helper functions for Horizon Books Fabric deployment scripts.
 
@@ -150,7 +150,7 @@ function Invoke-FabricApi {
             $webResponse = Invoke-WebRequest @params
             $statusCode  = $webResponse.StatusCode
 
-            # 202 Accepted — Long Running Operation
+            # 202 Accepted - Long Running Operation
             if ($statusCode -eq 202) {
                 $locationHeader = $webResponse.Headers["Location"]
                 $opIdHeader     = $webResponse.Headers["x-ms-operation-id"]
@@ -193,7 +193,7 @@ function Invoke-FabricApi {
                     if ($ra) { $retryAfter = [int]$ra }
                 } catch {}
                 $reason = if ($isRetriable) { "Retriable error" } else { "Rate limited (429)" }
-                Write-Warn "$reason — retrying in $($retryAfter)s (attempt $attempt/$MaxRetries)"
+                Write-Warn ("$reason - retrying in {0}s (attempt {1}/{2})" -f $retryAfter, $attempt, $MaxRetries)
                 Start-Sleep -Seconds $retryAfter
             }
             else {
@@ -227,7 +227,7 @@ function Wait-FabricOperation {
         try {
             $status = Invoke-RestMethod -Method Get -Uri $OperationUrl -Headers $headers
             $state  = $status.status
-            Write-Info "  Operation: $state ($($elapsed)s)"
+            Write-Info ("  Operation: {0} ({1}s)" -f $state, $elapsed)
 
             if ($state -eq "Succeeded") { return $status }
             if ($state -eq "Failed") {
@@ -237,13 +237,13 @@ function Wait-FabricOperation {
         }
         catch {
             if ($_.Exception.Response -and $_.Exception.Response.StatusCode -eq 429) {
-                Write-Warn "Rate limited while polling — waiting 30s..."
+                Write-Warn "Rate limited while polling - waiting 30s..."
                 Start-Sleep -Seconds 30
             }
             else { throw }
         }
     }
-    throw "Operation timed out after $($TimeoutSeconds)s"
+    throw ("Operation timed out after {0}s" -f $TimeoutSeconds)
 }
 
 function New-OrGetFabricItem {
@@ -276,7 +276,7 @@ function New-OrGetFabricItem {
                 for ($p = 1; $p -le 24; $p++) {
                     Start-Sleep -Seconds 5
                     $poll = Invoke-RestMethod -Uri $opUrl -Headers @{ Authorization = "Bearer $Token" }
-                    Write-Info "  LRO: $($poll.status) ($($p*5)s)"
+                    Write-Info ("  LRO: {0} ({1}s)" -f $poll.status, ($p*5))
                     if ($poll.status -eq "Succeeded") { break }
                     if ($poll.status -eq "Failed") { Write-Warn "LRO failed"; break }
                 }
@@ -297,7 +297,7 @@ function New-OrGetFabricItem {
         $errMsg = "$($_.Exception.Message) $errBody"
 
         if ($errMsg -like "*ItemDisplayNameAlreadyInUse*" -or $errMsg -like "*already in use*") {
-            Write-Info "'$DisplayName' already exists — reusing"
+            Write-Info "'$DisplayName' already exists - reusing"
             $items = (Invoke-RestMethod -Uri "$($script:FabricApiBase)/workspaces/$WsId/items?type=$Type" `
                 -Headers @{ Authorization = "Bearer $Token" }).value
             $found = $items | Where-Object { $_.displayName -eq $DisplayName } | Select-Object -First 1
@@ -364,7 +364,7 @@ function Update-FabricItemDefinition {
 
     for ($attempt = 1; $attempt -le 3; $attempt++) {
         if ($attempt -gt 1) {
-            Write-Info "Definition update retry $attempt/3 — waiting 10s..."
+            Write-Info "Definition update retry $attempt/3 - waiting 10s..."
             Start-Sleep -Seconds 10
             $Token   = Get-FabricToken
             $headers = @{ "Authorization" = "Bearer $Token"; "Content-Type" = "application/json" }
@@ -381,7 +381,7 @@ function Update-FabricItemDefinition {
                     for ($p = 1; $p -le 24; $p++) {
                         Start-Sleep -Seconds 5
                         $poll = Invoke-RestMethod -Uri $opUrl -Headers @{ Authorization = "Bearer $Token" }
-                        Write-Info "  Definition LRO: $($poll.status) ($($p*5)s)"
+                        Write-Info ("  Definition LRO: {0} ({1}s)" -f $poll.status, ($p*5))
                         if ($poll.status -eq "Succeeded") { return $true }
                         if ($poll.status -eq "Failed") { Write-Warn "Definition LRO failed"; return $false }
                     }
@@ -415,7 +415,7 @@ function Run-FabricNotebook {
 
     for ($runAttempt = 1; $runAttempt -le 3; $runAttempt++) {
         if ($runAttempt -gt 1) {
-            Write-Info "Run retry $runAttempt/3 — waiting 30s..."
+            Write-Info "Run retry $runAttempt/3 - waiting 30s..."
             Start-Sleep -Seconds 30
             $Token   = Get-FabricToken
             $headers = @{ "Authorization" = "Bearer $Token"; "Content-Type" = "application/json" }
@@ -448,7 +448,7 @@ function Run-FabricNotebook {
         $waited += 15
         try {
             $jobStat = Invoke-RestMethod -Uri $jobLoc -Headers @{ Authorization = "Bearer $Token" }
-            Write-Info "  $NotebookName status: $($jobStat.status) ($($waited)s)"
+            Write-Info ("  {0} status: {1} ({2}s)" -f $NotebookName, $jobStat.status, $waited)
             if ($jobStat.status -eq "Completed") {
                 Write-Success "$NotebookName completed"
                 return $true
@@ -462,7 +462,7 @@ function Run-FabricNotebook {
         }
         catch {
             if ($_.Exception.Response -and [int]$_.Exception.Response.StatusCode -eq 404) {
-                Write-Info "  Job not ready yet ($($waited)s)"
+                Write-Info ("  Job not ready yet ({0}s)" -f $waited)
             }
             else { Write-Warn "  Poll error: $($_.Exception.Message)" }
         }
@@ -492,7 +492,7 @@ function Run-FabricPipeline {
 
     for ($runAttempt = 1; $runAttempt -le 3; $runAttempt++) {
         if ($runAttempt -gt 1) {
-            Write-Info "Pipeline run retry $runAttempt/3 — waiting 30s..."
+            Write-Info "Pipeline run retry $runAttempt/3 - waiting 30s..."
             Start-Sleep -Seconds 30
             $Token   = Get-FabricToken
             $headers = @{ "Authorization" = "Bearer $Token"; "Content-Type" = "application/json" }
@@ -525,7 +525,7 @@ function Run-FabricPipeline {
         $waited += 20
         try {
             $jobStat = Invoke-RestMethod -Uri $jobLoc -Headers @{ Authorization = "Bearer $Token" }
-            Write-Info "  Pipeline status: $($jobStat.status) ($($waited)s)"
+            Write-Info ("  Pipeline status: {0} ({1}s)" -f $jobStat.status, $waited)
             if ($jobStat.status -eq "Completed") {
                 Write-Success "Pipeline $PipelineName completed"
                 return $true
@@ -539,7 +539,7 @@ function Run-FabricPipeline {
         }
         catch {
             if ($_.Exception.Response -and [int]$_.Exception.Response.StatusCode -eq 404) {
-                Write-Info "  Pipeline job not ready yet ($($waited)s)"
+                Write-Info ("  Pipeline job not ready yet ({0}s)" -f $waited)
             }
             else { Write-Warn "  Poll error: $($_.Exception.Message)" }
         }
