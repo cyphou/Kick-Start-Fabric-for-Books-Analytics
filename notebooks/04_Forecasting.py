@@ -40,6 +40,13 @@ import time
 import warnings
 warnings.filterwarnings("ignore")
 
+# ── Configuration ──
+FORECAST_HORIZON = 6        # months ahead
+CONFIDENCE_LEVEL = 0.95     # 95 % confidence interval
+MIN_HISTORY_MONTHS = 12     # minimum data points for Holt-Winters
+GOLD_SCHEMAS = ["dim", "fact", "analytics"]
+FORECAST_GENERATED_AT = datetime.utcnow()
+
 # ── MLflow Experiment Tracking ──
 # Disable autologging to prevent Fabric from creating a failed experiment
 # run for every statsmodels .fit() that raises inside our try/except
@@ -68,13 +75,6 @@ except Exception as _mle:
     _mlflow_ok = False
 
 spark = SparkSession.builder.getOrCreate()
-
-# ── Configuration ──
-FORECAST_HORIZON = 6        # months ahead
-CONFIDENCE_LEVEL = 0.95     # 95 % confidence interval
-MIN_HISTORY_MONTHS = 12     # minimum data points for Holt-Winters
-GOLD_SCHEMAS = ["dim", "fact", "analytics"]
-FORECAST_GENERATED_AT = datetime.utcnow()
 
 # ── Execution tracking ──
 _cell_results = {}          # track success/failure per forecast model

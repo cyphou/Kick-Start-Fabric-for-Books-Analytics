@@ -1,8 +1,11 @@
 -- ============================================================================
 -- Horizon Books - Date Dimension Generator
--- Run this AFTER creating tables to populate DimDate with 2023-2027 range
 -- ============================================================================
-
+-- REFERENCE ONLY — In the automated deployment, NB03 (SilverToGold)
+-- generates a richer DimDate with holiday integration, fiscal periods,
+-- and a wider date range. This script is kept for manual setup (Option D).
+-- ============================================================================
+--
 -- Generate dates from 2023-01-01 to 2027-12-31
 INSERT INTO DimDate
 SELECT

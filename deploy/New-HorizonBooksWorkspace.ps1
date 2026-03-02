@@ -54,6 +54,12 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+Import-Module (Join-Path $PSScriptRoot 'HorizonBooks.psm1') -Force
+
+# ── Imported from HorizonBooks.psm1 ──────────────────────────────────────
+#   Write-Step, Write-Info, Write-Success, Write-Warn
+#   Get-FabricToken
+#   $FabricApiBase
 
 $scriptDir = if ($PSScriptRoot) { $PSScriptRoot } else { Split-Path -Parent $MyInvocation.MyCommand.Path }
 $projectRoot = Split-Path -Parent $scriptDir
@@ -62,46 +68,12 @@ if (-not $LogoPath) {
     $LogoPath = Join-Path $projectRoot "assets\workspace-logo.png"
 }
 
-$FabricApiBase = "https://api.fabric.microsoft.com/v1"
+$FabricApiBase = $script:FabricApiBase
 $PowerBIApiBase = "https://api.powerbi.com/v1.0/myorg"
 
 # ============================================================================
-# HELPER FUNCTIONS
+# HELPER FUNCTIONS (script-specific)
 # ============================================================================
-
-function Write-Step {
-    param([string]$Message)
-    Write-Host ""
-    Write-Host "=====================================================================" -ForegroundColor Cyan
-    Write-Host " $Message" -ForegroundColor Cyan
-    Write-Host "=====================================================================" -ForegroundColor Cyan
-}
-
-function Write-Info {
-    param([string]$Message)
-    Write-Host "  [INFO] $Message" -ForegroundColor Gray
-}
-
-function Write-Success {
-    param([string]$Message)
-    Write-Host "  [OK]   $Message" -ForegroundColor Green
-}
-
-function Write-Warn {
-    param([string]$Message)
-    Write-Host "  [WARN] $Message" -ForegroundColor Yellow
-}
-
-function Get-FabricToken {
-    try {
-        $token = Get-AzAccessToken -ResourceUrl "https://api.fabric.microsoft.com"
-        return $token.Token
-    }
-    catch {
-        Write-Error "Failed to get Fabric API token. Run 'Connect-AzAccount' first."
-        throw
-    }
-}
 
 function Get-PowerBIToken {
     try {

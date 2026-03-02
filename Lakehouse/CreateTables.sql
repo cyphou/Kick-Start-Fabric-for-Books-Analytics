@@ -2,8 +2,13 @@
 -- Horizon Books Publishing & Distribution - Lakehouse Table Definitions
 -- Microsoft Fabric Lakehouse SQL Endpoint
 -- ============================================================================
--- Run these scripts in the Lakehouse SQL Endpoint after loading CSV data
--- via Dataflows Gen2 into the Lakehouse Tables.
+-- REFERENCE ONLY — In the automated deployment, NB03 (SilverToGold)
+-- creates all dimension and fact tables programmatically with schema
+-- prefixes (dim.DimAccounts, fact.FactOrders, etc.).
+--
+-- These DDL statements are provided for manual setup (Option D) or as
+-- documentation of the expected table structures. Table names here use
+-- the default (dbo) schema for SQL Endpoint compatibility.
 -- ============================================================================
 
 -- ============================================================================

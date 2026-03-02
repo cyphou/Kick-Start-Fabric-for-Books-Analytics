@@ -8,10 +8,11 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+Import-Module (Join-Path $PSScriptRoot 'HorizonBooks.psm1') -Force
 
 # Get IDs
-$fabricToken = (Get-AzAccessToken -ResourceUrl "https://api.fabric.microsoft.com").Token
-$apiBase = "https://api.fabric.microsoft.com/v1"
+$fabricToken = Get-FabricToken
+$apiBase = $script:FabricApiBase
 $headers = @{ "Authorization" = "Bearer $fabricToken"; "Content-Type" = "application/json" }
 
 # Find Lakehouse and Dataflow IDs

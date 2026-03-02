@@ -23,7 +23,7 @@ financial performance, HR metrics, inventory status, and operational KPIs.
 
 ### Step 2: Connect Semantic Model
 1. In the Data Agent configuration, click **Add data source**
-2. Select **Semantic Model** → `HorizonBooks_SemanticModel`
+2. Select **Semantic Model** → `HorizonBooksModel`
 3. Enable all tables and measures
 4. Save the configuration
 

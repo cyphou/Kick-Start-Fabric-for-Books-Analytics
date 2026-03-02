@@ -44,181 +44,20 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
-$FabricApiBase = "https://api.fabric.microsoft.com/v1"
+Import-Module (Join-Path $PSScriptRoot 'HorizonBooks.psm1') -Force
+
+# ── Imported from HorizonBooks.psm1 ──────────────────────────────────────
+#   Write-Step, Write-Info, Write-Warn
+#   Get-FabricToken, New-OrGetFabricItem, Update-FabricItemDefinition
+#   $FabricApiBase
+
+$FabricApiBase = $script:FabricApiBase
 
 # ============================================================================
-# HELPER FUNCTIONS
+# HELPER FUNCTIONS (script-specific)
 # ============================================================================
 
-function Write-Step  { param([string]$M) Write-Host "`n$('='*70)" -ForegroundColor Cyan; Write-Host " $M" -ForegroundColor Cyan; Write-Host "$('='*70)" -ForegroundColor Cyan }
-function Write-Info  { param([string]$M) Write-Host "  [INFO] $M" -ForegroundColor Gray }
 function Write-OK    { param([string]$M) Write-Host "  [OK]   $M" -ForegroundColor Green }
-function Write-Warn  { param([string]$M) Write-Host "  [WARN] $M" -ForegroundColor Yellow }
-
-function Get-FabricToken {
-    try {
-        $tok = Get-AzAccessToken -ResourceUrl "https://api.fabric.microsoft.com"
-        return $tok.Token
-    }
-    catch {
-        Write-Error "Failed to get Fabric API token. Run 'Connect-AzAccount' first."
-        throw
-    }
-}
-
-function New-OrGetFabricItem {
-    <#
-    .SYNOPSIS
-        Creates a Fabric item or retrieves it if it already exists.
-        Returns the item ID.
-    .NOTES
-        Fabric REST API type mapping:
-          - Dataflow Gen2: create with type "Dataflow"
-          - DataPipeline:  same name for create and list
-    #>
-    param(
-        [string]$DisplayName,
-        [string]$Type,
-        [string]$Description,
-        [string]$WsId,
-        [string]$Token
-    )
-
-    $headers = @{ "Authorization" = "Bearer $Token"; "Content-Type" = "application/json" }
-
-    # Map the create-API type to the list-API type (they can differ)
-    $listType = $Type
-
-    # --- Step 1: Check if item already exists (GET before POST) ---
-    try {
-        $existingItems = (Invoke-RestMethod -Uri "$FabricApiBase/workspaces/$WsId/items?type=$listType" `
-            -Headers @{Authorization = "Bearer $Token"}).value
-        $existing = $existingItems | Where-Object { $_.displayName -eq $DisplayName } | Select-Object -First 1
-        if ($existing) {
-            Write-Info "'$DisplayName' already exists - reusing ($($existing.id))"
-            return $existing.id
-        }
-    }
-    catch {
-        Write-Info "Could not list existing items, will attempt create..."
-    }
-
-    # --- Step 2: Create new item ---
-    $body = @{
-        displayName = $DisplayName
-        type        = $Type
-        description = $Description
-    } | ConvertTo-Json -Depth 5
-
-    $itemId = $null
-    try {
-        $resp = Invoke-WebRequest -Method Post -Uri "$FabricApiBase/workspaces/$WsId/items" `
-            -Headers $headers -Body $body -UseBasicParsing
-
-        if ($resp.StatusCode -eq 201) {
-            $obj = $resp.Content | ConvertFrom-Json
-            $itemId = $obj.id
-        }
-        elseif ($resp.StatusCode -eq 202) {
-            # LRO - poll for completion
-            $opUrl = $resp.Headers["Location"]
-            if ($opUrl) {
-                for ($p = 1; $p -le 24; $p++) {
-                    Start-Sleep -Seconds 5
-                    $poll = Invoke-RestMethod -Uri $opUrl -Headers @{Authorization = "Bearer $Token"}
-                    Write-Info "  LRO: $($poll.status) ($($p*5)s)"
-                    if ($poll.status -eq "Succeeded") { break }
-                    if ($poll.status -eq "Failed") { Write-Warn "LRO failed"; break }
-                }
-            }
-            Start-Sleep -Seconds 3
-            # Look up the newly created item
-            $items = (Invoke-RestMethod -Uri "$FabricApiBase/workspaces/$WsId/items?type=$listType" `
-                -Headers @{Authorization = "Bearer $Token"}).value
-            $found = $items | Where-Object { $_.displayName -eq $DisplayName } | Select-Object -First 1
-            if ($found) { $itemId = $found.id }
-        }
-    }
-    catch {
-        # Try to read the error body from the response stream
-        $errBody = ""
-        try {
-            if ($_.Exception.Response) {
-                $sr = New-Object System.IO.StreamReader($_.Exception.Response.GetResponseStream())
-                $errBody = $sr.ReadToEnd(); $sr.Close()
-            }
-        } catch {}
-
-        # Also check ErrorDetails (PS 5.1 sometimes populates this)
-        if (-not $errBody -and $_.ErrorDetails -and $_.ErrorDetails.Message) {
-            $errBody = $_.ErrorDetails.Message
-        }
-
-        $errMsg = "$($_.Exception.Message) $errBody"
-
-        if ($errMsg -like "*ItemDisplayNameAlreadyInUse*" -or $errMsg -like "*already in use*") {
-            Write-Info "'$DisplayName' already exists - looking up..."
-            try {
-                $items = (Invoke-RestMethod -Uri "$FabricApiBase/workspaces/$WsId/items?type=$listType" `
-                    -Headers @{Authorization = "Bearer $Token"}).value
-                $found = $items | Where-Object { $_.displayName -eq $DisplayName } | Select-Object -First 1
-                if ($found) { $itemId = $found.id }
-            } catch {}
-        }
-        else {
-            Write-Warn "Create $Type '$DisplayName' error: $errMsg"
-        }
-    }
-
-    return $itemId
-}
-
-function Update-FabricItemDefinition {
-    <#
-    .SYNOPSIS
-        Updates the definition of a Fabric item using the updateDefinition API.
-    #>
-    param(
-        [string]$ItemId,
-        [string]$WsId,
-        [string]$DefinitionJson,
-        [string]$Token
-    )
-
-    $headers = @{ "Authorization" = "Bearer $Token"; "Content-Type" = "application/json" }
-
-    for ($attempt = 1; $attempt -le 3; $attempt++) {
-        if ($attempt -gt 1) {
-            Write-Info "Definition update retry $attempt/3 - waiting 10s..."
-            Start-Sleep -Seconds 10
-            $Token = Get-FabricToken
-            $headers = @{ "Authorization" = "Bearer $Token"; "Content-Type" = "application/json" }
-        }
-        try {
-            $resp = Invoke-WebRequest -Method Post `
-                -Uri "$FabricApiBase/workspaces/$WsId/items/$ItemId/updateDefinition" `
-                -Headers $headers -Body $DefinitionJson -UseBasicParsing
-
-            if ($resp.StatusCode -eq 200) { return $true }
-            if ($resp.StatusCode -eq 202) {
-                $opUrl = $resp.Headers["Location"]
-                if ($opUrl) {
-                    for ($p = 1; $p -le 24; $p++) {
-                        Start-Sleep -Seconds 5
-                        $poll = Invoke-RestMethod -Uri $opUrl -Headers @{Authorization = "Bearer $Token"}
-                        Write-Info "  Definition LRO: $($poll.status) ($($p*5)s)"
-                        if ($poll.status -eq "Succeeded") { return $true }
-                        if ($poll.status -eq "Failed") { Write-Warn "Definition LRO failed"; return $false }
-                    }
-                }
-            }
-        }
-        catch {
-            Write-Warn "Definition update error (attempt $attempt): $($_.Exception.Message)"
-        }
-    }
-    return $false
-}
 
 function Update-PipelineDefinition {
     <#

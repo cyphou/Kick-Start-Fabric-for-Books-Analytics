@@ -16,8 +16,9 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
-$headers = @{ Authorization = "Bearer $((Get-AzAccessToken -ResourceUrl 'https://analysis.windows.net/powerbi/api').Token)" }
-$fabricBase = "https://api.fabric.microsoft.com/v1"
+Import-Module (Join-Path $PSScriptRoot 'HorizonBooks.psm1') -Force
+$headers = @{ Authorization = "Bearer $(Get-FabricToken)" }
+$fabricBase = $script:FabricApiBase
 
 # ── Resolve Lakehouse ──
 if (-not $WorkspaceId) {

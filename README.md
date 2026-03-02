@@ -92,7 +92,8 @@ Romance) and Non-Fiction (Tech, Lifestyle, Health, Education).
 │  │  deploy/                  PowerShell Automation                  │     │
 │  │  Deploy-Full.ps1               → ONE-COMMAND full deployment     │     │
 │  │  New-HorizonBooksWorkspace.ps1 → Workspace + capacity + logo    │     │
-│  │  Deploy-HorizonBooks.ps1       → Step-by-step setup (6 steps)   │     │
+│  │  HorizonBooks.psm1             → Shared module (tokens/API/log) │     │
+│  │  Deploy-HorizonBooks.ps1       → Legacy step-by-step setup      │     │
 │  │  Deploy-Pipeline.ps1           → Dataflows (with destinations)   │     │
 │  │  Update-DataflowDestinations.ps1→ Re-apply destinations only     │     │
 │  │  Deploy-DataAgent.ps1          → Data Agent creation             │     │
@@ -189,31 +190,31 @@ Connect-AzAccount
 # 2. (Optional) Create workspace with logo and capacity assignment
 .\deploy\New-HorizonBooksWorkspace.ps1 -CapacityId "<capacity-guid>"
 
-# 3. Run the deployment (creates Lakehouse, uploads CSVs, runs notebooks, deploys model)
-.\deploy\Deploy-HorizonBooks.ps1 -WorkspaceId "<your-workspace-guid>"
+# 3. Run the full deployment pipeline
+.\deploy\Deploy-Full.ps1 -WorkspaceId "<your-workspace-guid>" -SkipPipelineRun
 
-# 4. (Optional) Deploy the Data Agent
-.\deploy\Deploy-DataAgent.ps1 -WorkspaceId "<your-workspace-guid>"
+# 4. (Or deploy individual components)
+.\deploy\Deploy-Pipeline.ps1 -WorkspaceId "<your-workspace-guid>"   # Dataflows + Pipeline
+.\deploy\Deploy-PowerBI.ps1  -WorkspaceId "<your-workspace-guid>"   # Semantic Model + Report
+.\deploy\Deploy-DataAgent.ps1 -WorkspaceId "<your-workspace-guid>"  # Data Agent
 
-# 5. Validate everything was created
+# 5. Upload sample data (if not using Deploy-Full)
+.\deploy\Upload-SampleData.ps1 -WorkspaceId "<guid>" -BronzeLakehouseId "<bronze-lh-guid>"
+
+# 6. Validate everything was created
 .\deploy\Validate-Deployment.ps1 -WorkspaceId "<your-workspace-guid>"
 
-# 6. (Optional) Run Pester tests
+# 7. (Optional) Run Pester tests
 Invoke-Pester .\tests\Deploy-HorizonBooks.Tests.ps1 -Tag "Unit"
 ```
 
 The individual scripts:
 1. **New-HorizonBooksWorkspace.ps1** — Creates workspace, assigns to Fabric capacity, uploads branded logo
-2. **Deploy-HorizonBooks.ps1** performs 6 steps:
-   - Creates the Lakehouse and waits for the SQL endpoint
-   - Uploads all 17 CSV files via OneLake DFS API
-   - Deploys **4 PySpark notebooks** + Spark Environment (runs NB01 immediately; NB02-04 are orchestrated by the pipeline)
-   - Deploys **3 Dataflow Gen2 items** with **auto-configured Lakehouse destinations** + **1 Data Pipeline** for orchestration:
-     - `DF_Finance`, `DF_HR`, `DF_Operations` — Load CSVs into BronzeLH Delta tables (parallel)
-     - Each dataflow embeds `_DataDestination` queries and `[DataDestinations]` attributes in the mashup.pq — no manual portal configuration needed
-     - `PL_HorizonBooks_Orchestration` — Orchestrates: DataFlows → WebEnrichment → SilverToGold
-   - Deploys the Semantic Model from TMDL files with Direct Lake mode (96 DAX measures, 27 relationships)
-   - Optionally deploys the Data Agent
+2. **Deploy-Full.ps1** (with `-SkipPipelineRun`) provisions all items without executing the pipeline
+3. **Deploy-Pipeline.ps1** deploys Dataflow Gen2 items with auto-configured destinations + orchestration pipeline
+4. **Deploy-PowerBI.ps1** deploys the Semantic Model + Report from PBIP/TMDL definitions
+5. **Upload-SampleData.ps1** uploads 17 CSVs to BronzeLH (requires `-WorkspaceId` and `-BronzeLakehouseId`)
+6. **Deploy-DataAgent.ps1** creates the AI Data Agent (F64+ only)
 
 ### Notebook Pipeline Details
 
@@ -360,7 +361,7 @@ Follow the detailed guide in `Dataflows/DataflowConfiguration.md`
 ### Step 5: Create the Semantic Model (20 min)
 
 1. In the Lakehouse SQL Endpoint, click **New Semantic Model**
-2. Name: `HorizonBooks_SemanticModel`
+5. Name: `HorizonBooksModel`
 3. Select ALL tables (Dim* and Fact*)
 4. Open the model in the **Web Modeling** view or **Power BI Desktop**
 5. **Create Relationships** as defined in `SemanticModel/SemanticModelDefinition.md`
@@ -389,7 +390,7 @@ Follow the detailed guide in `Dataflows/DataflowConfiguration.md`
 
 1. **+ New** → **Data Agent (Preview)**
 2. Name: `Horizon Books Analytics Agent`
-3. Connect to `HorizonBooks_SemanticModel`
+3. Connect to `HorizonBooksModel`
 4. Add custom instructions from `DataAgent/DataAgentConfiguration.md`
 5. Test with sample queries:
    - "What is our total revenue for 2024?"
@@ -412,9 +413,10 @@ FullDemoFabricBookUseCase/
 │   └── workspace-logo.png             ← Workspace logo (PNG, uploaded to Fabric)
 │
 ├── deploy/                            ← PowerShell Deployment Scripts
+│   ├── HorizonBooks.psm1              ← Shared helper module (tokens, API, logging)
 │   ├── Deploy-Full.ps1                ← ONE-COMMAND full deployment (recommended)
 │   ├── New-HorizonBooksWorkspace.ps1  ← Workspace creation + capacity + logo
-│   ├── Deploy-HorizonBooks.ps1        ← Step-by-step orchestrator (6-step deploy)
+│   ├── Deploy-HorizonBooks.ps1        ← Legacy step-by-step setup
 │   ├── Deploy-Pipeline.ps1            ← Dataflows Gen2 (with destinations) + Pipeline
 │   ├── Deploy-PowerBI.ps1             ← Semantic Model + Report deployment
 │   ├── Update-DataflowDestinations.ps1← Re-apply Lakehouse destinations to dataflows

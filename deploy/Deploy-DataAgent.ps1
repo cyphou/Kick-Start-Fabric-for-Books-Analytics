@@ -29,22 +29,13 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
-$FabricApiBase = "https://api.fabric.microsoft.com/v1"
+Import-Module (Join-Path $PSScriptRoot 'HorizonBooks.psm1') -Force
 
-function Get-FabricToken {
-    try {
-        $token = Get-AzAccessToken -ResourceUrl "https://api.fabric.microsoft.com"
-        return $token.Token
-    }
-    catch {
-        Write-Error "Failed to get Fabric API token. Run 'Connect-AzAccount' first."
-        throw
-    }
-}
+# ── Imported from HorizonBooks.psm1 ──────────────────────────────────────
+#   Get-FabricToken, Write-Info, Write-Success, Write-Warn
+#   $FabricApiBase
 
-function Write-Info { param([string]$Message) Write-Host "  [INFO] $Message" -ForegroundColor Gray }
-function Write-Success { param([string]$Message) Write-Host "  [OK]   $Message" -ForegroundColor Green }
-function Write-Warn { param([string]$Message) Write-Host "  [WARN] $Message" -ForegroundColor Yellow }
+$FabricApiBase = $script:FabricApiBase
 
 Write-Host ""
 Write-Host "  Deploying Data Agent: $AgentName" -ForegroundColor Cyan

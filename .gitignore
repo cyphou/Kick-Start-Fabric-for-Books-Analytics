@@ -20,3 +20,12 @@ Thumbs.db
 *.log
 *.bak
 *.tmp
+
+# Temp / scratch files
+tmp_mashup.pq
+visual_audit.txt
+_fix_layout.py
+_check.txt
+
+# Python cache (already excluded above, belt-and-suspenders)
+__pycache__/

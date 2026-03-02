@@ -44,22 +44,41 @@ View experiment results in the Fabric portal under **Experiments** → `HorizonB
 
 ## Configuration
 
-Default parameters (defined in `forecast-config.json`):
+Default parameters (defined in `04_Forecasting.py`, Cell 1):
 
 | Parameter | Default | Description |
 |-----------|---------|-------------|
-| `forecastHorizon` | 6 | Months to forecast ahead |
-| `confidenceLevel` | 0.95 | Confidence interval (95%) |
-| `minHistoryMonths` | 12 | Minimum data points required |
-| `seasonalPeriods` | 12 | Monthly seasonality cycle |
+| `FORECAST_HORIZON` | 6 | Months to forecast ahead |
+| `CONFIDENCE_LEVEL` | 0.95 | Confidence interval (95%) |
+| `MIN_HISTORY_MONTHS` | 12 | Minimum data points required |
+| Seasonal periods | 12 | Monthly seasonality cycle (Holt-Winters `seasonal_periods`) |
+
+> **Note:** `forecast-config.json` documents the same defaults but is not consumed at runtime.
+> The notebook uses Python constants directly for Spark compatibility.
 
 ## Output Schema
-All forecast tables are written to **GoldLH** under the `analytics` schema and include:
-- `ForecastDate` — Projected date
-- `ForecastValue` — Point forecast
-- `LowerBound` / `UpperBound` — Confidence interval
-- `ModelName` — Algorithm used
-- `GeneratedAt` — Timestamp of forecast run
+All forecast tables are written to **GoldLH** under the `analytics` schema.
+Each table has a model-specific schema; common columns across all tables:
+
+| Column | Type | Description |
+|--------|------|-------------|
+| `ForecastMonth` | Date | Projected month (1st of month) |
+| `LowerBound` | Double | Lower confidence interval bound |
+| `UpperBound` | Double | Upper confidence interval bound |
+| `ForecastHorizon` | Integer | Period index (0 = actual, 1–6 = forecast) |
+| `RecordType` | String | `Actual` or `Forecast` |
+| `ForecastModel` | String | Algorithm used (e.g. `HoltWinters_add_add`) |
+| `_generated_at` | Timestamp | Run timestamp |
+
+### Model-specific columns
+
+| Table | Extra Columns |
+|-------|---------------|
+| `ForecastSalesRevenue` | `Channel`, `Revenue`, `Orders`, `Customers` |
+| `ForecastGenreDemand` | `Genre`, `UnitDemand`, `Revenue` |
+| `ForecastFinancial` | `PLCategory`, `Amount`, `TransactionCount` |
+| `ForecastInventoryDemand` | `BookID`, `WarehouseID`, `QuantityOnHand` (see notebook) |
+| `ForecastWorkforce` | `Department`, `Headcount`, `NetPay` (see notebook) |
 
 ## How to Run
 The forecasting notebook runs as part of the orchestration pipeline

@@ -4,13 +4,13 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
-$FabricApiBase = "https://api.fabric.microsoft.com/v1"
+Import-Module (Join-Path $PSScriptRoot 'HorizonBooks.psm1') -Force
+$FabricApiBase = $script:FabricApiBase
 $scriptDir = if ($PSScriptRoot) { $PSScriptRoot } else { Split-Path -Parent $MyInvocation.MyCommand.Path }
 $projectRoot = Split-Path -Parent $scriptDir
 
-function Get-Token {
-    return (Get-AzAccessToken -ResourceUrl "https://api.fabric.microsoft.com").Token
-}
+# Get-Token kept as a thin alias for backward compatibility
+function Get-Token { return (Get-FabricToken) }
 
 Write-Host ""
 Write-Host "=== Redeploy Notebooks Only ===" -ForegroundColor Cyan

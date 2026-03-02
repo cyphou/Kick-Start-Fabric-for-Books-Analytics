@@ -3,17 +3,30 @@
     Uploads the 17 SampleData CSV files to BronzeLH Files/ via OneLake DFS API.
 .DESCRIPTION
     Standalone script extracted from Deploy-Full.ps1 Step 2.
-    Uses the existing BronzeLH lakehouse and workspace IDs.
+    Requires the Workspace ID and BronzeLH Lakehouse ID as parameters.
+.PARAMETER WorkspaceId
+    The GUID of the Fabric workspace containing BronzeLH.
+.PARAMETER BronzeLakehouseId
+    The GUID of the BronzeLH lakehouse.
+.EXAMPLE
+    .\Upload-SampleData.ps1 -WorkspaceId "91b2dca3-..." -BronzeLakehouseId "899cf688-..."
 #>
 [CmdletBinding()]
-param()
+param(
+    [Parameter(Mandatory = $true)]
+    [string]$WorkspaceId,
+
+    [Parameter(Mandatory = $true)]
+    [string]$BronzeLakehouseId
+)
 
 $ErrorActionPreference = "Stop"
 
-# ── IDs ──────────────────────────────────────────────────────────────
-$WorkspaceId     = "91b2dca3-5729-4e7d-a473-bfeb85c16aa1"
-$BronzeLakehouseId = "899cf688-adfe-47fd-9b59-3d047478d6f0"
-$OneLakeBase     = "https://onelake.dfs.fabric.microsoft.com"
+# ── Shared helpers ───────────────────────────────────────────────────
+Import-Module (Join-Path $PSScriptRoot 'HorizonBooks.psm1') -Force
+# Imports: Get-StorageToken, Upload-FileToOneLake
+
+$OneLakeBase = $script:OneLakeBase
 
 $projectRoot = Split-Path $PSScriptRoot -Parent
 $dataFolder  = Join-Path $projectRoot "SampleData"
@@ -24,37 +37,6 @@ $LakehouseFiles = @(
     @{ Folder = "HR";         Files = @("DimEmployees.csv", "DimDepartments.csv", "FactPayroll.csv", "FactPerformanceReviews.csv", "FactRecruitment.csv") },
     @{ Folder = "Operations"; Files = @("DimBooks.csv", "DimAuthors.csv", "DimCustomers.csv", "DimGeography.csv", "DimWarehouses.csv", "FactOrders.csv", "FactInventory.csv", "FactReturns.csv") }
 )
-
-# ── Helpers ──────────────────────────────────────────────────────────
-function Get-StorageToken {
-    (Get-AzAccessToken -ResourceUrl "https://storage.azure.com").Token
-}
-
-function Upload-FileToOneLake {
-    param(
-        [string]$LocalFilePath,
-        [string]$OneLakePath,
-        [string]$Token
-    )
-    $fileBytes = [System.IO.File]::ReadAllBytes($LocalFilePath)
-    $fileName  = [System.IO.Path]::GetFileName($LocalFilePath)
-
-    # Step 1 – Create file
-    Invoke-RestMethod -Method Put `
-        -Uri "${OneLakePath}/${fileName}?resource=file" `
-        -Headers @{ "Authorization" = "Bearer $Token"; "Content-Length" = "0" } | Out-Null
-
-    # Step 2 – Append data
-    Invoke-RestMethod -Method Patch `
-        -Uri "${OneLakePath}/${fileName}?action=append&position=0" `
-        -Headers @{ "Authorization" = "Bearer $Token"; "Content-Type" = "application/octet-stream"; "Content-Length" = $fileBytes.Length.ToString() } `
-        -Body $fileBytes | Out-Null
-
-    # Step 3 – Flush
-    Invoke-RestMethod -Method Patch `
-        -Uri "${OneLakePath}/${fileName}?action=flush&position=$($fileBytes.Length)" `
-        -Headers @{ "Authorization" = "Bearer $Token"; "Content-Length" = "0" } | Out-Null
-}
 
 # ── Main ─────────────────────────────────────────────────────────────
 Write-Host ""
