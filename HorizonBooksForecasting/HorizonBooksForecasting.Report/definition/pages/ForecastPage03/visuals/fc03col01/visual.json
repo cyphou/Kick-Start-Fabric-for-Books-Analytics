@@ -1,0 +1,69 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.5.0/schema.json",
+  "name": "fc03col01",
+  "position": {
+    "x": 10,
+    "y": 380,
+    "width": 430,
+    "height": 330
+  },
+  "visual": {
+    "visualType": "columnChart",
+    "drillFilterOtherVisuals": true,
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Forecast Financial"
+                    }
+                  },
+                  "Property": "P&L Category"
+                }
+              },
+              "queryRef": "Forecast Financial.P&L Category",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Forecast Financial"
+                    }
+                  },
+                  "Property": "Forecast P&L Amount"
+                }
+              },
+              "queryRef": "Forecast Financial.Forecast P&L Amount",
+              "active": true
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Forecast Amount by P&L Category'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

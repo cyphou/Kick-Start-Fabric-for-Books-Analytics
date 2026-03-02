@@ -1,0 +1,97 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.5.0/schema.json",
+  "name": "fc05line01",
+  "position": {
+    "x": 10,
+    "y": 62,
+    "width": 870,
+    "height": 310
+  },
+  "visual": {
+    "visualType": "lineChart",
+    "drillFilterOtherVisuals": true,
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Forecast Workforce"
+                    }
+                  },
+                  "Property": "Forecast Month"
+                }
+              },
+              "queryRef": "Forecast Workforce.Forecast Month",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Forecast Workforce"
+                    }
+                  },
+                  "Property": "Forecast Headcount"
+                }
+              },
+              "queryRef": "Forecast Workforce.Forecast Headcount",
+              "active": true
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Forecast Workforce"
+                    }
+                  },
+                  "Property": "Forecast Payroll"
+                }
+              },
+              "queryRef": "Forecast Workforce.Forecast Payroll",
+              "active": true
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Forecast Workforce"
+                    }
+                  },
+                  "Property": "Forecast Openings"
+                }
+              },
+              "queryRef": "Forecast Workforce.Forecast Openings",
+              "active": true
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Workforce Forecast Over Time'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

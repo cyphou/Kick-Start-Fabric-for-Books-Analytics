@@ -1,0 +1,51 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.5.0/schema.json",
+  "name": "fc04card03",
+  "position": {
+    "x": 450,
+    "y": 600,
+    "width": 285,
+    "height": 100
+  },
+  "visual": {
+    "visualType": "card",
+    "drillFilterOtherVisuals": true,
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Forecast Inventory Demand"
+                    }
+                  },
+                  "Property": "Cumulative Forecast Demand"
+                }
+              },
+              "queryRef": "Forecast Inventory Demand.Cumulative Forecast Demand",
+              "active": true
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Cumulative Demand'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

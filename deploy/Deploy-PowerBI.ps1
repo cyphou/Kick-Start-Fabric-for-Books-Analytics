@@ -1,6 +1,6 @@
 ﻿<#
 .SYNOPSIS
-    Deploys the Power BI Semantic Model and Report for Horizon Books to Microsoft Fabric.
+    Deploys the Power BI Semantic Model and Reports for Horizon Books to Microsoft Fabric.
 
 .DESCRIPTION
     Standalone deployment script for the Power BI layer:
@@ -10,10 +10,13 @@
             - 27 relationships, 96 DAX measures
             - Auto-binds to GoldLH SQL endpoint
 
-    Step 2: Deploy Power BI Report (PBIR)
+    Step 2: Deploy Power BI Analytics Report (PBIR)
             - 10-page interactive report
             - Bound to the Semantic Model deployed in Step 1
-            - Includes geographic map visuals, KPIs, drill-through
+
+    Step 3: Deploy Power BI Forecasting Report (PBIR)
+            - 5-page forecasting report (Sales, Genre, Financial, Inventory, Workforce)
+            - Bound to the same Semantic Model
 
     This script can be run independently after the data pipeline has
     populated the Gold Lakehouse, or as part of Deploy-Full.ps1.
@@ -32,13 +35,16 @@
     Name for the Semantic Model. Defaults to HorizonBooksModel.
 
 .PARAMETER ReportName
-    Name for the PBIR Report. Defaults to HorizonBooksAnalytics.
+    Name for the Analytics PBIR Report. Defaults to HorizonBooksAnalytics.
+
+.PARAMETER ForecastReportName
+    Name for the Forecasting PBIR Report. Defaults to HorizonBooksForecasting.
 
 .PARAMETER SkipReport
-    If set, deploys only the Semantic Model (no report).
+    If set, deploys only the Semantic Model (no reports).
 
 .EXAMPLE
-    # Deploy both Semantic Model and Report
+    # Deploy Semantic Model + both reports
     .\Deploy-PowerBI.ps1 -WorkspaceId "your-workspace-guid"
 
 .EXAMPLE
@@ -66,6 +72,9 @@ param(
 
     [Parameter(Mandatory = $false)]
     [string]$ReportName = "HorizonBooksAnalytics",
+
+    [Parameter(Mandatory = $false)]
+    [string]$ForecastReportName = "HorizonBooksForecasting",
 
     [Parameter(Mandatory = $false)]
     [switch]$SkipReport,
@@ -104,7 +113,7 @@ Write-Host ""
 Write-Host "  Workspace      : $WorkspaceId" -ForegroundColor White
 Write-Host "  Gold Lakehouse : $GoldLakehouseName" -ForegroundColor White
 Write-Host "  Semantic Model : $SemanticModelName (folder: $ParentFolderName/$SemanticModelFolderName)" -ForegroundColor White
-Write-Host "  Report         : $(if ($SkipReport) { 'Skipped' } else { "$ReportName (folder: $ParentFolderName/$ReportFolderName)" })" -ForegroundColor White
+Write-Host "  Report         : $(if ($SkipReport) { 'Skipped' } else { "$ReportName + $ForecastReportName (folder: $ParentFolderName/$ReportFolderName)" })" -ForegroundColor White
 Write-Host ""
 
 # ------------------------------------------------------------------
@@ -384,26 +393,29 @@ catch {
 }
 
 # ------------------------------------------------------------------
-# Step 2: Deploy Power BI Report (PBIR)
+# Helper: Deploy a PBIR Report
 # ------------------------------------------------------------------
-if (-not $SkipReport) {
-    Write-Step "2/2" "Deploying Power BI Report '$ReportName' (PBIR)"
+function Deploy-PbirReport {
+    param(
+        [string]$RptName,
+        [string]$RptRoot,
+        [string]$Description,
+        [string]$FolderId,
+        [string]$SmId
+    )
 
-    $reportRoot   = Join-Path $projectRoot "HorizonBooksAnalytics\HorizonBooksAnalytics.Report"
-    $reportDefDir = Join-Path $reportRoot "definition"
-
-    if (-not (Test-Path $reportRoot)) {
-        Write-Error "Report folder not found at $reportRoot"
-        exit 1
+    $rptDefDir = Join-Path $RptRoot "definition"
+    if (-not (Test-Path $RptRoot)) {
+        Write-Warn "Report folder not found at $RptRoot - skipping"
+        return $null
     }
 
-    $reportParts = @()
+    $parts = @()
 
     # --- definition.pbir: rewrite byPath -> byConnection with SM ID ---
-    $pbirPath = Join-Path $reportRoot "definition.pbir"
+    $pbirPath = Join-Path $RptRoot "definition.pbir"
     if (Test-Path $pbirPath) {
-        if ($semanticModelId) {
-            # Build byConnection JSON referencing deployed semantic model
+        if ($SmId) {
             $pbirObj = @{
                 version = "4.0"
                 datasetReference = @{
@@ -412,7 +424,7 @@ if (-not $SkipReport) {
                         connectionString          = $null
                         pbiServiceModelId         = $null
                         pbiModelVirtualServerName = "sobe_wowvirtualserver"
-                        pbiModelDatabaseName      = $semanticModelId
+                        pbiModelDatabaseName      = $SmId
                         name                      = "EntityDataSource"
                         connectionType            = "pbiServiceXmlaStyleLive"
                     }
@@ -426,34 +438,31 @@ if (-not $SkipReport) {
             $pbirBytes = [IO.File]::ReadAllBytes($pbirPath)
         }
         $b64 = [Convert]::ToBase64String($pbirBytes)
-        $reportParts += '{"path":"definition.pbir","payload":"' + $b64 + '","payloadType":"InlineBase64"}'
-        Write-Info "Loaded definition.pbir (bound to SM $semanticModelId)"
+        $parts += '{"path":"definition.pbir","payload":"' + $b64 + '","payloadType":"InlineBase64"}'
+        Write-Info "Loaded definition.pbir (bound to SM $SmId)"
     }
 
     # --- Recursively collect all files under definition/ ---
-    if (Test-Path $reportDefDir) {
-        $defFiles = Get-ChildItem -Path $reportDefDir -Recurse -File | Sort-Object FullName
+    if (Test-Path $rptDefDir) {
+        $defFiles = Get-ChildItem -Path $rptDefDir -Recurse -File | Sort-Object FullName
         foreach ($f in $defFiles) {
-            $relPath = $f.FullName.Substring($reportRoot.Length + 1).Replace('\', '/')
-            # PBIR format: RegisteredResources must be under StaticResources/
+            $relPath = $f.FullName.Substring($RptRoot.Length + 1).Replace('\', '/')
             if ($relPath -like "definition/RegisteredResources/*") {
                 $relPath = $relPath -replace '^definition/RegisteredResources/', 'StaticResources/RegisteredResources/'
             }
-            $bytes   = [IO.File]::ReadAllBytes($f.FullName)
-            $b64     = [Convert]::ToBase64String($bytes)
-            $reportParts += '{"path":"' + $relPath + '","payload":"' + $b64 + '","payloadType":"InlineBase64"}'
+            $bytes = [IO.File]::ReadAllBytes($f.FullName)
+            $b64   = [Convert]::ToBase64String($bytes)
+            $parts += '{"path":"' + $relPath + '","payload":"' + $b64 + '","payloadType":"InlineBase64"}'
         }
         Write-Info "Loaded $($defFiles.Count) report definition files"
     }
 
-    Write-Info "Total report parts: $($reportParts.Count)"
+    Write-Info "Total report parts: $($parts.Count)"
 
-    $reportDesc = "Horizon Books Analytics - 10-page Power BI report (PBIR) bound to $SemanticModelName"
-    $partsJson  = $reportParts -join ","
-    $createReportJson = '{"displayName":"' + $ReportName + '","type":"Report","description":"' + $reportDesc + '","folderId":"' + $rptFolderId + '","definition":{"parts":[' + $partsJson + ']}}'
+    $partsJson = $parts -join ","
+    $createJson = '{"displayName":"' + $RptName + '","type":"Report","description":"' + $Description + '","folderId":"' + $FolderId + '","definition":{"parts":[' + $partsJson + ']}}'
 
-    $reportId = $null
-    $rptLroFailed = $false
+    $rptId = $null
 
     try {
         $fabricToken = Get-FabricToken
@@ -461,7 +470,7 @@ if (-not $SkipReport) {
 
         $rptResponse = Invoke-WebRequest -Method Post `
             -Uri "$FabricApiBase/workspaces/$WorkspaceId/items" `
-            -Headers $rptHeaders -Body $createReportJson -UseBasicParsing
+            -Headers $rptHeaders -Body $createJson -UseBasicParsing
 
         if ($rptResponse.StatusCode -eq 202) {
             Write-Info "Report creation accepted (202). Polling..."
@@ -484,14 +493,11 @@ if (-not $SkipReport) {
                         Write-Info "  Operation: $($pollData.status) ($($rptPolled)s)"
                         if ($pollData.status -eq "Succeeded") { break }
                         if ($pollData.status -eq "Failed") {
-                            $errDetail = $pollData | ConvertTo-Json -Depth 10 -Compress
-                            Write-Warn "Report creation LRO failed: $errDetail"
-                            Write-Warn "Will try updating existing item"
-                            $rptLroFailed = $true
+                            Write-Warn "Report creation LRO failed - will try update"
                             break
                         }
                     }
-                    catch { Write-Warn "Report poll error: $($_.Exception.Message)"; $rptLroFailed = $true; break }
+                    catch { Write-Warn "Report poll error: $($_.Exception.Message)"; break }
                 }
             }
             else { Start-Sleep -Seconds 15 }
@@ -500,55 +506,75 @@ if (-not $SkipReport) {
             $fabricToken = Get-FabricToken
             $rptItems = Invoke-FabricApi -Method Get `
                 -Uri "$FabricApiBase/workspaces/$WorkspaceId/items?type=Report" -Token $fabricToken
-            $rpt = $rptItems.value | Where-Object { $_.displayName -eq $ReportName } | Select-Object -First 1
-            $reportId = $rpt.id
+            $rpt = $rptItems.value | Where-Object { $_.displayName -eq $RptName } | Select-Object -First 1
+            $rptId = $rpt.id
 
-            # Always update definition when item already existed
-            if ($reportId) {
+            if ($rptId) {
                 Write-Info "Updating report definition to ensure latest PBIR is applied..."
                 $updateJson = '{"definition":{"parts":[' + $partsJson + ']}}'
                 $fabricToken = Get-FabricToken
-                $updated = Update-FabricItemDefinition -ItemId $reportId `
+                $updated = Update-FabricItemDefinition -ItemId $rptId `
                     -WsId $WorkspaceId -DefinitionJson $updateJson -Token $fabricToken
-                if ($updated) {
-                    Write-Success "Report definition updated: $reportId"
-                }
-                else {
-                    Write-Warn "Report definition update may have failed"
-                }
+                if ($updated) { Write-Success "Report definition updated: $rptId" }
+                else          { Write-Warn "Report definition update may have failed" }
             }
         }
         else {
             $rpt = $rptResponse.Content | ConvertFrom-Json
-            $reportId = $rpt.id
+            $rptId = $rpt.id
         }
-        Write-Success "Report deployed: $reportId"
+        Write-Success "Report deployed: $RptName ($rptId)"
     }
     catch {
         $errMsg = $_.Exception.Message
         if ($errMsg -like "*ItemDisplayNameAlreadyInUse*") {
-            Write-Info "Report '$ReportName' already exists - updating definition."
+            Write-Info "Report '$RptName' already exists - updating definition."
             $fabricToken = Get-FabricToken
             $rptItems = Invoke-FabricApi -Method Get `
                 -Uri "$FabricApiBase/workspaces/$WorkspaceId/items?type=Report" -Token $fabricToken
-            $rpt = $rptItems.value | Where-Object { $_.displayName -eq $ReportName } | Select-Object -First 1
-            $reportId = $rpt.id
+            $rpt = $rptItems.value | Where-Object { $_.displayName -eq $RptName } | Select-Object -First 1
+            $rptId = $rpt.id
 
-            if ($reportId) {
+            if ($rptId) {
                 $updateJson = '{"definition":{"parts":[' + $partsJson + ']}}'
                 $fabricToken = Get-FabricToken
-                $updated = Update-FabricItemDefinition -ItemId $reportId `
+                $updated = Update-FabricItemDefinition -ItemId $rptId `
                     -WsId $WorkspaceId -DefinitionJson $updateJson -Token $fabricToken
-                if ($updated) {
-                    Write-Success "Report definition updated: $reportId"
-                }
-                else {
-                    Write-Warn "Report definition update may have failed - check portal"
-                }
+                if ($updated) { Write-Success "Report definition updated: $rptId" }
+                else          { Write-Warn "Report definition update may have failed" }
             }
         }
         else { Write-Warn "Report deployment issue: $errMsg" }
     }
+
+    return $rptId
+}
+
+# ------------------------------------------------------------------
+# Step 2: Deploy Power BI Analytics Report (PBIR)
+# ------------------------------------------------------------------
+$reportId = $null
+$forecastReportId = $null
+
+if (-not $SkipReport) {
+    Write-Step "2/3" "Deploying Analytics Report '$ReportName' (PBIR)"
+
+    $analyticsRoot = Join-Path $projectRoot "HorizonBooksAnalytics\HorizonBooksAnalytics.Report"
+    $reportId = Deploy-PbirReport -RptName $ReportName `
+        -RptRoot $analyticsRoot `
+        -Description "Horizon Books Analytics - 10-page Power BI report (PBIR) bound to $SemanticModelName" `
+        -FolderId $rptFolderId -SmId $semanticModelId
+
+    # ------------------------------------------------------------------
+    # Step 3: Deploy Power BI Forecasting Report (PBIR)
+    # ------------------------------------------------------------------
+    Write-Step "3/3" "Deploying Forecasting Report '$ForecastReportName' (PBIR)"
+
+    $forecastRoot = Join-Path $projectRoot "HorizonBooksForecasting\HorizonBooksForecasting.Report"
+    $forecastReportId = Deploy-PbirReport -RptName $ForecastReportName `
+        -RptRoot $forecastRoot `
+        -Description "Horizon Books Forecasting - 5-page forecast report (PBIR) bound to $SemanticModelName" `
+        -FolderId $rptFolderId -SmId $semanticModelId
 }
 
 # ============================================================================
@@ -567,7 +593,10 @@ if ($semanticModelId) {
     Write-Host "  Semantic Model : $SemanticModelName ($semanticModelId)" -ForegroundColor White
 }
 if ($reportId) {
-    Write-Host "  Report         : $ReportName ($reportId)" -ForegroundColor White
+    Write-Host "  Analytics Rpt  : $ReportName ($reportId)" -ForegroundColor White
+}
+if ($forecastReportId) {
+    Write-Host "  Forecast Rpt   : $ForecastReportName ($forecastReportId)" -ForegroundColor White
 }
 Write-Host ""
 Write-Host "  Fabric Portal  : https://app.fabric.microsoft.com/groups/$WorkspaceId" -ForegroundColor Cyan

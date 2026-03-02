@@ -1,0 +1,97 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.5.0/schema.json",
+  "name": "fc01line01",
+  "position": {
+    "x": 10,
+    "y": 62,
+    "width": 870,
+    "height": 310
+  },
+  "visual": {
+    "visualType": "lineChart",
+    "drillFilterOtherVisuals": true,
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Forecast Sales Revenue"
+                    }
+                  },
+                  "Property": "Forecast Month"
+                }
+              },
+              "queryRef": "Forecast Sales Revenue.Forecast Month",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Forecast Sales Revenue"
+                    }
+                  },
+                  "Property": "Forecast Revenue"
+                }
+              },
+              "queryRef": "Forecast Sales Revenue.Forecast Revenue",
+              "active": true
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Forecast Sales Revenue"
+                    }
+                  },
+                  "Property": "Revenue Lower Bound"
+                }
+              },
+              "queryRef": "Forecast Sales Revenue.Revenue Lower Bound",
+              "active": true
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Forecast Sales Revenue"
+                    }
+                  },
+                  "Property": "Revenue Upper Bound"
+                }
+              },
+              "queryRef": "Forecast Sales Revenue.Revenue Upper Bound",
+              "active": true
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Revenue Forecast with Confidence Bounds'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

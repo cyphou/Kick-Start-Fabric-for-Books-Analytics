@@ -1,0 +1,51 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.5.0/schema.json",
+  "name": "fc01card03",
+  "position": {
+    "x": 10,
+    "y": 600,
+    "width": 285,
+    "height": 100
+  },
+  "visual": {
+    "visualType": "card",
+    "drillFilterOtherVisuals": true,
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Forecast Sales Revenue"
+                    }
+                  },
+                  "Property": "Forecast Revenue"
+                }
+              },
+              "queryRef": "Forecast Sales Revenue.Forecast Revenue",
+              "active": true
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Total Forecasted Revenue'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

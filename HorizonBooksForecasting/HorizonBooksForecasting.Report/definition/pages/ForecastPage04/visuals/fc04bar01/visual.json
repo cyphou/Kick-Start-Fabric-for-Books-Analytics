@@ -1,0 +1,69 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.5.0/schema.json",
+  "name": "fc04bar01",
+  "position": {
+    "x": 10,
+    "y": 380,
+    "width": 430,
+    "height": 330
+  },
+  "visual": {
+    "visualType": "barChart",
+    "drillFilterOtherVisuals": true,
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Forecast Inventory Demand"
+                    }
+                  },
+                  "Property": "Warehouse ID"
+                }
+              },
+              "queryRef": "Forecast Inventory Demand.Warehouse ID",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Forecast Inventory Demand"
+                    }
+                  },
+                  "Property": "Forecast Demand Units"
+                }
+              },
+              "queryRef": "Forecast Inventory Demand.Forecast Demand Units",
+              "active": true
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Demand by Warehouse'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

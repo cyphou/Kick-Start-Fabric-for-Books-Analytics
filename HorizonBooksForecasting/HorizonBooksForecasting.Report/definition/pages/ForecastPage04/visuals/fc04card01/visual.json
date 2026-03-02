@@ -1,0 +1,51 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.5.0/schema.json",
+  "name": "fc04card01",
+  "position": {
+    "x": 450,
+    "y": 380,
+    "width": 285,
+    "height": 100
+  },
+  "visual": {
+    "visualType": "card",
+    "drillFilterOtherVisuals": true,
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Forecast Inventory Demand"
+                    }
+                  },
+                  "Property": "Stock Coverage Months"
+                }
+              },
+              "queryRef": "Forecast Inventory Demand.Stock Coverage Months",
+              "active": true
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Stock Coverage (Months)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

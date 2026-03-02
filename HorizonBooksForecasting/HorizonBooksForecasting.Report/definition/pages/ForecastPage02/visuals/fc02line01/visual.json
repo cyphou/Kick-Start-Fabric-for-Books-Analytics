@@ -1,0 +1,87 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.5.0/schema.json",
+  "name": "fc02line01",
+  "position": {
+    "x": 10,
+    "y": 62,
+    "width": 870,
+    "height": 310
+  },
+  "visual": {
+    "visualType": "lineChart",
+    "drillFilterOtherVisuals": true,
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Forecast Genre Demand"
+                    }
+                  },
+                  "Property": "Forecast Month"
+                }
+              },
+              "queryRef": "Forecast Genre Demand.Forecast Month",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Forecast Genre Demand"
+                    }
+                  },
+                  "Property": "Forecast Unit Demand"
+                }
+              },
+              "queryRef": "Forecast Genre Demand.Forecast Unit Demand",
+              "active": true
+            }
+          ]
+        },
+        "Series": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Forecast Genre Demand"
+                    }
+                  },
+                  "Property": "Genre"
+                }
+              },
+              "queryRef": "Forecast Genre Demand.Genre",
+              "active": true
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Unit Demand Forecast by Genre'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

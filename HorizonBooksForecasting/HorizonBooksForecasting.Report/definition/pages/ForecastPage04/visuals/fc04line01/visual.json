@@ -1,0 +1,83 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.5.0/schema.json",
+  "name": "fc04line01",
+  "position": {
+    "x": 10,
+    "y": 62,
+    "width": 870,
+    "height": 310
+  },
+  "visual": {
+    "visualType": "lineChart",
+    "drillFilterOtherVisuals": true,
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Forecast Inventory Demand"
+                    }
+                  },
+                  "Property": "Forecast Month"
+                }
+              },
+              "queryRef": "Forecast Inventory Demand.Forecast Month",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Forecast Inventory Demand"
+                    }
+                  },
+                  "Property": "Forecast Demand Units"
+                }
+              },
+              "queryRef": "Forecast Inventory Demand.Forecast Demand Units",
+              "active": true
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Forecast Inventory Demand"
+                    }
+                  },
+                  "Property": "Cumulative Forecast Demand"
+                }
+              },
+              "queryRef": "Forecast Inventory Demand.Cumulative Forecast Demand",
+              "active": true
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Inventory Demand & Cumulative Forecast'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

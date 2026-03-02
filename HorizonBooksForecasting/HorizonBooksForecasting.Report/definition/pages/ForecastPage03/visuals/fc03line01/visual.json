@@ -1,0 +1,97 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.5.0/schema.json",
+  "name": "fc03line01",
+  "position": {
+    "x": 10,
+    "y": 62,
+    "width": 870,
+    "height": 310
+  },
+  "visual": {
+    "visualType": "lineChart",
+    "drillFilterOtherVisuals": true,
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Forecast Financial"
+                    }
+                  },
+                  "Property": "Forecast Month"
+                }
+              },
+              "queryRef": "Forecast Financial.Forecast Month",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Forecast Financial"
+                    }
+                  },
+                  "Property": "Forecast P&L Amount"
+                }
+              },
+              "queryRef": "Forecast Financial.Forecast P&L Amount",
+              "active": true
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Forecast Financial"
+                    }
+                  },
+                  "Property": "Forecast P&L Lower"
+                }
+              },
+              "queryRef": "Forecast Financial.Forecast P&L Lower",
+              "active": true
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Forecast Financial"
+                    }
+                  },
+                  "Property": "Forecast P&L Upper"
+                }
+              },
+              "queryRef": "Forecast Financial.Forecast P&L Upper",
+              "active": true
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'P&L Forecast with Confidence Bounds'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}
