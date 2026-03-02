@@ -18,13 +18,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "FactRecruitment"
+                      "Entity": "Recruitment"
                     }
                   },
                   "Property": "Avg Time to Fill"
                 }
               },
-              "queryRef": "FactRecruitment.Avg Time to Fill",
+              "queryRef": "Recruitment.Avg Time to Fill",
               "active": true
             }
           ]

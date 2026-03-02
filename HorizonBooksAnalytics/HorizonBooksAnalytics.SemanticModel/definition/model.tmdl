@@ -5,31 +5,31 @@ model Model
 		legacyRedirects
 		returnErrorValuesAsNull
 
-annotation PBI_QueryOrder = ["DimDate","DimAccounts","DimCostCenters","DimBooks","DimAuthors","DimGeography","DimCustomers","DimEmployees","DimDepartments","DimWarehouses","FactFinancialTransactions","FactBudget","FactOrders","FactInventory","FactReturns","FactPayroll","FactPerformanceReviews","FactRecruitment","ForecastSalesRevenue","ForecastGenreDemand","ForecastFinancial","ForecastInventoryDemand","ForecastWorkforce"]
+annotation PBI_QueryOrder = ["Date","Accounts","Cost Centers","Books","Authors","Geography","Customers","Employees","Departments","Warehouses","Financial Transactions","Budget","Orders","Inventory","Returns","Payroll","Performance Reviews","Recruitment","Forecast Sales Revenue","Forecast Genre Demand","Forecast Financial","Forecast Inventory Demand","Forecast Workforce"]
 
-ref table DimDate
-ref table DimAccounts
-ref table DimCostCenters
-ref table DimBooks
-ref table DimAuthors
-ref table DimGeography
-ref table DimCustomers
-ref table DimEmployees
-ref table DimDepartments
-ref table DimWarehouses
-ref table FactFinancialTransactions
-ref table FactBudget
-ref table FactOrders
-ref table FactInventory
-ref table FactReturns
-ref table FactPayroll
-ref table FactPerformanceReviews
-ref table FactRecruitment
-ref table ForecastSalesRevenue
-ref table ForecastGenreDemand
-ref table ForecastFinancial
-ref table ForecastInventoryDemand
-ref table ForecastWorkforce
+ref table 'Date'
+ref table 'Accounts'
+ref table 'Cost Centers'
+ref table 'Books'
+ref table 'Authors'
+ref table 'Geography'
+ref table 'Customers'
+ref table 'Employees'
+ref table 'Departments'
+ref table 'Warehouses'
+ref table 'Financial Transactions'
+ref table 'Budget'
+ref table 'Orders'
+ref table 'Inventory'
+ref table 'Returns'
+ref table 'Payroll'
+ref table 'Performance Reviews'
+ref table 'Recruitment'
+ref table 'Forecast Sales Revenue'
+ref table 'Forecast Genre Demand'
+ref table 'Forecast Financial'
+ref table 'Forecast Inventory Demand'
+ref table 'Forecast Workforce'
 
 ref expression DatabaseQuery
 

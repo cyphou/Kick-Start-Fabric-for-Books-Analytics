@@ -18,13 +18,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "DimEmployees"
+                      "Entity": "Employees"
                     }
                   },
                   "Property": "Avg Tenure Years"
                 }
               },
-              "queryRef": "DimEmployees.Avg Tenure Years",
+              "queryRef": "Employees.Avg Tenure Years",
               "active": true
             }
           ]

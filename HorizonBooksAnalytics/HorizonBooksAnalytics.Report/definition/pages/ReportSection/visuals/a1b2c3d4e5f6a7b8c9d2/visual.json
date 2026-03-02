@@ -18,13 +18,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "FactOrders"
+                      "Entity": "Orders"
                     }
                   },
                   "Property": "Total Orders"
                 }
               },
-              "queryRef": "FactOrders.Total Orders",
+              "queryRef": "Orders.Total Orders",
               "active": true
             }
           ]

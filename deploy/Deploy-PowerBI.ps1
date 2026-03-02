@@ -68,7 +68,16 @@ param(
     [string]$ReportName = "HorizonBooksAnalytics",
 
     [Parameter(Mandatory = $false)]
-    [switch]$SkipReport
+    [switch]$SkipReport,
+
+    [Parameter(Mandatory = $false)]
+    [string]$SemanticModelFolderName = "Semantic Model",
+
+    [Parameter(Mandatory = $false)]
+    [string]$ReportFolderName = "Report",
+
+    [Parameter(Mandatory = $false)]
+    [string]$ParentFolderName = "05 - Analytics"
 )
 
 $ErrorActionPreference = "Stop"
@@ -294,7 +303,19 @@ function Update-FabricItemDefinition {
                         $poll = Invoke-RestMethod -Uri $opUrl -Headers @{ Authorization = "Bearer $Token" }
                         Write-Info "  Definition LRO: $($poll.status) ($($p*5)s)"
                         if ($poll.status -eq "Succeeded") { return $true }
-                        if ($poll.status -eq "Failed") { Write-Warn "Definition LRO failed"; return $false }
+                        if ($poll.status -eq "Failed") {
+                            $errDetail = $poll | ConvertTo-Json -Depth 10 -Compress
+                            Write-Warn "Definition LRO failed: $errDetail"
+                            # Also try to get the result endpoint
+                            try {
+                                $resultUrl = "$opUrl/result"
+                                $resultData = Invoke-RestMethod -Uri $resultUrl -Headers @{ Authorization = "Bearer $Token" }
+                                Write-Warn "LRO Result: $($resultData | ConvertTo-Json -Depth 10 -Compress)"
+                            } catch {
+                                Write-Warn "Could not retrieve LRO result: $($_.Exception.Message)"
+                            }
+                            return $false
+                        }
                     }
                 }
             }
@@ -314,8 +335,8 @@ Write-Banner "Horizon Books - Power BI Deployment"
 Write-Host ""
 Write-Host "  Workspace      : $WorkspaceId" -ForegroundColor White
 Write-Host "  Gold Lakehouse : $GoldLakehouseName" -ForegroundColor White
-Write-Host "  Semantic Model : $SemanticModelName" -ForegroundColor White
-Write-Host "  Report         : $(if ($SkipReport) { 'Skipped' } else { $ReportName })" -ForegroundColor White
+Write-Host "  Semantic Model : $SemanticModelName (folder: $ParentFolderName/$SemanticModelFolderName)" -ForegroundColor White
+Write-Host "  Report         : $(if ($SkipReport) { 'Skipped' } else { "$ReportName (folder: $ParentFolderName/$ReportFolderName)" })" -ForegroundColor White
 Write-Host ""
 
 # ------------------------------------------------------------------
@@ -377,6 +398,60 @@ if (-not $sqlEndpoint) {
 Write-Success "Authenticated and resolved Gold Lakehouse"
 
 # ------------------------------------------------------------------
+# Resolve / Create target folders
+# ------------------------------------------------------------------
+Write-Info "Resolving workspace folders..."
+$fabricToken = Get-FabricToken
+$allFolders = (Invoke-RestMethod -Uri "$FabricApiBase/workspaces/$WorkspaceId/folders" `
+    -Headers @{ Authorization = "Bearer $fabricToken"; "Content-Type" = "application/json" }).value
+
+# Find or create parent folder
+$parentFolder = $allFolders | Where-Object { $_.displayName -eq $ParentFolderName } | Select-Object -First 1
+if (-not $parentFolder) {
+    Write-Info "Creating parent folder '$ParentFolderName'..."
+    $body = @{ displayName = $ParentFolderName } | ConvertTo-Json
+    $parentFolder = Invoke-RestMethod -Method Post -Uri "$FabricApiBase/workspaces/$WorkspaceId/folders" `
+        -Headers @{ Authorization = "Bearer $fabricToken"; "Content-Type" = "application/json" } -Body $body
+    Write-Success "Created folder '$ParentFolderName': $($parentFolder.id)"
+} else {
+    Write-Info "Found parent folder '$ParentFolderName': $($parentFolder.id)"
+}
+$parentFolderId = $parentFolder.id
+
+# Refresh folder list after potential creation
+$allFolders = (Invoke-RestMethod -Uri "$FabricApiBase/workspaces/$WorkspaceId/folders" `
+    -Headers @{ Authorization = "Bearer $fabricToken"; "Content-Type" = "application/json" }).value
+
+# Find or create SM subfolder
+$smFolder = $allFolders | Where-Object { $_.displayName -eq $SemanticModelFolderName -and $_.parentFolderId -eq $parentFolderId } | Select-Object -First 1
+if (-not $smFolder) {
+    Write-Info "Creating subfolder '$SemanticModelFolderName' under '$ParentFolderName'..."
+    $body = @{ displayName = $SemanticModelFolderName; parentFolderId = $parentFolderId } | ConvertTo-Json
+    $smFolder = Invoke-RestMethod -Method Post -Uri "$FabricApiBase/workspaces/$WorkspaceId/folders" `
+        -Headers @{ Authorization = "Bearer $fabricToken"; "Content-Type" = "application/json" } -Body $body
+    Write-Success "Created folder '$SemanticModelFolderName': $($smFolder.id)"
+} else {
+    Write-Info "Found subfolder '$SemanticModelFolderName': $($smFolder.id)"
+}
+$smFolderId = $smFolder.id
+
+# Find or create Report subfolder
+if (-not $SkipReport) {
+    $rptFolder = $allFolders | Where-Object { $_.displayName -eq $ReportFolderName -and $_.parentFolderId -eq $parentFolderId } | Select-Object -First 1
+    if (-not $rptFolder) {
+        Write-Info "Creating subfolder '$ReportFolderName' under '$ParentFolderName'..."
+        $body = @{ displayName = $ReportFolderName; parentFolderId = $parentFolderId } | ConvertTo-Json
+        $rptFolder = Invoke-RestMethod -Method Post -Uri "$FabricApiBase/workspaces/$WorkspaceId/folders" `
+            -Headers @{ Authorization = "Bearer $fabricToken"; "Content-Type" = "application/json" } -Body $body
+        Write-Success "Created folder '$ReportFolderName': $($rptFolder.id)"
+    } else {
+        Write-Info "Found subfolder '$ReportFolderName': $($rptFolder.id)"
+    }
+    $rptFolderId = $rptFolder.id
+}
+Write-Success "Folder structure ready"
+
+# ------------------------------------------------------------------
 # Step 1: Deploy Semantic Model (TMDL)
 # ------------------------------------------------------------------
 Write-Step "1/2" "Deploying Semantic Model '$SemanticModelName' (TMDL Direct Lake)"
@@ -404,6 +479,10 @@ if (Test-Path $pbismPath) {
 # definition/*.tmdl - read as raw bytes to avoid BOM issues
 foreach ($f in (Get-ChildItem -Path $tmdlDefDir -Filter "*.tmdl" -File | Sort-Object Name)) {
     $bytes = [IO.File]::ReadAllBytes($f.FullName)
+    # Strip UTF-8 BOM if present
+    if ($bytes.Length -ge 3 -and $bytes[0] -eq 0xEF -and $bytes[1] -eq 0xBB -and $bytes[2] -eq 0xBF) {
+        $bytes = $bytes[3..($bytes.Length - 1)]
+    }
     if ($f.Name -eq "expressions.tmdl") {
         $text = [Text.Encoding]::UTF8.GetString($bytes)
         $text = $text -replace '\{\{SQL_ENDPOINT\}\}', $sqlEndpoint
@@ -418,6 +497,10 @@ foreach ($f in (Get-ChildItem -Path $tmdlDefDir -Filter "*.tmdl" -File | Sort-Ob
 if (Test-Path $tmdlTablesDir) {
     foreach ($f in (Get-ChildItem -Path $tmdlTablesDir -Filter "*.tmdl" -File | Sort-Object Name)) {
         $bytes = [IO.File]::ReadAllBytes($f.FullName)
+        # Strip UTF-8 BOM if present
+        if ($bytes.Length -ge 3 -and $bytes[0] -eq 0xEF -and $bytes[1] -eq 0xBB -and $bytes[2] -eq 0xBF) {
+            $bytes = $bytes[3..($bytes.Length - 1)]
+        }
         $b64 = [Convert]::ToBase64String($bytes)
         $smParts += '{"path":"definition/tables/' + $f.Name + '","payload":"' + $b64 + '","payloadType":"InlineBase64"}'
     }
@@ -427,9 +510,10 @@ Write-Info "Total TMDL parts: $($smParts.Count)"
 
 $smDesc    = "Direct Lake semantic model on GoldLH - 23 tables (dim/fact/analytics schemas), 27 relationships, 96 DAX measures, 5 forecast tables"
 $partsJson = $smParts -join ","
-$createSmJson = '{"displayName":"' + $SemanticModelName + '","type":"SemanticModel","description":"' + $smDesc + '","definition":{"parts":[' + $partsJson + ']}}'
+$createSmJson = '{"displayName":"' + $SemanticModelName + '","type":"SemanticModel","description":"' + $smDesc + '","folderId":"' + $smFolderId + '","definition":{"parts":[' + $partsJson + ']}}'
 
 $semanticModelId = $null
+$smLroFailed = $false
 
 try {
     $fabricToken = Get-FabricToken
@@ -460,21 +544,43 @@ try {
                     Write-Info "  Operation: $($pollData.status) ($($smPolled)s)"
                     if ($pollData.status -eq "Succeeded") { break }
                     if ($pollData.status -eq "Failed") {
-                        Write-Warn "SM operation failed"
+                        $errDetail = $pollData | ConvertTo-Json -Depth 10 -Compress
+                        Write-Warn "SM creation LRO failed: $errDetail"
+                        try {
+                            $resultUrl = "$smOpUrl/result"
+                            $resultData = Invoke-RestMethod -Uri $resultUrl -Headers @{ "Authorization" = "Bearer $fabricToken" }
+                            Write-Warn "SM LRO Result: $($resultData | ConvertTo-Json -Depth 10 -Compress)"
+                        } catch { Write-Warn "Could not retrieve SM LRO result: $($_.Exception.Message)" }
+                        $smLroFailed = $true
                         break
                     }
                 }
-                catch { Write-Warn "SM poll error: $($_.Exception.Message)"; break }
+                catch { Write-Warn "SM poll error: $($_.Exception.Message)"; $smLroFailed = $true; break }
             }
         }
         else { Start-Sleep -Seconds 15 }
 
-        # Look up created model
+        # Look up created/existing model
         $fabricToken = Get-FabricToken
         $smItems = Invoke-FabricApi -Method Get `
             -Uri "$FabricApiBase/workspaces/$WorkspaceId/items?type=SemanticModel" -Token $fabricToken
         $sm = $smItems.value | Where-Object { $_.displayName -eq $SemanticModelName } | Select-Object -First 1
         $semanticModelId = $sm.id
+
+        # Always update definition when item already existed (creation 202 may not update existing definition)
+        if ($semanticModelId) {
+            Write-Info "Updating semantic model definition to ensure latest TMDL is applied..."
+            $updateJson = '{"definition":{"parts":[' + $partsJson + ']}}'
+            $fabricToken = Get-FabricToken
+            $updated = Update-FabricItemDefinition -ItemId $semanticModelId `
+                -WsId $WorkspaceId -DefinitionJson $updateJson -Token $fabricToken
+            if ($updated) {
+                Write-Success "Semantic model definition updated: $semanticModelId"
+            }
+            else {
+                Write-Warn "Semantic model definition update may have failed"
+            }
+        }
     }
     else {
         $sm = $smResponse.Content | ConvertFrom-Json
@@ -539,6 +645,8 @@ if (-not $SkipReport) {
                         pbiServiceModelId         = $null
                         pbiModelVirtualServerName = "sobe_wowvirtualserver"
                         pbiModelDatabaseName      = $semanticModelId
+                        name                      = "EntityDataSource"
+                        connectionType            = "pbiServiceXmlaStyleLive"
                     }
                 }
             }
@@ -559,6 +667,10 @@ if (-not $SkipReport) {
         $defFiles = Get-ChildItem -Path $reportDefDir -Recurse -File | Sort-Object FullName
         foreach ($f in $defFiles) {
             $relPath = $f.FullName.Substring($reportRoot.Length + 1).Replace('\', '/')
+            # PBIR format: RegisteredResources must be under StaticResources/
+            if ($relPath -like "definition/RegisteredResources/*") {
+                $relPath = $relPath -replace '^definition/RegisteredResources/', 'StaticResources/RegisteredResources/'
+            }
             $bytes   = [IO.File]::ReadAllBytes($f.FullName)
             $b64     = [Convert]::ToBase64String($bytes)
             $reportParts += '{"path":"' + $relPath + '","payload":"' + $b64 + '","payloadType":"InlineBase64"}'
@@ -570,9 +682,10 @@ if (-not $SkipReport) {
 
     $reportDesc = "Horizon Books Analytics - 10-page Power BI report (PBIR) bound to $SemanticModelName"
     $partsJson  = $reportParts -join ","
-    $createReportJson = '{"displayName":"' + $ReportName + '","type":"Report","description":"' + $reportDesc + '","definition":{"parts":[' + $partsJson + ']}}'
+    $createReportJson = '{"displayName":"' + $ReportName + '","type":"Report","description":"' + $reportDesc + '","folderId":"' + $rptFolderId + '","definition":{"parts":[' + $partsJson + ']}}'
 
     $reportId = $null
+    $rptLroFailed = $false
 
     try {
         $fabricToken = Get-FabricToken
@@ -603,21 +716,37 @@ if (-not $SkipReport) {
                         Write-Info "  Operation: $($pollData.status) ($($rptPolled)s)"
                         if ($pollData.status -eq "Succeeded") { break }
                         if ($pollData.status -eq "Failed") {
-                            Write-Warn "Report operation failed"
+                            Write-Warn "Report creation LRO failed - will try updating existing item"
+                            $rptLroFailed = $true
                             break
                         }
                     }
-                    catch { Write-Warn "Report poll error: $($_.Exception.Message)"; break }
+                    catch { Write-Warn "Report poll error: $($_.Exception.Message)"; $rptLroFailed = $true; break }
                 }
             }
             else { Start-Sleep -Seconds 15 }
 
-            # Look up created report
+            # Look up created/existing report
             $fabricToken = Get-FabricToken
             $rptItems = Invoke-FabricApi -Method Get `
                 -Uri "$FabricApiBase/workspaces/$WorkspaceId/items?type=Report" -Token $fabricToken
             $rpt = $rptItems.value | Where-Object { $_.displayName -eq $ReportName } | Select-Object -First 1
             $reportId = $rpt.id
+
+            # Always update definition when item already existed
+            if ($reportId) {
+                Write-Info "Updating report definition to ensure latest PBIR is applied..."
+                $updateJson = '{"definition":{"parts":[' + $partsJson + ']}}'
+                $fabricToken = Get-FabricToken
+                $updated = Update-FabricItemDefinition -ItemId $reportId `
+                    -WsId $WorkspaceId -DefinitionJson $updateJson -Token $fabricToken
+                if ($updated) {
+                    Write-Success "Report definition updated: $reportId"
+                }
+                else {
+                    Write-Warn "Report definition update may have failed"
+                }
+            }
         }
         else {
             $rpt = $rptResponse.Content | ConvertFrom-Json

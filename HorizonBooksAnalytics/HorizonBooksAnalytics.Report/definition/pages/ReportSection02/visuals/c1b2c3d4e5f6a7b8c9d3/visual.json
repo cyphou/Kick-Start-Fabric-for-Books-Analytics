@@ -18,13 +18,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "DimAccounts"
+                      "Entity": "Accounts"
                     }
                   },
                   "Property": "AccountName"
                 }
               },
-              "queryRef": "DimAccounts.AccountName",
+              "queryRef": "Accounts.AccountName",
               "active": true
             }
           ]
@@ -36,13 +36,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "FactBudget"
+                      "Entity": "Budget"
                     }
                   },
                   "Property": "Budget Amount"
                 }
               },
-              "queryRef": "FactBudget.Budget Amount",
+              "queryRef": "Budget.Budget Amount",
               "active": true
             }
           ]

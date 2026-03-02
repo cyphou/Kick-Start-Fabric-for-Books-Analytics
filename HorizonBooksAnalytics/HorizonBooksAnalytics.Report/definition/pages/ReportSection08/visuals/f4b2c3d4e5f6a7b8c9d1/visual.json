@@ -18,13 +18,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "FactPayroll"
+                      "Entity": "Payroll"
                     }
                   },
                   "Property": "Avg Salary per Employee"
                 }
               },
-              "queryRef": "FactPayroll.Avg Salary per Employee",
+              "queryRef": "Payroll.Avg Salary per Employee",
               "active": true
             }
           ]

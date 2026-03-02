@@ -18,13 +18,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "FactBudget"
+                      "Entity": "Budget"
                     }
                   },
                   "Property": "Budget Attainment"
                 }
               },
-              "queryRef": "FactBudget.Budget Attainment",
+              "queryRef": "Budget.Budget Attainment",
               "active": true
             }
           ]

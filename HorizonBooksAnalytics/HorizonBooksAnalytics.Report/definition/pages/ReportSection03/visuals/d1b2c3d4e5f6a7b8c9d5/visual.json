@@ -18,13 +18,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "DimDate"
+                      "Entity": "Date"
                     }
                   },
                   "Property": "MonthName"
                 }
               },
-              "queryRef": "DimDate.MonthName",
+              "queryRef": "Date.MonthName",
               "active": true
             }
           ]
@@ -36,13 +36,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "FactOrders"
+                      "Entity": "Orders"
                     }
                   },
                   "Property": "Order Revenue"
                 }
               },
-              "queryRef": "FactOrders.Order Revenue",
+              "queryRef": "Orders.Order Revenue",
               "active": true
             }
           ]

@@ -18,13 +18,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "DimEmployees"
+                      "Entity": "Employees"
                     }
                   },
                   "Property": "Location"
                 }
               },
-              "queryRef": "DimEmployees.Location",
+              "queryRef": "Employees.Location",
               "active": true
             }
           ]
@@ -36,13 +36,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "DimEmployees"
+                      "Entity": "Employees"
                     }
                   },
                   "Property": "EmployeeID"
                 }
               },
-              "queryRef": "DimEmployees.EmployeeID",
+              "queryRef": "Employees.EmployeeID",
               "active": true
             }
           ]

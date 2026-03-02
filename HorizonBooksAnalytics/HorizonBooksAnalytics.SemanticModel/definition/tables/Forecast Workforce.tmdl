@@ -1,15 +1,15 @@
-table ForecastWorkforce
+table 'Forecast Workforce'
 	lineageTag: 30000005-0001-0001-0001-000000000001
 
-	measure 'Forecast Workforce Value' = IF(HASONEVALUE(ForecastWorkforce[RecordType]), SUM(ForecastWorkforce[Value]), BLANK())
+	measure 'Forecast Workforce Value' = IF(HASONEVALUE('Forecast Workforce'[RecordType]), SUM('Forecast Workforce'[Value]), BLANK())
 		formatString: #,0
 		displayFolder: Forecasting \ Workforce
 		lineageTag: 30000005-0001-0001-0001-100000000001
 
 	measure 'Forecast Payroll' =
 		CALCULATE(
-			SUM(ForecastWorkforce[Value]),
-			ForecastWorkforce[Metric] = "TotalPayroll"
+			SUM('Forecast Workforce'[Value]),
+			'Forecast Workforce'[Metric] = "TotalPayroll"
 		)
 		formatString: $#,0;($#,0)
 		displayFolder: Forecasting \ Workforce
@@ -17,8 +17,8 @@ table ForecastWorkforce
 
 	measure 'Forecast Headcount' =
 		CALCULATE(
-			SUM(ForecastWorkforce[Value]),
-			ForecastWorkforce[Metric] = "Headcount"
+			SUM('Forecast Workforce'[Value]),
+			'Forecast Workforce'[Metric] = "Headcount"
 		)
 		formatString: #,0
 		displayFolder: Forecasting \ Workforce
@@ -26,8 +26,8 @@ table ForecastWorkforce
 
 	measure 'Forecast Openings' =
 		CALCULATE(
-			SUM(ForecastWorkforce[Value]),
-			ForecastWorkforce[Metric] = "Openings"
+			SUM('Forecast Workforce'[Value]),
+			'Forecast Workforce'[Metric] = "Openings"
 		)
 		formatString: #,0
 		displayFolder: Forecasting \ Workforce
@@ -98,10 +98,10 @@ table ForecastWorkforce
 
 		annotation SummarizationSetBy = Automatic
 
-	partition ForecastWorkforce = entity
+	partition 'Forecast Workforce' = entity
 		mode: directLake
 		schemaName: analytics
-		entityName: ForecastWorkforce
+		entityName: forecastworkforce
 		expressionSource: DatabaseQuery
 
 	annotation PBI_ResultType = Table

@@ -18,13 +18,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "FactInventory"
+                      "Entity": "Inventory"
                     }
                   },
                   "Property": "Status"
                 }
               },
-              "queryRef": "FactInventory.Status",
+              "queryRef": "Inventory.Status",
               "active": true
             }
           ]
@@ -36,13 +36,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "FactInventory"
+                      "Entity": "Inventory"
                     }
                   },
                   "Property": "BookID"
                 }
               },
-              "queryRef": "FactInventory.BookID",
+              "queryRef": "Inventory.BookID",
               "active": true
             }
           ]

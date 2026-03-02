@@ -18,13 +18,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "FactInventory"
+                      "Entity": "Inventory"
                     }
                   },
                   "Property": "Avg Days of Supply"
                 }
               },
-              "queryRef": "FactInventory.Avg Days of Supply",
+              "queryRef": "Inventory.Avg Days of Supply",
               "active": true
             }
           ]

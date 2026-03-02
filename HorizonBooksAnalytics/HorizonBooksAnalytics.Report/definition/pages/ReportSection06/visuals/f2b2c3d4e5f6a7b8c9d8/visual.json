@@ -18,13 +18,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "DimBooks"
+                      "Entity": "Books"
                     }
                   },
                   "Property": "Title"
                 }
               },
-              "queryRef": "DimBooks.Title",
+              "queryRef": "Books.Title",
               "active": true
             }
           ]
@@ -36,13 +36,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "FactReturns"
+                      "Entity": "Returns"
                     }
                   },
                   "Property": "Total Returns"
                 }
               },
-              "queryRef": "FactReturns.Total Returns",
+              "queryRef": "Returns.Total Returns",
               "active": true
             },
             {
@@ -50,13 +50,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "FactReturns"
+                      "Entity": "Returns"
                     }
                   },
                   "Property": "Total Refunds"
                 }
               },
-              "queryRef": "FactReturns.Total Refunds",
+              "queryRef": "Returns.Total Refunds",
               "active": true
             },
             {
@@ -64,13 +64,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "FactReturns"
+                      "Entity": "Returns"
                     }
                   },
                   "Property": "Return Rate"
                 }
               },
-              "queryRef": "FactReturns.Return Rate",
+              "queryRef": "Returns.Return Rate",
               "active": true
             }
           ]

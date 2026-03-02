@@ -1,22 +1,22 @@
-table ForecastInventoryDemand
+table 'Forecast Inventory Demand'
 	lineageTag: 30000004-0001-0001-0001-000000000001
 
-	measure 'Forecast Demand Units' = IF(HASONEVALUE(ForecastInventoryDemand[RecordType]), SUM(ForecastInventoryDemand[UnitsDemanded]), BLANK())
+	measure 'Forecast Demand Units' = IF(HASONEVALUE('Forecast Inventory Demand'[RecordType]), SUM('Forecast Inventory Demand'[UnitsDemanded]), BLANK())
 		formatString: #,0
 		displayFolder: Forecasting \ Inventory
 		lineageTag: 30000004-0001-0001-0001-100000000001
 
 	measure 'Stock Coverage Months' =
 		CALCULATE(
-			AVERAGE(ForecastInventoryDemand[StockCoverMonths]),
-			ForecastInventoryDemand[RecordType] = "Forecast",
-			ForecastInventoryDemand[ForecastHorizon] = 1
+			AVERAGE('Forecast Inventory Demand'[StockCoverMonths]),
+			'Forecast Inventory Demand'[RecordType] = "Forecast",
+			'Forecast Inventory Demand'[ForecastHorizon] = 1
 		)
 		formatString: 0.0
 		displayFolder: Forecasting \ Inventory
 		lineageTag: 30000004-0001-0001-0001-100000000002
 
-	measure 'Cumulative Forecast Demand' = IF(HASONEVALUE(ForecastInventoryDemand[RecordType]), SUM(ForecastInventoryDemand[CumulativeDemand]), BLANK())
+	measure 'Cumulative Forecast Demand' = IF(HASONEVALUE('Forecast Inventory Demand'[RecordType]), SUM('Forecast Inventory Demand'[CumulativeDemand]), BLANK())
 		formatString: #,0
 		displayFolder: Forecasting \ Inventory
 		lineageTag: 30000004-0001-0001-0001-100000000003
@@ -118,10 +118,10 @@ table ForecastInventoryDemand
 
 		annotation SummarizationSetBy = Automatic
 
-	partition ForecastInventoryDemand = entity
+	partition 'Forecast Inventory Demand' = entity
 		mode: directLake
 		schemaName: analytics
-		entityName: ForecastInventoryDemand
+		entityName: forecastinventorydemand
 		expressionSource: DatabaseQuery
 
 	annotation PBI_ResultType = Table

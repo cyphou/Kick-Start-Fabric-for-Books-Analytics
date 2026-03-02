@@ -18,13 +18,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "FactFinancialTransactions"
+                      "Entity": "Financial Transactions"
                     }
                   },
                   "Property": "Total COGS"
                 }
               },
-              "queryRef": "FactFinancialTransactions.Total COGS",
+              "queryRef": "Financial Transactions.Total COGS",
               "active": true
             }
           ]

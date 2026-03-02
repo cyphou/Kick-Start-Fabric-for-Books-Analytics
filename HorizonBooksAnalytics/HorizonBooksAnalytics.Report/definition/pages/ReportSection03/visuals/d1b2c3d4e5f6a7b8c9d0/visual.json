@@ -18,13 +18,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "DimBooks"
+                      "Entity": "Books"
                     }
                   },
                   "Property": "BookID"
                 }
               },
-              "queryRef": "DimBooks.BookID",
+              "queryRef": "Books.BookID",
               "active": true
             }
           ]

@@ -18,13 +18,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "FactFinancialTransactions"
+                      "Entity": "Financial Transactions"
                     }
                   },
                   "Property": "Operating Margin %"
                 }
               },
-              "queryRef": "FactFinancialTransactions.Operating Margin %",
+              "queryRef": "Financial Transactions.Operating Margin %",
               "active": true
             }
           ]

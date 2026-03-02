@@ -1,4 +1,4 @@
-table DimDate
+table 'Date'
 	lineageTag: 10000001-0001-0001-0001-000000000001
 
 	column DateKey
@@ -113,10 +113,10 @@ table DimDate
 
 		annotation SummarizationSetBy = Automatic
 
-	partition DimDate = entity
+	partition 'Date' = entity
 		mode: directLake
 		schemaName: dim
-		entityName: DimDate
+		entityName: dimdate
 		expressionSource: DatabaseQuery
 
 	annotation PBI_ResultType = Table

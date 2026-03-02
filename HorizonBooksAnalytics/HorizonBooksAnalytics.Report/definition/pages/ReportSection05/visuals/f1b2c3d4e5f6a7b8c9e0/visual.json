@@ -18,13 +18,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "DimGeography"
+                      "Entity": "Geography"
                     }
                   },
                   "Property": "Continent"
                 }
               },
-              "queryRef": "DimGeography.Continent",
+              "queryRef": "Geography.Continent",
               "active": true
             }
           ]

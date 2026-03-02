@@ -1,4 +1,4 @@
-table DimAuthors
+table 'Authors'
 	lineageTag: 10000005-0001-0001-0001-000000000001
 
 	column AuthorID
@@ -105,10 +105,10 @@ table DimAuthors
 
 		annotation SummarizationSetBy = Automatic
 
-	partition DimAuthors = entity
+	partition 'Authors' = entity
 		mode: directLake
 		schemaName: dim
-		entityName: DimAuthors
+		entityName: dimauthors
 		expressionSource: DatabaseQuery
 
 	annotation PBI_ResultType = Table

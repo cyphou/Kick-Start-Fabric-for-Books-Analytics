@@ -18,13 +18,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "DimBooks"
+                      "Entity": "Books"
                     }
                   },
                   "Property": "Title"
                 }
               },
-              "queryRef": "DimBooks.Title",
+              "queryRef": "Books.Title",
               "active": true
             },
             {
@@ -32,13 +32,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "DimAuthors"
+                      "Entity": "Authors"
                     }
                   },
                   "Property": "LastName"
                 }
               },
-              "queryRef": "DimAuthors.LastName",
+              "queryRef": "Authors.LastName",
               "active": true
             },
             {
@@ -46,13 +46,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "DimBooks"
+                      "Entity": "Books"
                     }
                   },
                   "Property": "Genre"
                 }
               },
-              "queryRef": "DimBooks.Genre",
+              "queryRef": "Books.Genre",
               "active": true
             },
             {
@@ -60,13 +60,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "DimBooks"
+                      "Entity": "Books"
                     }
                   },
                   "Property": "ImprintName"
                 }
               },
-              "queryRef": "DimBooks.ImprintName",
+              "queryRef": "Books.ImprintName",
               "active": true
             },
             {
@@ -74,13 +74,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "DimBooks"
+                      "Entity": "Books"
                     }
                   },
                   "Property": "ListPrice"
                 }
               },
-              "queryRef": "DimBooks.ListPrice",
+              "queryRef": "Books.ListPrice",
               "active": true
             },
             {
@@ -88,13 +88,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "FactOrders"
+                      "Entity": "Orders"
                     }
                   },
                   "Property": "Total Units Sold"
                 }
               },
-              "queryRef": "FactOrders.Total Units Sold",
+              "queryRef": "Orders.Total Units Sold",
               "active": true
             },
             {
@@ -102,13 +102,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "FactOrders"
+                      "Entity": "Orders"
                     }
                   },
                   "Property": "Order Revenue"
                 }
               },
-              "queryRef": "FactOrders.Order Revenue",
+              "queryRef": "Orders.Order Revenue",
               "active": true
             }
           ]

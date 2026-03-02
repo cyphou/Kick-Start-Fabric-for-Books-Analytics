@@ -18,13 +18,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "FactPayroll"
+                      "Entity": "Payroll"
                     }
                   },
                   "Property": "Total Payroll Cost"
                 }
               },
-              "queryRef": "FactPayroll.Total Payroll Cost",
+              "queryRef": "Payroll.Total Payroll Cost",
               "active": true
             }
           ]

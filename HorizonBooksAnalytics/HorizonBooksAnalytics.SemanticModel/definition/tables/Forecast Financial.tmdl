@@ -1,17 +1,17 @@
-table ForecastFinancial
+table 'Forecast Financial'
 	lineageTag: 30000003-0001-0001-0001-000000000001
 
-	measure 'Forecast P&L Amount' = IF(HASONEVALUE(ForecastFinancial[RecordType]), SUM(ForecastFinancial[Amount]), BLANK())
+	measure 'Forecast P&L Amount' = IF(HASONEVALUE('Forecast Financial'[RecordType]), SUM('Forecast Financial'[Amount]), BLANK())
 		formatString: $#,0;($#,0)
 		displayFolder: Forecasting \ Financial
 		lineageTag: 30000003-0001-0001-0001-100000000001
 
-	measure 'Forecast P&L Lower' = IF(HASONEVALUE(ForecastFinancial[RecordType]), SUM(ForecastFinancial[LowerBound]), BLANK())
+	measure 'Forecast P&L Lower' = IF(HASONEVALUE('Forecast Financial'[RecordType]), SUM('Forecast Financial'[LowerBound]), BLANK())
 		formatString: $#,0;($#,0)
 		displayFolder: Forecasting \ Financial
 		lineageTag: 30000003-0001-0001-0001-100000000002
 
-	measure 'Forecast P&L Upper' = IF(HASONEVALUE(ForecastFinancial[RecordType]), SUM(ForecastFinancial[UpperBound]), BLANK())
+	measure 'Forecast P&L Upper' = IF(HASONEVALUE('Forecast Financial'[RecordType]), SUM('Forecast Financial'[UpperBound]), BLANK())
 		formatString: $#,0;($#,0)
 		displayFolder: Forecasting \ Financial
 		lineageTag: 30000003-0001-0001-0001-100000000003
@@ -89,10 +89,10 @@ table ForecastFinancial
 
 		annotation SummarizationSetBy = Automatic
 
-	partition ForecastFinancial = entity
+	partition 'Forecast Financial' = entity
 		mode: directLake
 		schemaName: analytics
-		entityName: ForecastFinancial
+		entityName: forecastfinancial
 		expressionSource: DatabaseQuery
 
 	annotation PBI_ResultType = Table

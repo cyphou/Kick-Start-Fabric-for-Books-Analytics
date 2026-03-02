@@ -1,19 +1,19 @@
-table ForecastGenreDemand
+table 'Forecast Genre Demand'
 	lineageTag: 30000002-0001-0001-0001-000000000001
 
-	measure 'Forecast Unit Demand' = IF(HASONEVALUE(ForecastGenreDemand[RecordType]), SUM(ForecastGenreDemand[UnitDemand]), BLANK())
+	measure 'Forecast Unit Demand' = IF(HASONEVALUE('Forecast Genre Demand'[RecordType]), SUM('Forecast Genre Demand'[UnitDemand]), BLANK())
 		formatString: #,0
 		displayFolder: Forecasting \ Genre
 		lineageTag: 30000002-0001-0001-0001-100000000001
 
-	measure 'Forecast Genre Revenue' = IF(HASONEVALUE(ForecastGenreDemand[RecordType]), SUM(ForecastGenreDemand[Revenue]), BLANK())
+	measure 'Forecast Genre Revenue' = IF(HASONEVALUE('Forecast Genre Demand'[RecordType]), SUM('Forecast Genre Demand'[Revenue]), BLANK())
 		formatString: $#,0;($#,0)
 		displayFolder: Forecasting \ Genre
 		lineageTag: 30000002-0001-0001-0001-100000000002
 
 	measure 'Demand Confidence Range' =
-		VAR _lower = SUM(ForecastGenreDemand[LowerBound])
-		VAR _upper = SUM(ForecastGenreDemand[UpperBound])
+		VAR _lower = SUM('Forecast Genre Demand'[LowerBound])
+		VAR _upper = SUM('Forecast Genre Demand'[UpperBound])
 		RETURN _upper - _lower
 		formatString: #,0
 		displayFolder: Forecasting \ Genre
@@ -92,10 +92,10 @@ table ForecastGenreDemand
 
 		annotation SummarizationSetBy = Automatic
 
-	partition ForecastGenreDemand = entity
+	partition 'Forecast Genre Demand' = entity
 		mode: directLake
 		schemaName: analytics
-		entityName: ForecastGenreDemand
+		entityName: forecastgenredemand
 		expressionSource: DatabaseQuery
 
 	annotation PBI_ResultType = Table

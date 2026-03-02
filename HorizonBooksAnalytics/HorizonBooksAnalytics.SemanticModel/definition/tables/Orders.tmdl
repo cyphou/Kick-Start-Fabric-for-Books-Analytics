@@ -1,17 +1,17 @@
-table FactOrders
+table 'Orders'
 	lineageTag: 20000003-0001-0001-0001-000000000001
 
-	measure 'Total Orders' = DISTINCTCOUNT(FactOrders[OrderID])
+	measure 'Total Orders' = DISTINCTCOUNT('Orders'[OrderID])
 		formatString: #,0
 		displayFolder: Operations \ Orders
 		lineageTag: 20000003-0001-0001-0001-100000000001
 
-	measure 'Total Units Sold' = SUM(FactOrders[Quantity])
+	measure 'Total Units Sold' = SUM('Orders'[Quantity])
 		formatString: #,0
 		displayFolder: Operations \ Orders
 		lineageTag: 20000003-0001-0001-0001-100000000002
 
-	measure 'Order Revenue' = SUM(FactOrders[TotalAmount])
+	measure 'Order Revenue' = SUM('Orders'[TotalAmount])
 		formatString: $#,0;($#,0)
 		displayFolder: Operations \ Orders
 		lineageTag: 20000003-0001-0001-0001-100000000003
@@ -21,7 +21,7 @@ table FactOrders
 		displayFolder: Operations \ Orders
 		lineageTag: 20000003-0001-0001-0001-100000000004
 
-	measure 'Average Discount' = AVERAGE(FactOrders[Discount])
+	measure 'Average Discount' = AVERAGE('Orders'[Discount])
 		formatString: 0.0%
 		displayFolder: Operations \ Orders
 		lineageTag: 20000003-0001-0001-0001-100000000005
@@ -31,22 +31,22 @@ table FactOrders
 		displayFolder: Operations \ Orders
 		lineageTag: 20000003-0001-0001-0001-100000000006
 
-	measure 'Online Revenue' = CALCULATE([Order Revenue], FactOrders[Channel] = "Online")
+	measure 'Online Revenue' = CALCULATE([Order Revenue], 'Orders'[Channel] = "Online")
 		formatString: $#,0;($#,0)
 		displayFolder: Operations \ Channels
 		lineageTag: 20000003-0001-0001-0001-100000000007
 
-	measure 'Retail Revenue' = CALCULATE([Order Revenue], FactOrders[Channel] = "Retail")
+	measure 'Retail Revenue' = CALCULATE([Order Revenue], 'Orders'[Channel] = "Retail")
 		formatString: $#,0;($#,0)
 		displayFolder: Operations \ Channels
 		lineageTag: 20000003-0001-0001-0001-100000000008
 
-	measure 'Digital Revenue' = CALCULATE([Order Revenue], FactOrders[Channel] = "Digital")
+	measure 'Digital Revenue' = CALCULATE([Order Revenue], 'Orders'[Channel] = "Digital")
 		formatString: $#,0;($#,0)
 		displayFolder: Operations \ Channels
 		lineageTag: 20000003-0001-0001-0001-100000000009
 
-	measure 'International Revenue' = CALCULATE([Order Revenue], FactOrders[Channel] = "International")
+	measure 'International Revenue' = CALCULATE([Order Revenue], 'Orders'[Channel] = "International")
 		formatString: $#,0;($#,0)
 		displayFolder: Operations \ Channels
 		lineageTag: 20000003-0001-0001-0001-100000000010
@@ -56,17 +56,17 @@ table FactOrders
 		displayFolder: Operations \ Channels
 		lineageTag: 20000003-0001-0001-0001-100000000011
 
-	measure 'Active Customers' = DISTINCTCOUNT(FactOrders[CustomerID])
+	measure 'Active Customers' = DISTINCTCOUNT('Orders'[CustomerID])
 		formatString: #,0
 		displayFolder: Operations \ Customers
 		lineageTag: 20000003-0001-0001-0001-100000000012
 
 	measure 'New Customers' =
 		CALCULATE(
-			DISTINCTCOUNT(FactOrders[CustomerID]),
+			DISTINCTCOUNT('Orders'[CustomerID]),
 			FILTER(
-				VALUES(FactOrders[CustomerID]),
-				CALCULATE(MIN(FactOrders[OrderDate])) >= MIN(DimDate[FullDate])
+				VALUES('Orders'[CustomerID]),
+				CALCULATE(MIN('Orders'[OrderDate])) >= MIN('Date'[FullDate])
 			)
 		)
 		formatString: #,0
@@ -78,12 +78,12 @@ table FactOrders
 		displayFolder: Operations \ Customers
 		lineageTag: 20000003-0001-0001-0001-100000000014
 
-	measure 'Avg Ship Days' = AVERAGE(DATEDIFF(FactOrders[OrderDate], FactOrders[ShipDate], DAY))
+	measure 'Avg Ship Days' = AVERAGE(DATEDIFF('Orders'[OrderDate], 'Orders'[ShipDate], DAY))
 		formatString: 0.0
 		displayFolder: Operations \ Fulfillment
 		lineageTag: 20000003-0001-0001-0001-100000000015
 
-	measure 'Avg Delivery Days' = AVERAGE(DATEDIFF(FactOrders[OrderDate], FactOrders[DeliveryDate], DAY))
+	measure 'Avg Delivery Days' = AVERAGE(DATEDIFF('Orders'[OrderDate], 'Orders'[DeliveryDate], DAY))
 		formatString: 0.0
 		displayFolder: Operations \ Fulfillment
 		lineageTag: 20000003-0001-0001-0001-100000000016
@@ -91,32 +91,32 @@ table FactOrders
 	measure 'On Time Delivery Rate' =
 		DIVIDE(
 			CALCULATE(
-				COUNTROWS(FactOrders),
-				DATEDIFF(FactOrders[OrderDate], FactOrders[DeliveryDate], DAY) <= 7
+				COUNTROWS('Orders'),
+				DATEDIFF('Orders'[OrderDate], 'Orders'[DeliveryDate], DAY) <= 7
 			),
-			COUNTROWS(FactOrders),
+			COUNTROWS('Orders'),
 			0
 		)
 		formatString: 0.0%;-0.0%;0.0%
 		displayFolder: Operations \ Fulfillment
 		lineageTag: 20000003-0001-0001-0001-100000000017
 
-	measure 'International Customer Count' = CALCULATE(DISTINCTCOUNT(DimCustomers[CustomerID]),DimGeography[Country] <> "United States")
+	measure 'International Customer Count' = CALCULATE(DISTINCTCOUNT('Customers'[CustomerID]),'Geography'[Country] <> "United States")
 		formatString: #,0
 		displayFolder: Geographic
 		lineageTag: 20000003-0001-0001-0001-100000000018
 
-	measure 'Domestic Customer Count' = CALCULATE(DISTINCTCOUNT(DimCustomers[CustomerID]),DimGeography[Country] = "United States")
+	measure 'Domestic Customer Count' = CALCULATE(DISTINCTCOUNT('Customers'[CustomerID]),'Geography'[Country] = "United States")
 		formatString: #,0
 		displayFolder: Geographic
 		lineageTag: 20000003-0001-0001-0001-100000000019
 
-	measure 'Intl Revenue' = CALCULATE(SUM(FactOrders[TotalAmount]),DimGeography[Country] <> "United States")
+	measure 'Intl Revenue' = CALCULATE(SUM('Orders'[TotalAmount]),'Geography'[Country] <> "United States")
 		formatString: $#,0;($#,0)
 		displayFolder: Geographic
 		lineageTag: 20000003-0001-0001-0001-100000000020
 
-	measure 'Domestic Revenue' = CALCULATE(SUM(FactOrders[TotalAmount]),DimGeography[Country] = "United States")
+	measure 'Domestic Revenue' = CALCULATE(SUM('Orders'[TotalAmount]),'Geography'[Country] = "United States")
 		formatString: $#,0;($#,0)
 		displayFolder: Geographic
 		lineageTag: 20000003-0001-0001-0001-100000000021
@@ -126,12 +126,12 @@ table FactOrders
 		displayFolder: Geographic
 		lineageTag: 20000003-0001-0001-0001-100000000022
 
-	measure 'Countries Served' = DISTINCTCOUNT(DimGeography[Country])
+	measure 'Countries Served' = DISTINCTCOUNT('Geography'[Country])
 		formatString: #,0
 		displayFolder: Geographic
 		lineageTag: 20000003-0001-0001-0001-100000000023
 
-	measure 'Continents Served' = DISTINCTCOUNT(DimGeography[Continent])
+	measure 'Continents Served' = DISTINCTCOUNT('Geography'[Continent])
 		formatString: #,0
 		displayFolder: Geographic
 		lineageTag: 20000003-0001-0001-0001-100000000024
@@ -141,7 +141,7 @@ table FactOrders
 		displayFolder: Geographic
 		lineageTag: 20000003-0001-0001-0001-100000000025
 
-	measure 'Employee Locations' = CALCULATE(DISTINCTCOUNT(DimGeography[City]),USERELATIONSHIP(DimEmployees[GeoID],DimGeography[GeoID]),VALUES(DimEmployees[EmployeeID]))
+	measure 'Employee Locations' = CALCULATE(DISTINCTCOUNT('Geography'[City]),USERELATIONSHIP('Employees'[GeoID],'Geography'[GeoID]),VALUES('Employees'[EmployeeID]))
 		formatString: #,0
 		displayFolder: Geographic
 		lineageTag: 20000003-0001-0001-0001-100000000026
@@ -258,10 +258,10 @@ table FactOrders
 
 		annotation SummarizationSetBy = Automatic
 
-	partition FactOrders = entity
+	partition 'Orders' = entity
 		mode: directLake
 		schemaName: fact
-		entityName: FactOrders
+		entityName: factorders
 		expressionSource: DatabaseQuery
 
 	annotation PBI_ResultType = Table

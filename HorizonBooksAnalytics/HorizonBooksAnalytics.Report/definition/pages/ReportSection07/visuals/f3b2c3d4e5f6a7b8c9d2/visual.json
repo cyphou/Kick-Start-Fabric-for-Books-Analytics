@@ -18,13 +18,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "FactRecruitment"
+                      "Entity": "Recruitment"
                     }
                   },
                   "Property": "Open Positions"
                 }
               },
-              "queryRef": "FactRecruitment.Open Positions",
+              "queryRef": "Recruitment.Open Positions",
               "active": true
             }
           ]

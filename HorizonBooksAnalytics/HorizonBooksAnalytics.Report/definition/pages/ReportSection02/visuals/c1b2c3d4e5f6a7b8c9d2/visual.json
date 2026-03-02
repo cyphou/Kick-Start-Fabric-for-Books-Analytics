@@ -18,13 +18,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "FactBudget"
+                      "Entity": "Budget"
                     }
                   },
                   "Property": "Budget Variance %"
                 }
               },
-              "queryRef": "FactBudget.Budget Variance %",
+              "queryRef": "Budget.Budget Variance %",
               "active": true
             }
           ]

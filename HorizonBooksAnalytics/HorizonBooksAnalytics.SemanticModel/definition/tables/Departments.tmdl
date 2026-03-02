@@ -1,4 +1,4 @@
-table DimDepartments
+table 'Departments'
 	lineageTag: 10000009-0001-0001-0001-000000000001
 
 	column DepartmentID
@@ -49,10 +49,10 @@ table DimDepartments
 
 		annotation SummarizationSetBy = Automatic
 
-	partition DimDepartments = entity
+	partition 'Departments' = entity
 		mode: directLake
 		schemaName: dim
-		entityName: DimDepartments
+		entityName: dimdepartments
 		expressionSource: DatabaseQuery
 
 	annotation PBI_ResultType = Table

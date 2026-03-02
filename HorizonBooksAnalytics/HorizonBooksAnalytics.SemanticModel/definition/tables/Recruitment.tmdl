@@ -1,27 +1,27 @@
-table FactRecruitment
+table 'Recruitment'
 	lineageTag: 20000008-0001-0001-0001-000000000001
 
-	measure 'Open Positions' = CALCULATE(COUNTROWS(FactRecruitment),FactRecruitment[Status] = "Open")
+	measure 'Open Positions' = CALCULATE(COUNTROWS('Recruitment'),'Recruitment'[Status] = "Open")
 		formatString: #,0
 		displayFolder: HR \ Recruitment
 		lineageTag: 20000008-0001-0001-0001-100000000001
 
-	measure 'Avg Time to Fill' = CALCULATE(AVERAGE(FactRecruitment[TimeToFillDays]),FactRecruitment[Status] = "Filled")
+	measure 'Avg Time to Fill' = CALCULATE(AVERAGE('Recruitment'[TimeToFillDays]),'Recruitment'[Status] = "Filled")
 		formatString: 0.0
 		displayFolder: HR \ Recruitment
 		lineageTag: 20000008-0001-0001-0001-100000000002
 
-	measure 'Offer Acceptance Rate' = DIVIDE(SUM(FactRecruitment[OfferAccepted]),SUM(FactRecruitment[OffersExtended]),0)
+	measure 'Offer Acceptance Rate' = DIVIDE(SUM('Recruitment'[OfferAccepted]),SUM('Recruitment'[OffersExtended]),0)
 		formatString: 0.0%;-0.0%;0.0%
 		displayFolder: HR \ Recruitment
 		lineageTag: 20000008-0001-0001-0001-100000000003
 
-	measure 'Application to Interview Rate' = DIVIDE(SUM(FactRecruitment[Interviewed]),SUM(FactRecruitment[ApplicationsReceived]),0)
+	measure 'Application to Interview Rate' = DIVIDE(SUM('Recruitment'[Interviewed]),SUM('Recruitment'[ApplicationsReceived]),0)
 		formatString: 0.0%;-0.0%;0.0%
 		displayFolder: HR \ Recruitment
 		lineageTag: 20000008-0001-0001-0001-100000000004
 
-	measure 'Cost per Hire' = DIVIDE(CALCULATE(ABS(SUM(FactFinancialTransactions[Amount])), DimAccounts[AccountID] = 1050),CALCULATE(COUNTROWS(FactRecruitment), FactRecruitment[Status] = "Filled"),0)
+	measure 'Cost per Hire' = DIVIDE(CALCULATE(ABS(SUM('Financial Transactions'[Amount])), 'Accounts'[AccountID] = 1050),CALCULATE(COUNTROWS('Recruitment'), 'Recruitment'[Status] = "Filled"),0)
 		formatString: $#,0.00
 		displayFolder: HR \ Recruitment
 		lineageTag: 20000008-0001-0001-0001-100000000005
@@ -138,10 +138,10 @@ table FactRecruitment
 
 		annotation SummarizationSetBy = Automatic
 
-	partition FactRecruitment = entity
+	partition 'Recruitment' = entity
 		mode: directLake
 		schemaName: fact
-		entityName: FactRecruitment
+		entityName: factrecruitment
 		expressionSource: DatabaseQuery
 
 	annotation PBI_ResultType = Table

@@ -18,13 +18,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "DimDate"
+                      "Entity": "Date"
                     }
                   },
                   "Property": "FiscalQuarter"
                 }
               },
-              "queryRef": "DimDate.FiscalQuarter",
+              "queryRef": "Date.FiscalQuarter",
               "active": true
             }
           ]

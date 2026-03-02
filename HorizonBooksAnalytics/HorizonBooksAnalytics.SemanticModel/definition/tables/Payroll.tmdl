@@ -1,27 +1,27 @@
-table FactPayroll
+table 'Payroll'
 	lineageTag: 20000006-0001-0001-0001-000000000001
 
-	measure 'Total Payroll Cost' = SUM(FactPayroll[NetPay])
+	measure 'Total Payroll Cost' = SUM('Payroll'[NetPay])
 		formatString: $#,0;($#,0)
 		displayFolder: HR \ Compensation
 		lineageTag: 20000006-0001-0001-0001-100000000001
 
-	measure 'Total Base Salary' = SUM(FactPayroll[BaseSalary])
+	measure 'Total Base Salary' = SUM('Payroll'[BaseSalary])
 		formatString: $#,0;($#,0)
 		displayFolder: HR \ Compensation
 		lineageTag: 20000006-0001-0001-0001-100000000002
 
-	measure 'Total Bonus Paid' = SUM(FactPayroll[Bonus])
+	measure 'Total Bonus Paid' = SUM('Payroll'[Bonus])
 		formatString: $#,0;($#,0)
 		displayFolder: HR \ Compensation
 		lineageTag: 20000006-0001-0001-0001-100000000003
 
-	measure 'Total Overtime' = SUM(FactPayroll[Overtime])
+	measure 'Total Overtime' = SUM('Payroll'[Overtime])
 		formatString: $#,0;($#,0)
 		displayFolder: HR \ Compensation
 		lineageTag: 20000006-0001-0001-0001-100000000004
 
-	measure 'Avg Salary per Employee' = DIVIDE([Total Base Salary],DISTINCTCOUNT(FactPayroll[EmployeeID]),0)
+	measure 'Avg Salary per Employee' = DIVIDE([Total Base Salary],DISTINCTCOUNT('Payroll'[EmployeeID]),0)
 		formatString: $#,0.00
 		displayFolder: HR \ Compensation
 		lineageTag: 20000006-0001-0001-0001-100000000005
@@ -116,10 +116,10 @@ table FactPayroll
 
 		annotation SummarizationSetBy = Automatic
 
-	partition FactPayroll = entity
+	partition 'Payroll' = entity
 		mode: directLake
 		schemaName: fact
-		entityName: FactPayroll
+		entityName: factpayroll
 		expressionSource: DatabaseQuery
 
 	annotation PBI_ResultType = Table

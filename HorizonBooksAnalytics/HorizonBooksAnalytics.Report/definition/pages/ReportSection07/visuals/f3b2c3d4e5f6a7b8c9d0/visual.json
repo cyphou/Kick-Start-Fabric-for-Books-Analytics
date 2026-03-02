@@ -18,13 +18,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "DimEmployees"
+                      "Entity": "Employees"
                     }
                   },
                   "Property": "Total Headcount"
                 }
               },
-              "queryRef": "DimEmployees.Total Headcount",
+              "queryRef": "Employees.Total Headcount",
               "active": true
             }
           ]

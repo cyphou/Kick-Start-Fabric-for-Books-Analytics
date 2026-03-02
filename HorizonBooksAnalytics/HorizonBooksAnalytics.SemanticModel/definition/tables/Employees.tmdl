@@ -1,22 +1,22 @@
-table DimEmployees
+table 'Employees'
 	lineageTag: 10000008-0001-0001-0001-000000000001
 
-	measure 'Total Headcount' = CALCULATE(COUNTROWS(DimEmployees),DimEmployees[IsActive] = TRUE())
+	measure 'Total Headcount' = CALCULATE(COUNTROWS('Employees'),'Employees'[IsActive] = TRUE())
 		formatString: #,0
 		displayFolder: HR \ Workforce
 		lineageTag: 10000008-0001-0001-0001-100000000001
 
-	measure 'Full Time Employees' = CALCULATE(COUNTROWS(DimEmployees),DimEmployees[IsActive] = TRUE(),DimEmployees[EmploymentType] = "Full-Time")
+	measure 'Full Time Employees' = CALCULATE(COUNTROWS('Employees'),'Employees'[IsActive] = TRUE(),'Employees'[EmploymentType] = "Full-Time")
 		formatString: #,0
 		displayFolder: HR \ Workforce
 		lineageTag: 10000008-0001-0001-0001-100000000002
 
-	measure 'Part Time & Contract' = CALCULATE(COUNTROWS(DimEmployees),DimEmployees[IsActive] = TRUE(),DimEmployees[EmploymentType] IN {"Part-Time", "Contract"})
+	measure 'Part Time & Contract' = CALCULATE(COUNTROWS('Employees'),'Employees'[IsActive] = TRUE(),'Employees'[EmploymentType] IN {"Part-Time", "Contract"})
 		formatString: #,0
 		displayFolder: HR \ Workforce
 		lineageTag: 10000008-0001-0001-0001-100000000003
 
-	measure 'Avg Tenure Years' = AVERAGEX(FILTER(DimEmployees, DimEmployees[IsActive] = TRUE()),DATEDIFF(DimEmployees[HireDate], TODAY(), YEAR))
+	measure 'Avg Tenure Years' = AVERAGEX(FILTER('Employees', 'Employees'[IsActive] = TRUE()),DATEDIFF('Employees'[HireDate], TODAY(), YEAR))
 		formatString: 0.0
 		displayFolder: HR \ Workforce
 		lineageTag: 10000008-0001-0001-0001-100000000004
@@ -122,10 +122,10 @@ table DimEmployees
 
 		annotation SummarizationSetBy = Automatic
 
-	partition DimEmployees = entity
+	partition 'Employees' = entity
 		mode: directLake
 		schemaName: dim
-		entityName: DimEmployees
+		entityName: dimemployees
 		expressionSource: DatabaseQuery
 
 	annotation PBI_ResultType = Table

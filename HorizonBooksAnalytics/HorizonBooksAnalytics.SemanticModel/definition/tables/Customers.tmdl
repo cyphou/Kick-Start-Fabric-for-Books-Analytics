@@ -1,4 +1,4 @@
-table DimCustomers
+table 'Customers'
 	lineageTag: 10000007-0001-0001-0001-000000000001
 
 	column CustomerID
@@ -108,10 +108,10 @@ table DimCustomers
 
 		annotation SummarizationSetBy = Automatic
 
-	partition DimCustomers = entity
+	partition 'Customers' = entity
 		mode: directLake
 		schemaName: dim
-		entityName: DimCustomers
+		entityName: dimcustomers
 		expressionSource: DatabaseQuery
 
 	annotation PBI_ResultType = Table

@@ -1,26 +1,26 @@
-table FactInventory
+table 'Inventory'
 	lineageTag: 20000004-0001-0001-0001-000000000001
 
-	measure 'Current Inventory Value' = CALCULATE(SUM(FactInventory[TotalInventoryValue]),LASTDATE(FactInventory[SnapshotDate]))
+	measure 'Current Inventory Value' = CALCULATE(SUM('Inventory'[TotalInventoryValue]),LASTDATE('Inventory'[SnapshotDate]))
 		formatString: $#,0;($#,0)
 		displayFolder: Operations \ Inventory
 		lineageTag: 20000004-0001-0001-0001-100000000001
 
-	measure 'Current Units on Hand' = CALCULATE(SUM(FactInventory[QuantityOnHand]),LASTDATE(FactInventory[SnapshotDate]))
+	measure 'Current Units on Hand' = CALCULATE(SUM('Inventory'[QuantityOnHand]),LASTDATE('Inventory'[SnapshotDate]))
 		formatString: #,0
 		displayFolder: Operations \ Inventory
 		lineageTag: 20000004-0001-0001-0001-100000000002
 
-	measure 'Avg Days of Supply' = CALCULATE(AVERAGE(FactInventory[DaysOfSupply]),LASTDATE(FactInventory[SnapshotDate]))
+	measure 'Avg Days of Supply' = CALCULATE(AVERAGE('Inventory'[DaysOfSupply]),LASTDATE('Inventory'[SnapshotDate]))
 		formatString: 0.0
 		displayFolder: Operations \ Inventory
 		lineageTag: 20000004-0001-0001-0001-100000000003
 
 	measure 'Low Stock Items' =
 		CALCULATE(
-			DISTINCTCOUNT(FactInventory[BookID]),
-			FactInventory[Status] IN {"Low Stock", "Critical"},
-			LASTDATE(FactInventory[SnapshotDate])
+			DISTINCTCOUNT('Inventory'[BookID]),
+			'Inventory'[Status] IN {"Low Stock", "Critical"},
+			LASTDATE('Inventory'[SnapshotDate])
 		)
 		formatString: #,0
 		displayFolder: Operations \ Inventory
@@ -135,10 +135,10 @@ table FactInventory
 
 		annotation SummarizationSetBy = Automatic
 
-	partition FactInventory = entity
+	partition 'Inventory' = entity
 		mode: directLake
 		schemaName: fact
-		entityName: FactInventory
+		entityName: factinventory
 		expressionSource: DatabaseQuery
 
 	annotation PBI_ResultType = Table

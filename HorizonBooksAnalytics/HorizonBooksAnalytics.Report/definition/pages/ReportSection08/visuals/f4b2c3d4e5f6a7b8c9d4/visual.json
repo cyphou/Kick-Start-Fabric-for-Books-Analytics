@@ -18,13 +18,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "DimDepartments"
+                      "Entity": "Departments"
                     }
                   },
                   "Property": "DepartmentName"
                 }
               },
-              "queryRef": "DimDepartments.DepartmentName",
+              "queryRef": "Departments.DepartmentName",
               "active": true
             }
           ]
@@ -36,13 +36,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "FactPayroll"
+                      "Entity": "Payroll"
                     }
                   },
                   "Property": "Total Base Salary"
                 }
               },
-              "queryRef": "FactPayroll.Total Base Salary",
+              "queryRef": "Payroll.Total Base Salary",
               "active": true
             }
           ]

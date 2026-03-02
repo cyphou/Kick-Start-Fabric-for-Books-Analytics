@@ -93,6 +93,30 @@ foreach ($check in $checks) {
     }
 }
 
+# Check Dataflow connections
+Write-Host ""
+Write-Host "  Checking Dataflow connections..." -ForegroundColor Cyan
+$dfNames = @("HorizonBooks_DF_Finance", "HorizonBooks_DF_HR", "HorizonBooks_DF_Operations")
+foreach ($dfName in $dfNames) {
+    $dfItem = $allItems | Where-Object { $_.displayName -eq $dfName -and $_.type -eq "Dataflow" } | Select-Object -First 1
+    if (-not $dfItem) { continue }
+    try {
+        $conns = (Invoke-RestMethod -Uri "$FabricApiBase/workspaces/$WorkspaceId/items/$($dfItem.id)/connections" -Headers $headers).value
+        $bound = $conns | Where-Object { $_.connectivityType -ne "None" }
+        if ($bound -and $bound.Count -gt 0) {
+            Write-Host "  [OK]   $dfName - connection bound" -ForegroundColor Green
+            $passed++
+        }
+        else {
+            Write-Host "  [WARN] $dfName - connection NOT bound (configure in portal)" -ForegroundColor Yellow
+            Write-Host "         https://app.fabric.microsoft.com/groups/$WorkspaceId/dataflows/$($dfItem.id)" -ForegroundColor Cyan
+        }
+    }
+    catch {
+        Write-Host "  [WARN] $dfName - could not check connections: $($_.Exception.Message)" -ForegroundColor Yellow
+    }
+}
+
 # Check lakehouse tables
 Write-Host ""
 Write-Host "  Checking Lakehouse tables..." -ForegroundColor Cyan

@@ -1,17 +1,17 @@
-table FactBudget
+table 'Budget'
 	lineageTag: 20000002-0001-0001-0001-000000000001
 
-	measure 'Budget Amount' = SUM(FactBudget[BudgetAmount])
+	measure 'Budget Amount' = SUM('Budget'[BudgetAmount])
 		formatString: $#,0;($#,0)
 		displayFolder: Finance \ Budget
 		lineageTag: 20000002-0001-0001-0001-100000000001
 
-	measure 'Actual Amount' = SUM(FactBudget[ActualAmount])
+	measure 'Actual Amount' = SUM('Budget'[ActualAmount])
 		formatString: $#,0;($#,0)
 		displayFolder: Finance \ Budget
 		lineageTag: 20000002-0001-0001-0001-100000000002
 
-	measure 'Budget Variance' = SUM(FactBudget[Variance])
+	measure 'Budget Variance' = SUM('Budget'[Variance])
 		formatString: $#,0;($#,0)
 		displayFolder: Finance \ Budget
 		lineageTag: 20000002-0001-0001-0001-100000000003
@@ -106,10 +106,10 @@ table FactBudget
 
 		annotation SummarizationSetBy = Automatic
 
-	partition FactBudget = entity
+	partition 'Budget' = entity
 		mode: directLake
 		schemaName: fact
-		entityName: FactBudget
+		entityName: factbudget
 		expressionSource: DatabaseQuery
 
 	annotation PBI_ResultType = Table

@@ -18,13 +18,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "DimCustomers"
+                      "Entity": "Customers"
                     }
                   },
                   "Property": "CustomerName"
                 }
               },
-              "queryRef": "DimCustomers.CustomerName",
+              "queryRef": "Customers.CustomerName",
               "active": true
             }
           ]
@@ -36,13 +36,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "FactOrders"
+                      "Entity": "Orders"
                     }
                   },
                   "Property": "Order Revenue"
                 }
               },
-              "queryRef": "FactOrders.Order Revenue",
+              "queryRef": "Orders.Order Revenue",
               "active": true
             }
           ]
@@ -55,7 +55,7 @@
               "Measure": {
                 "Expression": {
                   "SourceRef": {
-                    "Entity": "FactOrders"
+                    "Entity": "Orders"
                   }
                 },
                 "Property": "Order Revenue"
@@ -89,7 +89,7 @@
                 "From": [
                   {
                     "Name": "g",
-                    "Entity": "DimGeography",
+                    "Entity": "Geography",
                     "Type": 0
                   }
                 ],
@@ -104,7 +104,7 @@
                               "Column": {
                                 "Expression": {
                                   "SourceRef": {
-                                    "Entity": "DimGeography"
+                                    "Entity": "Geography"
                                   }
                                 },
                                 "Property": "Country"

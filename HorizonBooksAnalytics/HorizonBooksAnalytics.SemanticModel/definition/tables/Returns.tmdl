@@ -1,12 +1,12 @@
-table FactReturns
+table 'Returns'
 	lineageTag: 20000005-0001-0001-0001-000000000001
 
-	measure 'Total Returns' = SUM(FactReturns[Quantity])
+	measure 'Total Returns' = SUM('Returns'[Quantity])
 		formatString: #,0
 		displayFolder: Operations \ Returns
 		lineageTag: 20000005-0001-0001-0001-100000000001
 
-	measure 'Total Refunds' = SUM(FactReturns[RefundAmount])
+	measure 'Total Refunds' = SUM('Returns'[RefundAmount])
 		formatString: $#,0;($#,0)
 		displayFolder: Operations \ Returns
 		lineageTag: 20000005-0001-0001-0001-100000000002
@@ -16,7 +16,7 @@ table FactReturns
 		displayFolder: Operations \ Returns
 		lineageTag: 20000005-0001-0001-0001-100000000003
 
-	measure 'Damaged Returns' = CALCULATE(SUM(FactReturns[Quantity]),FactReturns[Condition] = "Damaged")
+	measure 'Damaged Returns' = CALCULATE(SUM('Returns'[Quantity]),'Returns'[Condition] = "Damaged")
 		formatString: #,0
 		displayFolder: Operations \ Returns
 		lineageTag: 20000005-0001-0001-0001-100000000004
@@ -114,10 +114,10 @@ table FactReturns
 
 		annotation SummarizationSetBy = Automatic
 
-	partition FactReturns = entity
+	partition 'Returns' = entity
 		mode: directLake
 		schemaName: fact
-		entityName: FactReturns
+		entityName: factreturns
 		expressionSource: DatabaseQuery
 
 	annotation PBI_ResultType = Table

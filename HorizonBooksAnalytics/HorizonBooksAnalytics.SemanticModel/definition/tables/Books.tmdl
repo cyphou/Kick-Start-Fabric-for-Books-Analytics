@@ -1,4 +1,4 @@
-table DimBooks
+table 'Books'
 	lineageTag: 10000004-0001-0001-0001-000000000001
 
 	column BookID
@@ -105,10 +105,10 @@ table DimBooks
 
 		annotation SummarizationSetBy = Automatic
 
-	partition DimBooks = entity
+	partition 'Books' = entity
 		mode: directLake
 		schemaName: dim
-		entityName: DimBooks
+		entityName: dimbooks
 		expressionSource: DatabaseQuery
 
 	annotation PBI_ResultType = Table

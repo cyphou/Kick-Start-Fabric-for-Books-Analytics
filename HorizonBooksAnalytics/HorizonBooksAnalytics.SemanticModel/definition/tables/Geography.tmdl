@@ -1,4 +1,4 @@
-table DimGeography
+table 'Geography'
 	lineageTag: 10000006-0001-0001-0001-000000000001
 
 	column GeoID
@@ -111,10 +111,10 @@ table DimGeography
 
 		annotation SummarizationSetBy = Automatic
 
-	partition DimGeography = entity
+	partition 'Geography' = entity
 		mode: directLake
 		schemaName: dim
-		entityName: DimGeography
+		entityName: dimgeography
 		expressionSource: DatabaseQuery
 
 	annotation PBI_ResultType = Table

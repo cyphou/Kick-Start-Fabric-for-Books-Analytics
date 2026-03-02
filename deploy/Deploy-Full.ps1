@@ -1010,6 +1010,84 @@ Measure-Step "5. Deploy Dataflows + Pipeline" {
         -LakehouseName $BronzeLakehouseName
 
     Write-Success "Dataflows + Pipeline deployed"
+
+    # --- Dataflow Connection Validation ---
+    # Fabric Dataflow Gen2 Lakehouse connections require a one-time manual OAuth2
+    # sign-in via the portal. Check if connections are bound and prompt if not.
+    $dfNames = @("HorizonBooks_DF_Finance", "HorizonBooks_DF_HR", "HorizonBooks_DF_Operations")
+    $fabricToken = Get-FabricToken
+    $allDfItems  = (Invoke-RestMethod `
+        -Uri "$FabricApiBase/workspaces/$WorkspaceId/items?type=Dataflow" `
+        -Headers @{ Authorization = "Bearer $fabricToken" }).value
+
+    $unboundDfs = @()
+    foreach ($dfName in $dfNames) {
+        $dfItem = $allDfItems | Where-Object { $_.displayName -eq $dfName } | Select-Object -First 1
+        if (-not $dfItem) { continue }
+
+        try {
+            $fabricToken = Get-FabricToken
+            $conns = (Invoke-RestMethod `
+                -Uri "$FabricApiBase/workspaces/$WorkspaceId/items/$($dfItem.id)/connections" `
+                -Headers @{ Authorization = "Bearer $fabricToken" }).value
+            $bound = $conns | Where-Object { $_.connectivityType -ne "None" }
+            if (-not $bound -or $bound.Count -eq 0) {
+                $unboundDfs += @{ Name = $dfName; Id = $dfItem.id }
+            }
+        }
+        catch {
+            # If the connections endpoint errors, assume unbound
+            $unboundDfs += @{ Name = $dfName; Id = $dfItem.id }
+        }
+    }
+
+    if ($unboundDfs.Count -gt 0) {
+        Write-Host ""
+        Write-Host "  ============================================================" -ForegroundColor Yellow
+        Write-Host "   ACTION REQUIRED: Configure Dataflow Connections" -ForegroundColor Yellow
+        Write-Host "  ============================================================" -ForegroundColor Yellow
+        Write-Host ""
+        Write-Host "  $($unboundDfs.Count) Dataflow(s) need a one-time Lakehouse connection setup." -ForegroundColor Yellow
+        Write-Host "  Open each link below, click 'Configure connection', and sign in:" -ForegroundColor Yellow
+        Write-Host ""
+        foreach ($ub in $unboundDfs) {
+            $portalUrl = "https://app.fabric.microsoft.com/groups/$WorkspaceId/dataflows/$($ub.Id)"
+            Write-Host "    - $($ub.Name)" -ForegroundColor White
+            Write-Host "      $portalUrl" -ForegroundColor Cyan
+        }
+        Write-Host ""
+        Write-Host "  After configuring all connections, press ENTER to continue..." -ForegroundColor Yellow
+        Read-Host "  Press ENTER when ready"
+
+        # Re-verify after user action
+        $stillUnbound = 0
+        foreach ($ub in $unboundDfs) {
+            try {
+                $fabricToken = Get-FabricToken
+                $conns = (Invoke-RestMethod `
+                    -Uri "$FabricApiBase/workspaces/$WorkspaceId/items/$($ub.Id)/connections" `
+                    -Headers @{ Authorization = "Bearer $fabricToken" }).value
+                $bound = $conns | Where-Object { $_.connectivityType -ne "None" }
+                if (-not $bound -or $bound.Count -eq 0) {
+                    $stillUnbound++
+                    Write-Warn "$($ub.Name) still has no bound connection"
+                }
+                else {
+                    Write-Success "$($ub.Name) connection configured"
+                }
+            }
+            catch {
+                $stillUnbound++
+                Write-Warn "$($ub.Name) connection check failed"
+            }
+        }
+        if ($stillUnbound -gt 0) {
+            Write-Warn "$stillUnbound dataflow(s) still unbound. Pipeline run may fail."
+        }
+    }
+    else {
+        Write-Success "All Dataflow connections are bound"
+    }
 }
 
 # ------------------------------------------------------------------

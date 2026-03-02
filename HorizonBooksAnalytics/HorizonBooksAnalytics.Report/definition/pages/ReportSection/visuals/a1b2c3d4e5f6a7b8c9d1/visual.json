@@ -18,13 +18,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "FactFinancialTransactions"
+                      "Entity": "Financial Transactions"
                     }
                   },
                   "Property": "Gross Margin %"
                 }
               },
-              "queryRef": "FactFinancialTransactions.Gross Margin %",
+              "queryRef": "Financial Transactions.Gross Margin %",
               "active": true
             }
           ]

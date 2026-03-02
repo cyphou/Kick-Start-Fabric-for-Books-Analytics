@@ -18,13 +18,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "FactInventory"
+                      "Entity": "Inventory"
                     }
                   },
                   "Property": "Current Inventory Value"
                 }
               },
-              "queryRef": "FactInventory.Current Inventory Value",
+              "queryRef": "Inventory.Current Inventory Value",
               "active": true
             }
           ]

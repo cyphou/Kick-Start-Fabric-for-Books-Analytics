@@ -18,13 +18,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "FactFinancialTransactions"
+                      "Entity": "Financial Transactions"
                     }
                   },
                   "Property": "Total Revenue"
                 }
               },
-              "queryRef": "FactFinancialTransactions.Total Revenue",
+              "queryRef": "Financial Transactions.Total Revenue",
               "active": true
             }
           ]

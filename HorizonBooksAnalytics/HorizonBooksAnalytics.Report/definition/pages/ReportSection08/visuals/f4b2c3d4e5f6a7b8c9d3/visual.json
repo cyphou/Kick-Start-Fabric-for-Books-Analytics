@@ -18,13 +18,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "FactPerformanceReviews"
+                      "Entity": "Performance Reviews"
                     }
                   },
                   "Property": "Top Performer Rate"
                 }
               },
-              "queryRef": "FactPerformanceReviews.Top Performer Rate",
+              "queryRef": "Performance Reviews.Top Performer Rate",
               "active": true
             }
           ]

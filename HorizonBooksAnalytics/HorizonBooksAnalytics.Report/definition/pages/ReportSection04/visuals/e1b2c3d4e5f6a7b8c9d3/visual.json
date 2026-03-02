@@ -18,13 +18,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "FactOrders"
+                      "Entity": "Orders"
                     }
                   },
                   "Property": "On Time Delivery Rate"
                 }
               },
-              "queryRef": "FactOrders.On Time Delivery Rate",
+              "queryRef": "Orders.On Time Delivery Rate",
               "active": true
             }
           ]

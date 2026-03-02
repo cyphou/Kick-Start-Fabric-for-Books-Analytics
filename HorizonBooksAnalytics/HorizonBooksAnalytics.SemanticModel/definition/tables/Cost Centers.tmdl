@@ -1,4 +1,4 @@
-table DimCostCenters
+table 'Cost Centers'
 	lineageTag: 10000003-0001-0001-0001-000000000001
 
 	column CostCenterID
@@ -33,10 +33,10 @@ table DimCostCenters
 
 		annotation SummarizationSetBy = Automatic
 
-	partition DimCostCenters = entity
+	partition 'Cost Centers' = entity
 		mode: directLake
 		schemaName: dim
-		entityName: DimCostCenters
+		entityName: dimcostcenters
 		expressionSource: DatabaseQuery
 
 	annotation PBI_ResultType = Table

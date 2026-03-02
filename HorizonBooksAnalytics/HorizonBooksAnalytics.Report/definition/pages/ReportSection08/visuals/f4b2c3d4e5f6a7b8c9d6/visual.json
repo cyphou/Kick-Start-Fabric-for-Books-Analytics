@@ -18,13 +18,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "FactPerformanceReviews"
+                      "Entity": "Performance Reviews"
                     }
                   },
                   "Property": "PerformanceRating"
                 }
               },
-              "queryRef": "FactPerformanceReviews.PerformanceRating",
+              "queryRef": "Performance Reviews.PerformanceRating",
               "active": true
             }
           ]
@@ -36,13 +36,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "FactPerformanceReviews"
+                      "Entity": "Performance Reviews"
                     }
                   },
                   "Property": "OverallScore"
                 }
               },
-              "queryRef": "FactPerformanceReviews.OverallScore",
+              "queryRef": "Performance Reviews.OverallScore",
               "active": true
             }
           ]

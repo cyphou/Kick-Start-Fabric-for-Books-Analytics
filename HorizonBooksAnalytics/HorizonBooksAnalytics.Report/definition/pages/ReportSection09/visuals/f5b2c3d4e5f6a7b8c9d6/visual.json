@@ -18,13 +18,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "FactRecruitment"
+                      "Entity": "Recruitment"
                     }
                   },
                   "Property": "RequisitionID"
                 }
               },
-              "queryRef": "FactRecruitment.RequisitionID",
+              "queryRef": "Recruitment.RequisitionID",
               "active": true
             },
             {
@@ -32,13 +32,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "DimDepartments"
+                      "Entity": "Departments"
                     }
                   },
                   "Property": "DepartmentName"
                 }
               },
-              "queryRef": "DimDepartments.DepartmentName",
+              "queryRef": "Departments.DepartmentName",
               "active": true
             },
             {
@@ -46,13 +46,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "FactRecruitment"
+                      "Entity": "Recruitment"
                     }
                   },
                   "Property": "JobTitle"
                 }
               },
-              "queryRef": "FactRecruitment.JobTitle",
+              "queryRef": "Recruitment.JobTitle",
               "active": true
             },
             {
@@ -60,13 +60,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "FactRecruitment"
+                      "Entity": "Recruitment"
                     }
                   },
                   "Property": "OpenDate"
                 }
               },
-              "queryRef": "FactRecruitment.OpenDate",
+              "queryRef": "Recruitment.OpenDate",
               "active": true
             },
             {
@@ -74,13 +74,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "FactRecruitment"
+                      "Entity": "Recruitment"
                     }
                   },
                   "Property": "ApplicationsReceived"
                 }
               },
-              "queryRef": "FactRecruitment.ApplicationsReceived",
+              "queryRef": "Recruitment.ApplicationsReceived",
               "active": true
             },
             {
@@ -88,13 +88,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "FactRecruitment"
+                      "Entity": "Recruitment"
                     }
                   },
                   "Property": "Status"
                 }
               },
-              "queryRef": "FactRecruitment.Status",
+              "queryRef": "Recruitment.Status",
               "active": true
             },
             {
@@ -102,13 +102,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "FactRecruitment"
+                      "Entity": "Recruitment"
                     }
                   },
                   "Property": "TimeToFillDays"
                 }
               },
-              "queryRef": "FactRecruitment.TimeToFillDays",
+              "queryRef": "Recruitment.TimeToFillDays",
               "active": true
             }
           ]

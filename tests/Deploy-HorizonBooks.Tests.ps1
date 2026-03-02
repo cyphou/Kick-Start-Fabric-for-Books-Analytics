@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Comprehensive Pester 5 test suite for the Horizon Books 3-Lakehouse Medallion Fabric demo.
     Covers structure, non-regression, TMDL, definitions, data quality, deploy scripts, and integration.
@@ -197,29 +197,29 @@ Describe "Non-Regression Baselines" -Tag "NonRegression" {
 
     Context "Per-Table Measure Counts" {
         $expectedMeasures = @(
-            @{ Table = "DimAccounts";                Expected = 0 },
-            @{ Table = "DimAuthors";                 Expected = 0 },
-            @{ Table = "DimBooks";                   Expected = 0 },
-            @{ Table = "DimCostCenters";             Expected = 0 },
-            @{ Table = "DimCustomers";               Expected = 0 },
-            @{ Table = "DimDate";                    Expected = 0 },
-            @{ Table = "DimDepartments";             Expected = 0 },
-            @{ Table = "DimEmployees";               Expected = 5 },
-            @{ Table = "DimGeography";               Expected = 0 },
-            @{ Table = "DimWarehouses";              Expected = 0 },
-            @{ Table = "FactBudget";                 Expected = 5 },
-            @{ Table = "FactFinancialTransactions";  Expected = 18 },
-            @{ Table = "FactInventory";              Expected = 5 },
-            @{ Table = "FactOrders";                 Expected = 26 },
-            @{ Table = "FactPayroll";                Expected = 7 },
-            @{ Table = "FactPerformanceReviews";     Expected = 3 },
-            @{ Table = "FactRecruitment";            Expected = 5 },
-            @{ Table = "FactReturns";                Expected = 5 },
-            @{ Table = "ForecastSalesRevenue";        Expected = 4 },
-            @{ Table = "ForecastGenreDemand";         Expected = 3 },
-            @{ Table = "ForecastFinancial";           Expected = 3 },
-            @{ Table = "ForecastInventoryDemand";     Expected = 3 },
-            @{ Table = "ForecastWorkforce";           Expected = 4 }
+            @{ Table = "Dim Accounts";                Expected = 0 },
+            @{ Table = "Dim Authors";                 Expected = 0 },
+            @{ Table = "Dim Books";                   Expected = 0 },
+            @{ Table = "Dim Cost Centers";             Expected = 0 },
+            @{ Table = "Dim Customers";               Expected = 0 },
+            @{ Table = "Dim Date";                    Expected = 0 },
+            @{ Table = "Dim Departments";             Expected = 0 },
+            @{ Table = "Dim Employees";               Expected = 5 },
+            @{ Table = "Dim Geography";               Expected = 0 },
+            @{ Table = "Dim Warehouses";              Expected = 0 },
+            @{ Table = "Fact Budget";                 Expected = 5 },
+            @{ Table = "Fact Financial Transactions";  Expected = 18 },
+            @{ Table = "Fact Inventory";              Expected = 5 },
+            @{ Table = "Fact Orders";                 Expected = 26 },
+            @{ Table = "Fact Payroll";                Expected = 7 },
+            @{ Table = "Fact Performance Reviews";     Expected = 3 },
+            @{ Table = "Fact Recruitment";            Expected = 5 },
+            @{ Table = "Fact Returns";                Expected = 5 },
+            @{ Table = "Forecast Sales Revenue";        Expected = 4 },
+            @{ Table = "Forecast Genre Demand";         Expected = 3 },
+            @{ Table = "Forecast Financial";           Expected = 3 },
+            @{ Table = "Forecast Inventory Demand";     Expected = 3 },
+            @{ Table = "Forecast Workforce";           Expected = 4 }
         )
         It "Table <Table> has <Expected> measures" -ForEach $expectedMeasures {
             $file = Join-Path $tablesDir "$Table.tmdl"
@@ -231,29 +231,29 @@ Describe "Non-Regression Baselines" -Tag "NonRegression" {
 
     Context "Per-Table Column Counts" {
         $expectedColumns = @(
-            @{ Table = "DimAccounts";                Expected = 6 },
-            @{ Table = "DimAuthors";                 Expected = 13 },
-            @{ Table = "DimBooks";                   Expected = 13 },
-            @{ Table = "DimCostCenters";             Expected = 4 },
-            @{ Table = "DimCustomers";               Expected = 13 },
-            @{ Table = "DimDate";                    Expected = 14 },
-            @{ Table = "DimDepartments";             Expected = 6 },
-            @{ Table = "DimEmployees";               Expected = 12 },
-            @{ Table = "DimGeography";               Expected = 13 },
-            @{ Table = "DimWarehouses";              Expected = 12 },
-            @{ Table = "FactBudget";                 Expected = 10 },
-            @{ Table = "FactFinancialTransactions";  Expected = 12 },
-            @{ Table = "FactInventory";              Expected = 13 },
-            @{ Table = "FactOrders";                 Expected = 14 },
-            @{ Table = "FactPayroll";                Expected = 10 },
-            @{ Table = "FactPerformanceReviews";     Expected = 9 },
-            @{ Table = "FactRecruitment";            Expected = 14 },
-            @{ Table = "FactReturns";                Expected = 11 },
-            @{ Table = "ForecastSalesRevenue";        Expected = 10 },
-            @{ Table = "ForecastGenreDemand";         Expected = 9 },
-            @{ Table = "ForecastFinancial";           Expected = 9 },
-            @{ Table = "ForecastInventoryDemand";     Expected = 12 },
-            @{ Table = "ForecastWorkforce";           Expected = 8 }
+            @{ Table = "Dim Accounts";                Expected = 6 },
+            @{ Table = "Dim Authors";                 Expected = 13 },
+            @{ Table = "Dim Books";                   Expected = 13 },
+            @{ Table = "Dim Cost Centers";             Expected = 4 },
+            @{ Table = "Dim Customers";               Expected = 13 },
+            @{ Table = "Dim Date";                    Expected = 14 },
+            @{ Table = "Dim Departments";             Expected = 6 },
+            @{ Table = "Dim Employees";               Expected = 12 },
+            @{ Table = "Dim Geography";               Expected = 13 },
+            @{ Table = "Dim Warehouses";              Expected = 12 },
+            @{ Table = "Fact Budget";                 Expected = 10 },
+            @{ Table = "Fact Financial Transactions";  Expected = 12 },
+            @{ Table = "Fact Inventory";              Expected = 13 },
+            @{ Table = "Fact Orders";                 Expected = 14 },
+            @{ Table = "Fact Payroll";                Expected = 10 },
+            @{ Table = "Fact Performance Reviews";     Expected = 9 },
+            @{ Table = "Fact Recruitment";            Expected = 14 },
+            @{ Table = "Fact Returns";                Expected = 11 },
+            @{ Table = "Forecast Sales Revenue";        Expected = 10 },
+            @{ Table = "Forecast Genre Demand";         Expected = 9 },
+            @{ Table = "Forecast Financial";           Expected = 9 },
+            @{ Table = "Forecast Inventory Demand";     Expected = 12 },
+            @{ Table = "Forecast Workforce";           Expected = 8 }
         )
         It "Table <Table> has <Expected> columns" -ForEach $expectedColumns {
             $file = Join-Path $tablesDir "$Table.tmdl"
@@ -462,7 +462,7 @@ Describe "TMDL Semantic Model Integrity" -Tag "TMDL" {
     Context "Relationship References Valid Tables" {
         It "All fromColumn/toColumn reference existing table files" {
             $content = Get-Content (Join-Path $tmdlDir "relationships.tmdl") -Raw
-            $refs = [regex]::Matches($content, '(?:fromColumn|toColumn):\s*(\w+)\.\w+') | ForEach-Object { $_.Groups[1].Value }
+            $refs = [regex]::Matches($content, '(?:fromColumn|toColumn):\s*''([^'']+)''\.[\w ]+') | ForEach-Object { $_.Groups[1].Value }
             $tableNames = (Get-ChildItem $tablesDir -Filter "*.tmdl").BaseName
             foreach ($ref in ($refs | Sort-Object -Unique)) {
                 $ref | Should -BeIn $tableNames
@@ -473,7 +473,7 @@ Describe "TMDL Semantic Model Integrity" -Tag "TMDL" {
     Context "model.tmdl ref tables match table files" {
         It "Every ref table in model.tmdl has a corresponding .tmdl file" {
             $content = Get-Content (Join-Path $tmdlDir "model.tmdl") -Raw
-            $refTables = [regex]::Matches($content, '(?m)^ref table (\w+)') | ForEach-Object { $_.Groups[1].Value }
+            $refTables = [regex]::Matches($content, '(?m)^ref table ''([^'']+)''') | ForEach-Object { $_.Groups[1].Value }
             $tableNames = (Get-ChildItem $tablesDir -Filter "*.tmdl").BaseName
             foreach ($ref in $refTables) {
                 $ref | Should -BeIn $tableNames
@@ -481,7 +481,7 @@ Describe "TMDL Semantic Model Integrity" -Tag "TMDL" {
         }
         It "Every .tmdl table file is referenced in model.tmdl" {
             $content = Get-Content (Join-Path $tmdlDir "model.tmdl") -Raw
-            $refTables = [regex]::Matches($content, '(?m)^ref table (\w+)') | ForEach-Object { $_.Groups[1].Value }
+            $refTables = [regex]::Matches($content, '(?m)^ref table ''([^'']+)''') | ForEach-Object { $_.Groups[1].Value }
             $tableNames = (Get-ChildItem $tablesDir -Filter "*.tmdl").BaseName
             foreach ($tn in $tableNames) {
                 $tn | Should -BeIn $refTables
@@ -1173,14 +1173,14 @@ Describe "Cross-Artifact Consistency" -Tag "NonRegression" {
             $csvNames = Get-ChildItem $dataDir -Recurse -Filter "*.csv" | ForEach-Object { $_.BaseName }
             $tmdlNames = (Get-ChildItem $tablesDir -Filter "*.tmdl").BaseName
             foreach ($csv in $csvNames) {
-                $csv | Should -BeIn $tmdlNames
+                ($csv -creplace '([a-z])([A-Z])', '$1 $2') | Should -BeIn $tmdlNames
             }
         }
     }
 
     Context "TMDL Tables Without CSV (Generated)" {
         It "DimDate is in TMDL but has no CSV (notebook-generated)" {
-            Join-Path $tablesDir "DimDate.tmdl" | Should -Exist
+            Join-Path $tablesDir "Dim Date.tmdl" | Should -Exist
             Get-ChildItem $dataDir -Recurse -Filter "DimDate.csv" | Should -BeNullOrEmpty
         }
     }
@@ -1223,7 +1223,7 @@ Describe "Cross-Artifact Consistency" -Tag "NonRegression" {
             foreach ($csv in $csvFiles) {
                 $header = Get-Content $csv.FullName -First 1
                 $csvCols = ($header -split ',').Count
-                $tmdlFile = Join-Path $tablesDir "$($csv.BaseName).tmdl"
+                $tmdlName = ($csv.BaseName -creplace '([a-z])([A-Z])', '$1 $2'); $tmdlFile = Join-Path $tablesDir "$tmdlName.tmdl"
                 if (Test-Path $tmdlFile) {
                     $txt = Get-Content $tmdlFile -Raw
                     $tmdlCols = ([regex]::Matches($txt, '(?m)^\tcolumn ')).Count

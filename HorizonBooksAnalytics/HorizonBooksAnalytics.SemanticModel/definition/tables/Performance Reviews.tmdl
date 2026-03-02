@@ -1,17 +1,17 @@
-table FactPerformanceReviews
+table 'Performance Reviews'
 	lineageTag: 20000007-0001-0001-0001-000000000001
 
-	measure 'Avg Performance Score' = AVERAGE(FactPerformanceReviews[OverallScore])
+	measure 'Avg Performance Score' = AVERAGE('Performance Reviews'[OverallScore])
 		formatString: 0.0
 		displayFolder: HR \ Performance
 		lineageTag: 20000007-0001-0001-0001-100000000001
 
-	measure 'Top Performers' = CALCULATE(COUNTROWS(FactPerformanceReviews),FactPerformanceReviews[PerformanceRating] IN {"Exceeds Expectations", "Outstanding"})
+	measure 'Top Performers' = CALCULATE(COUNTROWS('Performance Reviews'),'Performance Reviews'[PerformanceRating] IN {"Exceeds Expectations", "Outstanding"})
 		formatString: #,0
 		displayFolder: HR \ Performance
 		lineageTag: 20000007-0001-0001-0001-100000000002
 
-	measure 'Top Performer Rate' = DIVIDE([Top Performers],COUNTROWS(FactPerformanceReviews),0)
+	measure 'Top Performer Rate' = DIVIDE([Top Performers],COUNTROWS('Performance Reviews'),0)
 		formatString: 0.0%;-0.0%;0.0%
 		displayFolder: HR \ Performance
 		lineageTag: 20000007-0001-0001-0001-100000000003
@@ -88,10 +88,10 @@ table FactPerformanceReviews
 
 		annotation SummarizationSetBy = Automatic
 
-	partition FactPerformanceReviews = entity
+	partition 'Performance Reviews' = entity
 		mode: directLake
 		schemaName: fact
-		entityName: FactPerformanceReviews
+		entityName: factperformancereviews
 		expressionSource: DatabaseQuery
 
 	annotation PBI_ResultType = Table

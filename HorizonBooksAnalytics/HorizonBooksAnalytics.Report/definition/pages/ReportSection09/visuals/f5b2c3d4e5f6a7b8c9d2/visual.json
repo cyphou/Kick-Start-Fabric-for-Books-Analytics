@@ -18,13 +18,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "FactRecruitment"
+                      "Entity": "Recruitment"
                     }
                   },
                   "Property": "Offer Acceptance Rate"
                 }
               },
-              "queryRef": "FactRecruitment.Offer Acceptance Rate",
+              "queryRef": "Recruitment.Offer Acceptance Rate",
               "active": true
             }
           ]

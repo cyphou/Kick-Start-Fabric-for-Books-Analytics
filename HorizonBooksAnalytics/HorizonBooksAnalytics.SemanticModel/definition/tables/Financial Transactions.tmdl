@@ -1,27 +1,27 @@
-table FactFinancialTransactions
+table 'Financial Transactions'
 	lineageTag: 20000001-0001-0001-0001-000000000001
 
-	measure 'Total Revenue' = CALCULATE(SUM(FactFinancialTransactions[Amount]),DimAccounts[AccountType] = "Revenue")
+	measure 'Total Revenue' = CALCULATE(SUM('Financial Transactions'[Amount]),'Accounts'[AccountType] = "Revenue")
 		formatString: $#,0;($#,0)
 		displayFolder: Finance \ Revenue
 		lineageTag: 20000001-0001-0001-0001-100000000001
 
-	measure 'Book Sales Revenue' = CALCULATE(SUM(FactFinancialTransactions[Amount]),DimAccounts[AccountID] = 1001)
+	measure 'Book Sales Revenue' = CALCULATE(SUM('Financial Transactions'[Amount]),'Accounts'[AccountID] = 1001)
 		formatString: $#,0;($#,0)
 		displayFolder: Finance \ Revenue
 		lineageTag: 20000001-0001-0001-0001-100000000002
 
-	measure 'E-Book Sales Revenue' = CALCULATE(SUM(FactFinancialTransactions[Amount]),DimAccounts[AccountID] = 1002)
+	measure 'E-Book Sales Revenue' = CALCULATE(SUM('Financial Transactions'[Amount]),'Accounts'[AccountID] = 1002)
 		formatString: $#,0;($#,0)
 		displayFolder: Finance \ Revenue
 		lineageTag: 20000001-0001-0001-0001-100000000003
 
-	measure 'Audiobook Revenue' = CALCULATE(SUM(FactFinancialTransactions[Amount]),DimAccounts[AccountID] = 1003)
+	measure 'Audiobook Revenue' = CALCULATE(SUM('Financial Transactions'[Amount]),'Accounts'[AccountID] = 1003)
 		formatString: $#,0;($#,0)
 		displayFolder: Finance \ Revenue
 		lineageTag: 20000001-0001-0001-0001-100000000004
 
-	measure 'Rights & Licensing Revenue' = CALCULATE(SUM(FactFinancialTransactions[Amount]),DimAccounts[AccountCategory] = "Licensing")
+	measure 'Rights & Licensing Revenue' = CALCULATE(SUM('Financial Transactions'[Amount]),'Accounts'[AccountCategory] = "Licensing")
 		formatString: $#,0;($#,0)
 		displayFolder: Finance \ Revenue
 		lineageTag: 20000001-0001-0001-0001-100000000005
@@ -31,27 +31,27 @@ table FactFinancialTransactions
 		displayFolder: Finance \ Revenue
 		lineageTag: 20000001-0001-0001-0001-100000000006
 
-	measure 'Total COGS' = CALCULATE(ABS(SUM(FactFinancialTransactions[Amount])),DimAccounts[AccountCategory] = "Cost of Goods Sold")
+	measure 'Total COGS' = CALCULATE(ABS(SUM('Financial Transactions'[Amount])),'Accounts'[AccountCategory] = "Cost of Goods Sold")
 		formatString: $#,0;($#,0)
 		displayFolder: Finance \ Costs
 		lineageTag: 20000001-0001-0001-0001-100000000007
 
-	measure 'Total Royalties' = CALCULATE(ABS(SUM(FactFinancialTransactions[Amount])),DimAccounts[AccountCategory] = "Royalties")
+	measure 'Total Royalties' = CALCULATE(ABS(SUM('Financial Transactions'[Amount])),'Accounts'[AccountCategory] = "Royalties")
 		formatString: $#,0;($#,0)
 		displayFolder: Finance \ Costs
 		lineageTag: 20000001-0001-0001-0001-100000000008
 
-	measure 'Total Marketing Spend' = CALCULATE(ABS(SUM(FactFinancialTransactions[Amount])),DimAccounts[AccountCategory] = "Marketing")
+	measure 'Total Marketing Spend' = CALCULATE(ABS(SUM('Financial Transactions'[Amount])),'Accounts'[AccountCategory] = "Marketing")
 		formatString: $#,0;($#,0)
 		displayFolder: Finance \ Costs
 		lineageTag: 20000001-0001-0001-0001-100000000009
 
-	measure 'Total Distribution Cost' = CALCULATE(ABS(SUM(FactFinancialTransactions[Amount])),DimAccounts[AccountCategory] = "Distribution")
+	measure 'Total Distribution Cost' = CALCULATE(ABS(SUM('Financial Transactions'[Amount])),'Accounts'[AccountCategory] = "Distribution")
 		formatString: $#,0;($#,0)
 		displayFolder: Finance \ Costs
 		lineageTag: 20000001-0001-0001-0001-100000000010
 
-	measure 'Total Operating Expenses' = CALCULATE(ABS(SUM(FactFinancialTransactions[Amount])),DimAccounts[AccountType] = "Expense")
+	measure 'Total Operating Expenses' = CALCULATE(ABS(SUM('Financial Transactions'[Amount])),'Accounts'[AccountType] = "Expense")
 		formatString: $#,0;($#,0)
 		displayFolder: Finance \ Costs
 		lineageTag: 20000001-0001-0001-0001-100000000011
@@ -76,7 +76,7 @@ table FactFinancialTransactions
 		displayFolder: Finance \ Profitability
 		lineageTag: 20000001-0001-0001-0001-100000000015
 
-	measure 'Revenue PY' = CALCULATE([Total Revenue],DATEADD(DimDate[FullDate], -1, YEAR))
+	measure 'Revenue PY' = CALCULATE([Total Revenue],DATEADD('Date'[FullDate], -1, YEAR))
 		formatString: $#,0;($#,0)
 		displayFolder: Finance \ Growth
 		lineageTag: 20000001-0001-0001-0001-100000000016
@@ -88,7 +88,7 @@ table FactFinancialTransactions
 
 	measure 'Revenue QoQ' =
 		VAR CurrentQ = [Total Revenue]
-		VAR PriorQ = CALCULATE([Total Revenue], DATEADD(DimDate[FullDate], -1, QUARTER))
+		VAR PriorQ = CALCULATE([Total Revenue], DATEADD('Date'[FullDate], -1, QUARTER))
 		RETURN DIVIDE(CurrentQ - PriorQ, ABS(PriorQ), 0)
 		formatString: 0.0%;-0.0%;0.0%
 		displayFolder: Finance \ Growth
@@ -190,10 +190,10 @@ table FactFinancialTransactions
 
 		annotation SummarizationSetBy = Automatic
 
-	partition FactFinancialTransactions = entity
+	partition 'Financial Transactions' = entity
 		mode: directLake
 		schemaName: fact
-		entityName: FactFinancialTransactions
+		entityName: factfinancialtransactions
 		expressionSource: DatabaseQuery
 
 	annotation PBI_ResultType = Table

@@ -18,13 +18,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "DimBooks"
+                      "Entity": "Books"
                     }
                   },
                   "Property": "Genre"
                 }
               },
-              "queryRef": "DimBooks.Genre",
+              "queryRef": "Books.Genre",
               "active": true
             }
           ]

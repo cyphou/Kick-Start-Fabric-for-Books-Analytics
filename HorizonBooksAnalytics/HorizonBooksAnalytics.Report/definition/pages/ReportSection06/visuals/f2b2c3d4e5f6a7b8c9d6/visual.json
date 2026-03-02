@@ -18,13 +18,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "DimBooks"
+                      "Entity": "Books"
                     }
                   },
                   "Property": "Genre"
                 }
               },
-              "queryRef": "DimBooks.Genre",
+              "queryRef": "Books.Genre",
               "active": true
             }
           ]
@@ -36,13 +36,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "FactInventory"
+                      "Entity": "Inventory"
                     }
                   },
                   "Property": "TotalInventoryValue"
                 }
               },
-              "queryRef": "FactInventory.TotalInventoryValue",
+              "queryRef": "Inventory.TotalInventoryValue",
               "active": true
             }
           ]
