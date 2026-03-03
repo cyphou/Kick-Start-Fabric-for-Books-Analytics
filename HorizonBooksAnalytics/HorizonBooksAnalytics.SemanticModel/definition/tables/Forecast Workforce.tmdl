@@ -1,7 +1,7 @@
 table 'Forecast Workforce'
 	lineageTag: 30000005-0001-0001-0001-000000000001
 
-	measure 'Forecast Workforce Value' = IF(HASONEVALUE('Forecast Workforce'[Record Type]), SUM('Forecast Workforce'[Value]), BLANK())
+	measure 'Forecast Workforce Value' = SUM('Forecast Workforce'[Value])
 		formatString: #,0
 		displayFolder: Forecasting \ Workforce
 		lineageTag: 30000005-0001-0001-0001-100000000001

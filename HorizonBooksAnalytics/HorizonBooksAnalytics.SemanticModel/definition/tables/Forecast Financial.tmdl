@@ -1,17 +1,17 @@
 table 'Forecast Financial'
 	lineageTag: 30000003-0001-0001-0001-000000000001
 
-	measure 'Forecast P&L Amount' = IF(HASONEVALUE('Forecast Financial'[Record Type]), SUM('Forecast Financial'[Amount]), BLANK())
+	measure 'Forecast P&L Amount' = SUM('Forecast Financial'[Amount])
 		formatString: $#,0;($#,0)
 		displayFolder: Forecasting \ Financial
 		lineageTag: 30000003-0001-0001-0001-100000000001
 
-	measure 'Forecast P&L Lower' = IF(HASONEVALUE('Forecast Financial'[Record Type]), SUM('Forecast Financial'[Lower Bound]), BLANK())
+	measure 'Forecast P&L Lower' = SUM('Forecast Financial'[Lower Bound])
 		formatString: $#,0;($#,0)
 		displayFolder: Forecasting \ Financial
 		lineageTag: 30000003-0001-0001-0001-100000000002
 
-	measure 'Forecast P&L Upper' = IF(HASONEVALUE('Forecast Financial'[Record Type]), SUM('Forecast Financial'[Upper Bound]), BLANK())
+	measure 'Forecast P&L Upper' = SUM('Forecast Financial'[Upper Bound])
 		formatString: $#,0;($#,0)
 		displayFolder: Forecasting \ Financial
 		lineageTag: 30000003-0001-0001-0001-100000000003

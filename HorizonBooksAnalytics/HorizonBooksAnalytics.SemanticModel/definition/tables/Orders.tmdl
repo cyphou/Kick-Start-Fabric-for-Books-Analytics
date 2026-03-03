@@ -92,7 +92,7 @@ table 'Orders'
 		DIVIDE(
 			CALCULATE(
 				COUNTROWS('Orders'),
-				DATEDIFF('Orders'[Order Date], 'Orders'[Delivery Date], DAY) <= 7
+				FILTER('Orders', DATEDIFF('Orders'[Order Date], 'Orders'[Delivery Date], DAY) <= 7)
 			),
 			COUNTROWS('Orders'),
 			0

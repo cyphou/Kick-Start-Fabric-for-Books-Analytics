@@ -1,12 +1,12 @@
 table 'Forecast Genre Demand'
 	lineageTag: 30000002-0001-0001-0001-000000000001
 
-	measure 'Forecast Unit Demand' = IF(HASONEVALUE('Forecast Genre Demand'[Record Type]), SUM('Forecast Genre Demand'[Unit Demand]), BLANK())
+	measure 'Forecast Unit Demand' = SUM('Forecast Genre Demand'[Unit Demand])
 		formatString: #,0
 		displayFolder: Forecasting \ Genre
 		lineageTag: 30000002-0001-0001-0001-100000000001
 
-	measure 'Forecast Genre Revenue' = IF(HASONEVALUE('Forecast Genre Demand'[Record Type]), SUM('Forecast Genre Demand'[Revenue]), BLANK())
+	measure 'Forecast Genre Revenue' = SUM('Forecast Genre Demand'[Revenue])
 		formatString: $#,0;($#,0)
 		displayFolder: Forecasting \ Genre
 		lineageTag: 30000002-0001-0001-0001-100000000002

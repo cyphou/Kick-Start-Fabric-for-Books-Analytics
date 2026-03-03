@@ -1,7 +1,7 @@
 table 'Forecast Inventory Demand'
 	lineageTag: 30000004-0001-0001-0001-000000000001
 
-	measure 'Forecast Demand Units' = IF(HASONEVALUE('Forecast Inventory Demand'[Record Type]), SUM('Forecast Inventory Demand'[Units Demanded]), BLANK())
+	measure 'Forecast Demand Units' = SUM('Forecast Inventory Demand'[Units Demanded])
 		formatString: #,0
 		displayFolder: Forecasting \ Inventory
 		lineageTag: 30000004-0001-0001-0001-100000000001
@@ -16,7 +16,7 @@ table 'Forecast Inventory Demand'
 		displayFolder: Forecasting \ Inventory
 		lineageTag: 30000004-0001-0001-0001-100000000002
 
-	measure 'Cumulative Forecast Demand' = IF(HASONEVALUE('Forecast Inventory Demand'[Record Type]), SUM('Forecast Inventory Demand'[Cumulative Demand]), BLANK())
+	measure 'Cumulative Forecast Demand' = SUM('Forecast Inventory Demand'[Cumulative Demand])
 		formatString: #,0
 		displayFolder: Forecasting \ Inventory
 		lineageTag: 30000004-0001-0001-0001-100000000003
