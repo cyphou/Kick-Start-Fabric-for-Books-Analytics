@@ -3,9 +3,9 @@
     "name":  "a1b2c3d4e5f6a7b8c9d5",
     "position":  {
                      "x":  640,
-                     "y":  153,
+                     "y":  178,
                      "width":  630,
-                     "height":  270
+                     "height":  245
                  },
     "visual":  {
                    "visualType":  "donutChart",
@@ -62,7 +62,20 @@
                                                                                  }
                                                                     }
                                                  }
-                                             ]
+                                             ],
+                                   "legend":  [
+                                                  {
+                                                      "properties":  {
+                                                                         "position":  {
+                                                                                          "expr":  {
+                                                                                                       "Literal":  {
+                                                                                                                       "Value":  "\u0027Bottom\u0027"
+                                                                                                                   }
+                                                                                                   }
+                                                                                      }
+                                                                     }
+                                                  }
+                                              ]
                                },
                    "drillFilterOtherVisuals":  true
                }
