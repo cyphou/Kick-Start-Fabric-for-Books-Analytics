@@ -97,7 +97,7 @@ Romance) and Non-Fiction (Tech, Lifestyle, Health, Education).
 │  │  Deploy-Pipeline.ps1           → Dataflows (with destinations)   │     │
 │  │  Update-DataflowDestinations.ps1→ Re-apply destinations only     │     │
 │  │  Deploy-DataAgent.ps1          → Data Agent creation             │     │
-│  │  Deploy-PowerBI.ps1            → Semantic Model + Report deploy  │     │
+│  │  Deploy-PowerBI.ps1            → Semantic Model + 2 Reports      │     │
 │  │  Validate-Deployment.ps1       → Post-deploy validation          │     │
 │  │  Upload-SampleData.ps1         → Standalone CSV upload to Bronze │     │
 │  │  Redeploy-Notebooks.ps1        → Re-deploy notebooks only        │     │
@@ -159,7 +159,7 @@ Connect-AzAccount
 | 6 | **Run pipeline**: Dataflows + NB01 (parallel) → NB02 WebEnrichment → NB03 SilverToGold → NB04 Forecasting | ~7 min |
 | 7 | Execute Lakehouse SQL scripts (CreateTables.sql + GenerateDateDimension.sql) | ~1 min |
 | 8 | Deploy Semantic Model (Direct Lake on GoldLH, 96 measures, schemaName bindings) | ~1 min |
-| 9 | Deploy Power BI Report (PBIR, 10 pages bound to Semantic Model) | <1 min |
+| 9 | Deploy 2 Power BI Reports: Analytics (10 pages) + Forecasting (5 pages), both PBIR bound to Semantic Model | <1 min |
 | 10 | Deploy Data Agent (F64+ only) | <1 min |
 | 11 | Validate all deployed items | <1 min |
 
@@ -195,7 +195,7 @@ Connect-AzAccount
 
 # 4. (Or deploy individual components)
 .\deploy\Deploy-Pipeline.ps1 -WorkspaceId "<your-workspace-guid>"   # Dataflows + Pipeline
-.\deploy\Deploy-PowerBI.ps1  -WorkspaceId "<your-workspace-guid>"   # Semantic Model + Report
+.\deploy\Deploy-PowerBI.ps1  -WorkspaceId "<your-workspace-guid>"   # Semantic Model + 2 Reports
 .\deploy\Deploy-DataAgent.ps1 -WorkspaceId "<your-workspace-guid>"  # Data Agent
 
 # 5. Upload sample data (if not using Deploy-Full)
@@ -212,7 +212,7 @@ The individual scripts:
 1. **New-HorizonBooksWorkspace.ps1** — Creates workspace, assigns to Fabric capacity, uploads branded logo
 2. **Deploy-Full.ps1** (with `-SkipPipelineRun`) provisions all items without executing the pipeline
 3. **Deploy-Pipeline.ps1** deploys Dataflow Gen2 items with auto-configured destinations + orchestration pipeline
-4. **Deploy-PowerBI.ps1** deploys the Semantic Model + Report from PBIP/TMDL definitions
+4. **Deploy-PowerBI.ps1** deploys the Semantic Model + 2 Reports (Analytics & Forecasting) from PBIP/TMDL definitions. **Idempotent:** re-running updates existing items instead of creating duplicates
 5. **Upload-SampleData.ps1** uploads 17 CSVs to BronzeLH (requires `-WorkspaceId` and `-BronzeLakehouseId`)
 6. **Deploy-DataAgent.ps1** creates the AI Data Agent (F64+ only)
 
@@ -269,14 +269,15 @@ The pipeline is designed to be resilient to partial failures and observable via 
 
 ### Option C: PBIP in Power BI Desktop
 
-Open the PBIP project locally for editing and development.
+Open the PBIP projects locally for editing and development.
 
-1. Open `HorizonBooksAnalytics/HorizonBooksAnalytics.pbip` in Power BI Desktop
-2. The semantic model uses placeholder tokens — search and replace in [expressions.tmdl](HorizonBooksAnalytics/HorizonBooksAnalytics.SemanticModel/definition/expressions.tmdl):
+1. Open `HorizonBooksAnalytics/HorizonBooksAnalytics.pbip` in Power BI Desktop (Analytics report, 10 pages)
+2. Open `HorizonBooksForecasting/HorizonBooksForecasting.pbip` for the Forecasting report (5 pages)
+3. The semantic model uses placeholder tokens — search and replace in [expressions.tmdl](HorizonBooksAnalytics/HorizonBooksAnalytics.SemanticModel/definition/expressions.tmdl):
    - `{{SQL_ENDPOINT}}` → your GoldLH SQL endpoint (e.g. `xxxxx.datawarehouse.fabric.microsoft.com`)
    - `{{LAKEHOUSE_NAME}}` → your Gold Lakehouse name (e.g. `GoldLH`)
-3. Connect and refresh to validate the model
-4. Publish from Desktop to your Fabric workspace
+4. Connect and refresh to validate the model
+5. Publish from Desktop to your Fabric workspace
 
 ### Option D: Manual Setup (~90 min)
 
@@ -368,8 +369,9 @@ Follow the detailed guide in `Dataflows/DataflowConfiguration.md`
 6. **Create all DAX Measures** organized in display folders
 7. Save and publish
 
-### Step 6: Build the Power BI Report (30 min)
+### Step 6: Build the Power BI Reports (40 min)
 
+**Analytics Report (10 pages):**
 1. From the Semantic Model, click **Create Report**
 2. Follow the layout in `Reports/ReportSpecification.md`
 3. Build 10 report pages:
@@ -385,6 +387,16 @@ Follow the detailed guide in `Dataflows/DataflowConfiguration.md`
    - Page 10: HR - Recruitment Pipeline
 4. Add navigation, bookmarks, and tooltips
 5. Save the report: `Horizon Books Analytics`
+
+**Forecasting Report (5 pages):**
+1. Create a second report from the same Semantic Model
+2. Build 5 forecast pages (Holt-Winters projections with confidence bands):
+   - Page 1: Sales Revenue Forecast (by channel)
+   - Page 2: Genre Demand Forecast
+   - Page 3: Financial P&L Forecast
+   - Page 4: Inventory Demand Forecast
+   - Page 5: Workforce Planning Forecast
+3. Save the report: `Horizon Books Forecasting`
 
 ### Step 7: Create the Data Agent (10 min)
 
@@ -418,7 +430,7 @@ FullDemoFabricBookUseCase/
 │   ├── New-HorizonBooksWorkspace.ps1  ← Workspace creation + capacity + logo
 │   ├── Deploy-HorizonBooks.ps1        ← Legacy step-by-step setup
 │   ├── Deploy-Pipeline.ps1            ← Dataflows Gen2 (with destinations) + Pipeline
-│   ├── Deploy-PowerBI.ps1             ← Semantic Model + Report deployment
+│   ├── Deploy-PowerBI.ps1             ← Semantic Model + 2 Reports (idempotent)
 │   ├── Update-DataflowDestinations.ps1← Re-apply Lakehouse destinations to dataflows
 │   ├── Deploy-DataAgent.ps1           ← Data Agent creation helper
 │   ├── Validate-Deployment.ps1        ← Post-deploy validation checker
@@ -492,8 +504,20 @@ FullDemoFabricBookUseCase/
 │           │   └── ReportSection09/   ← Recruitment Pipeline (7 visuals)
 │           └── RegisteredResources/
 │               └── HorizonBooksTheme.json  ← Custom color theme
-│
-├── SampleData/
+│├── HorizonBooksForecasting/               ← Forecasting Report (PBIP)
+│   ├── HorizonBooksForecasting.pbip       ← Project entry point
+│   └── HorizonBooksForecasting.Report/
+│       ├── definition.pbir                ← Report config (PBIR v4.0)
+│       └── definition/
+│           ├── report.json                ← Report settings & theme ref
+│           └── pages/
+│               ├── pages.json             ← 5-page ordering
+│               ├── ForecastPage01/        ← Sales Revenue Forecast
+│               ├── ForecastPage02/        ← Genre Demand Forecast
+│               ├── ForecastPage03/        ← Financial P&L Forecast
+│               ├── ForecastPage04/        ← Inventory Demand Forecast
+│               └── ForecastPage05/        ← Workforce Forecast
+│├── SampleData/
 │   ├── Finance/
 │   │   ├── DimAccounts.csv            ← Chart of Accounts (28 rows)
 │   │   ├── DimCostCenters.csv         ← Cost Centers (7 rows)
@@ -622,6 +646,7 @@ Ask "Compare FY2024 vs FY2025" → Show how business users can self-serve analyt
 | Pipeline run: Web Enrichment | 2 min | 4 public APIs → SilverLH.web.* |
 | Pipeline run: Silver→Gold | 3 min | SilverLH → GoldLH (dim, fact, analytics) |
 | Deploy Semantic Model | 1 min | Direct Lake on GoldLH (96 measures, schemaName) |
+| Deploy 2 Reports | <1 min | Analytics (10 pages) + Forecasting (5 pages) |
 | Deploy Data Agent | <1 min | AI Q&A |
 | **Total** | **~17 min** | |
 
@@ -639,7 +664,7 @@ Once deployed, the workspace is organized into **folders** and a **visual task f
 | **02 - Data Ingestion** | (Reserved for future connectors) |
 | **03 - Data Transformation** | NB01_BronzeToSilver, NB02_WebEnrichment, NB03_SilverToGold, NB04_Forecasting, NB05_DiagnosticCheck, HorizonBooks_SparkEnv |
 | **04 - Orchestration** | HorizonBooks Data Pipeline |
-| **05 - Analytics** | HorizonBooksAnalytics Semantic Model |
+| **05 - Analytics** | HorizonBooksModel (Semantic Model), HorizonBooksAnalytics (Report, 10 pages), HorizonBooksForecasting (Report, 5 pages) |
 | **Root** | 3 Dataflow Gen2 items (cannot be placed in folders — Fabric limitation) |
 
 ### Task Flow

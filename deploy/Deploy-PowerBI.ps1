@@ -292,6 +292,23 @@ $createSmJson = '{"displayName":"' + $SemanticModelName + '","type":"SemanticMod
 $semanticModelId = $null
 $smLroFailed = $false
 
+# Check for existing semantic model first to avoid creating duplicates
+$fabricToken = Get-FabricToken
+$smExisting = Invoke-FabricApi -Method Get `
+    -Uri "$FabricApiBase/workspaces/$WorkspaceId/items?type=SemanticModel" -Token $fabricToken
+$smMatch = $smExisting.value | Where-Object { $_.displayName -eq $SemanticModelName } | Select-Object -First 1
+if ($smMatch) {
+    Write-Info "Semantic model '$SemanticModelName' already exists ($($smMatch.id)) - updating definition"
+    $semanticModelId = $smMatch.id
+    $updateJson = '{"definition":{"parts":[' + $partsJson + ']}}'
+    $fabricToken = Get-FabricToken
+    $updated = Update-FabricItemDefinition -ItemId $semanticModelId `
+        -WsId $WorkspaceId -DefinitionJson $updateJson -Token $fabricToken
+    if ($updated) { Write-Success "Semantic model definition updated: $semanticModelId" }
+    else          { Write-Warn "Semantic model definition update may have failed" }
+}
+
+if (-not $semanticModelId) {
 try {
     $fabricToken = Get-FabricToken
     $smHeaders = @{ "Authorization" = "Bearer $fabricToken"; "Content-Type" = "application/json" }
@@ -391,6 +408,7 @@ catch {
     }
     else { Write-Warn "Semantic model deployment issue: $errMsg" }
 }
+} # end if (-not $semanticModelId)
 
 # ------------------------------------------------------------------
 # Helper: Deploy a PBIR Report
@@ -463,6 +481,23 @@ function Deploy-PbirReport {
     $createJson = '{"displayName":"' + $RptName + '","type":"Report","description":"' + $Description + '","folderId":"' + $FolderId + '","definition":{"parts":[' + $partsJson + ']}}'
 
     $rptId = $null
+
+    # Check for existing report first to avoid creating duplicates
+    $fabricToken = Get-FabricToken
+    $rptExisting = Invoke-FabricApi -Method Get `
+        -Uri "$FabricApiBase/workspaces/$WorkspaceId/items?type=Report" -Token $fabricToken
+    $rptMatch = $rptExisting.value | Where-Object { $_.displayName -eq $RptName } | Select-Object -First 1
+    if ($rptMatch) {
+        Write-Info "Report '$RptName' already exists ($($rptMatch.id)) - updating definition"
+        $rptId = $rptMatch.id
+        $updateJson = '{"definition":{"parts":[' + $partsJson + ']}}'
+        $fabricToken = Get-FabricToken
+        $updated = Update-FabricItemDefinition -ItemId $rptId `
+            -WsId $WorkspaceId -DefinitionJson $updateJson -Token $fabricToken
+        if ($updated) { Write-Success "Report definition updated: $RptName ($rptId)" }
+        else          { Write-Warn "Report definition update may have failed" }
+        return $rptId
+    }
 
     try {
         $fabricToken = Get-FabricToken

@@ -249,8 +249,9 @@ function Wait-FabricOperation {
 function New-OrGetFabricItem {
     <#
     .SYNOPSIS
-        Creates a Fabric item or returns the ID of an existing one
-        if the display-name is already in use.
+        Returns the ID of an existing Fabric item with the given display-name
+        and type, or creates a new one if none exists.  Checks for existing
+        items FIRST to avoid creating duplicates across re-runs.
     #>
     param(
         [string]$DisplayName,
@@ -260,6 +261,20 @@ function New-OrGetFabricItem {
         [string]$Token
     )
 
+    # ── Look for an existing item first ──────────────────────────────
+    try {
+        $existing = (Invoke-RestMethod `
+            -Uri "$($script:FabricApiBase)/workspaces/$WsId/items?type=$Type" `
+            -Headers @{ Authorization = "Bearer $Token" }).value
+        $found = $existing | Where-Object { $_.displayName -eq $DisplayName } | Select-Object -First 1
+        if ($found) {
+            Write-Info "'$DisplayName' ($Type) already exists - reusing $($found.id)"
+            return $found.id
+        }
+    }
+    catch { Write-Warn "Could not list existing ${Type} items: $($_.Exception.Message)" }
+
+    # ── No existing item found - create a new one ────────────────────
     $headers = @{ "Authorization" = "Bearer $Token"; "Content-Type" = "application/json" }
     $body = @{ displayName = $DisplayName; type = $Type; description = $Description } | ConvertTo-Json -Depth 5
 
@@ -268,7 +283,9 @@ function New-OrGetFabricItem {
             -Headers $headers -Body $body -UseBasicParsing
 
         if ($resp.StatusCode -eq 201) {
-            return ($resp.Content | ConvertFrom-Json).id
+            $newId = ($resp.Content | ConvertFrom-Json).id
+            Write-Info "Created $Type '$DisplayName': $newId"
+            return $newId
         }
         elseif ($resp.StatusCode -eq 202) {
             $opUrl = $resp.Headers["Location"]
