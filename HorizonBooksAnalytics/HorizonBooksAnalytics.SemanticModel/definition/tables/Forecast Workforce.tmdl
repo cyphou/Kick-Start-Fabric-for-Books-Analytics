@@ -6,29 +6,17 @@ table 'Forecast Workforce'
 		displayFolder: Forecasting \ Workforce
 		lineageTag: 30000005-0001-0001-0001-100000000001
 
-	measure 'Forecast Payroll' =
-		CALCULATE(
-			SUM('Forecast Workforce'[Value]),
-			'Forecast Workforce'[Metric] = "TotalPayroll"
-		)
+	measure 'Forecast Payroll' = CALCULATE(SUM('Forecast Workforce'[Value]), 'Forecast Workforce'[Metric] = "TotalPayroll")
 		formatString: $#,0;($#,0)
 		displayFolder: Forecasting \ Workforce
 		lineageTag: 30000005-0001-0001-0001-100000000002
 
-	measure 'Forecast Headcount' =
-		CALCULATE(
-			SUM('Forecast Workforce'[Value]),
-			'Forecast Workforce'[Metric] = "Headcount"
-		)
+	measure 'Forecast Headcount' = CALCULATE(SUM('Forecast Workforce'[Value]), 'Forecast Workforce'[Metric] = "Headcount")
 		formatString: #,0
 		displayFolder: Forecasting \ Workforce
 		lineageTag: 30000005-0001-0001-0001-100000000003
 
-	measure 'Forecast Openings' =
-		CALCULATE(
-			SUM('Forecast Workforce'[Value]),
-			'Forecast Workforce'[Metric] = "Openings"
-		)
+	measure 'Forecast Openings' = CALCULATE(SUM('Forecast Workforce'[Value]), 'Forecast Workforce'[Metric] = "Openings")
 		formatString: #,0
 		displayFolder: Forecasting \ Workforce
 		lineageTag: 30000005-0001-0001-0001-100000000004

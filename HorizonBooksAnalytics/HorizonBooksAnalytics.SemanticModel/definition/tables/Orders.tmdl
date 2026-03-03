@@ -61,14 +61,7 @@ table 'Orders'
 		displayFolder: Operations \ Customers
 		lineageTag: 20000003-0001-0001-0001-100000000012
 
-	measure 'New Customers' =
-		CALCULATE(
-			DISTINCTCOUNT('Orders'[Customer ID]),
-			FILTER(
-				VALUES('Orders'[Customer ID]),
-				CALCULATE(MIN('Orders'[Order Date])) >= MIN('Date'[Full Date])
-			)
-		)
+	measure 'New Customers' = CALCULATE(DISTINCTCOUNT('Orders'[Customer ID]), FILTER(VALUES('Orders'[Customer ID]), CALCULATE(MIN('Orders'[Order Date])) >= MIN('Date'[Full Date])))
 		formatString: #,0
 		displayFolder: Operations \ Customers
 		lineageTag: 20000003-0001-0001-0001-100000000013
@@ -88,15 +81,7 @@ table 'Orders'
 		displayFolder: Operations \ Fulfillment
 		lineageTag: 20000003-0001-0001-0001-100000000016
 
-	measure 'On Time Delivery Rate' =
-		DIVIDE(
-			CALCULATE(
-				COUNTROWS('Orders'),
-				FILTER('Orders', DATEDIFF('Orders'[Order Date], 'Orders'[Delivery Date], DAY) <= 7)
-			),
-			COUNTROWS('Orders'),
-			0
-		)
+	measure 'On Time Delivery Rate' = DIVIDE(CALCULATE(COUNTROWS('Orders'), FILTER('Orders', DATEDIFF('Orders'[Order Date], 'Orders'[Delivery Date], DAY) <= 7)), COUNTROWS('Orders'), 0)
 		formatString: 0.0%;-0.0%;0.0%
 		displayFolder: Operations \ Fulfillment
 		lineageTag: 20000003-0001-0001-0001-100000000017

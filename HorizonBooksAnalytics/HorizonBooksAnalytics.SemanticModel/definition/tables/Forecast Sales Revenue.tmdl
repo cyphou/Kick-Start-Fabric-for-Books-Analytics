@@ -16,10 +16,7 @@ table 'Forecast Sales Revenue'
 		displayFolder: Forecasting \ Sales
 		lineageTag: 30000001-0001-0001-0001-100000000003
 
-	measure 'Forecast vs Actual Revenue' =
-		VAR _forecast = CALCULATE(SUM('Forecast Sales Revenue'[Revenue]), 'Forecast Sales Revenue'[Record Type] = "Forecast")
-		VAR _actual = CALCULATE(SUM('Forecast Sales Revenue'[Revenue]), 'Forecast Sales Revenue'[Record Type] = "Actual")
-		RETURN IF(_actual <> 0, DIVIDE(_forecast - _actual, _actual, 0), BLANK())
+	measure 'Forecast vs Actual Revenue' = VAR _forecast = CALCULATE(SUM('Forecast Sales Revenue'[Revenue]), 'Forecast Sales Revenue'[Record Type] = "Forecast") VAR _actual = CALCULATE(SUM('Forecast Sales Revenue'[Revenue]), 'Forecast Sales Revenue'[Record Type] = "Actual") RETURN IF(_actual <> 0, DIVIDE(_forecast - _actual, _actual, 0), BLANK())
 		formatString: 0.0%;-0.0%;0.0%
 		displayFolder: Forecasting \ Sales
 		lineageTag: 30000001-0001-0001-0001-100000000004

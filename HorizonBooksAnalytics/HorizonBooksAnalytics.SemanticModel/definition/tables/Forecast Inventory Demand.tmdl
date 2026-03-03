@@ -6,12 +6,7 @@ table 'Forecast Inventory Demand'
 		displayFolder: Forecasting \ Inventory
 		lineageTag: 30000004-0001-0001-0001-100000000001
 
-	measure 'Stock Coverage Months' =
-		CALCULATE(
-			AVERAGE('Forecast Inventory Demand'[Stock Cover Months]),
-			'Forecast Inventory Demand'[Record Type] = "Forecast",
-			'Forecast Inventory Demand'[Forecast Horizon] = 1
-		)
+	measure 'Stock Coverage Months' = CALCULATE(AVERAGE('Forecast Inventory Demand'[Stock Cover Months]), 'Forecast Inventory Demand'[Record Type] = "Forecast", 'Forecast Inventory Demand'[Forecast Horizon] = 1)
 		formatString: 0.0
 		displayFolder: Forecasting \ Inventory
 		lineageTag: 30000004-0001-0001-0001-100000000002

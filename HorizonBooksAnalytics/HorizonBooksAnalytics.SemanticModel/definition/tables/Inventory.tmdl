@@ -16,12 +16,7 @@ table 'Inventory'
 		displayFolder: Operations \ Inventory
 		lineageTag: 20000004-0001-0001-0001-100000000003
 
-	measure 'Low Stock Items' =
-		CALCULATE(
-			DISTINCTCOUNT('Inventory'[Book ID]),
-			'Inventory'[Status] IN {"Low Stock", "Critical"},
-			LASTDATE('Inventory'[Snapshot Date])
-		)
+	measure 'Low Stock Items' = CALCULATE(DISTINCTCOUNT('Inventory'[Book ID]), 'Inventory'[Status] IN {"Low Stock", "Critical"}, LASTDATE('Inventory'[Snapshot Date]))
 		formatString: #,0
 		displayFolder: Operations \ Inventory
 		lineageTag: 20000004-0001-0001-0001-100000000004

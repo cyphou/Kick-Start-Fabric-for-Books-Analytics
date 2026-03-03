@@ -11,10 +11,7 @@ table 'Forecast Genre Demand'
 		displayFolder: Forecasting \ Genre
 		lineageTag: 30000002-0001-0001-0001-100000000002
 
-	measure 'Demand Confidence Range' =
-		VAR _lower = SUM('Forecast Genre Demand'[Lower Bound])
-		VAR _upper = SUM('Forecast Genre Demand'[Upper Bound])
-		RETURN _upper - _lower
+	measure 'Demand Confidence Range' = VAR _lower = SUM('Forecast Genre Demand'[Lower Bound]) VAR _upper = SUM('Forecast Genre Demand'[Upper Bound]) RETURN _upper - _lower
 		formatString: #,0
 		displayFolder: Forecasting \ Genre
 		lineageTag: 30000002-0001-0001-0001-100000000003

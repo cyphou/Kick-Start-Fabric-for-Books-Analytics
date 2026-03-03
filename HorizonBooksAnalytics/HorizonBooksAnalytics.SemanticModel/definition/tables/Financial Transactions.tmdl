@@ -86,10 +86,7 @@ table 'Financial Transactions'
 		displayFolder: Finance \ Growth
 		lineageTag: 20000001-0001-0001-0001-100000000017
 
-	measure 'Revenue QoQ' =
-		VAR CurrentQ = [Total Revenue]
-		VAR PriorQ = CALCULATE([Total Revenue], DATEADD('Date'[Full Date], -1, QUARTER))
-		RETURN DIVIDE(CurrentQ - PriorQ, ABS(PriorQ), 0)
+	measure 'Revenue QoQ' = VAR CurrentQ = [Total Revenue] VAR PriorQ = CALCULATE([Total Revenue], DATEADD('Date'[Full Date], -1, QUARTER)) RETURN DIVIDE(CurrentQ - PriorQ, ABS(PriorQ), 0)
 		formatString: 0.0%;-0.0%;0.0%
 		displayFolder: Finance \ Growth
 		lineageTag: 20000001-0001-0001-0001-100000000018
