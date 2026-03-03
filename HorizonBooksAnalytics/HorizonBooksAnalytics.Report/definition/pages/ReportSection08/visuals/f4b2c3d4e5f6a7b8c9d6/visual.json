@@ -39,10 +39,10 @@
                       "Entity": "Performance Reviews"
                     }
                   },
-                  "Property": "OverallScore"
+                  "Property": "Overall Score"
                 }
               },
-              "queryRef": "Performance Reviews.OverallScore",
+              "queryRef": "Performance Reviews.Overall Score",
               "active": true
             }
           ]

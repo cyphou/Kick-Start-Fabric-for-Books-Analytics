@@ -21,10 +21,10 @@
                       "Entity": "Customers"
                     }
                   },
-                  "Property": "CustomerType"
+                  "Property": "Customer Type"
                 }
               },
-              "queryRef": "Customers.CustomerType",
+              "queryRef": "Customers.Customer Type",
               "active": true
             }
           ]

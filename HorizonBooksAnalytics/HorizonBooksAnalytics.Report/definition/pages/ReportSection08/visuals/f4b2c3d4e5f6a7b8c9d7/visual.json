@@ -21,10 +21,10 @@
                       "Entity": "Employees"
                     }
                   },
-                  "Property": "FirstName"
+                  "Property": "First Name"
                 }
               },
-              "queryRef": "Employees.FirstName",
+              "queryRef": "Employees.First Name",
               "active": true
             },
             {
@@ -35,10 +35,10 @@
                       "Entity": "Employees"
                     }
                   },
-                  "Property": "LastName"
+                  "Property": "Last Name"
                 }
               },
-              "queryRef": "Employees.LastName",
+              "queryRef": "Employees.Last Name",
               "active": true
             },
             {
@@ -77,10 +77,10 @@
                       "Entity": "Performance Reviews"
                     }
                   },
-                  "Property": "GoalsMet"
+                  "Property": "Goals Met"
                 }
               },
-              "queryRef": "Performance Reviews.GoalsMet",
+              "queryRef": "Performance Reviews.Goals Met",
               "active": true
             },
             {
@@ -91,10 +91,10 @@
                       "Entity": "Performance Reviews"
                     }
                   },
-                  "Property": "OverallScore"
+                  "Property": "Overall Score"
                 }
               },
-              "queryRef": "Performance Reviews.OverallScore",
+              "queryRef": "Performance Reviews.Overall Score",
               "active": true
             }
           ]

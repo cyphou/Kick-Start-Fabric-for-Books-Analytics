@@ -21,10 +21,10 @@
                       "Entity": "Inventory"
                     }
                   },
-                  "Property": "SnapshotDate"
+                  "Property": "Snapshot Date"
                 }
               },
-              "queryRef": "Inventory.SnapshotDate",
+              "queryRef": "Inventory.Snapshot Date",
               "active": true
             }
           ]

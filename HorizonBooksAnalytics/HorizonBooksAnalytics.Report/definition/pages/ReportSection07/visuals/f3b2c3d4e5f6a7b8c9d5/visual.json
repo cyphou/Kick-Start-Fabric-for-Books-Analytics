@@ -21,10 +21,10 @@
                       "Entity": "Employees"
                     }
                   },
-                  "Property": "EmploymentType"
+                  "Property": "Employment Type"
                 }
               },
-              "queryRef": "Employees.EmploymentType",
+              "queryRef": "Employees.Employment Type",
               "active": true
             }
           ]

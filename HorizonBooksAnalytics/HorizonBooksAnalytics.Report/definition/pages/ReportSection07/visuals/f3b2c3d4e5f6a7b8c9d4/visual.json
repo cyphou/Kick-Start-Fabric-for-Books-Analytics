@@ -39,10 +39,10 @@
                       "Entity": "Departments"
                     }
                   },
-                  "Property": "HeadCount"
+                  "Property": "Head Count"
                 }
               },
-              "queryRef": "Departments.HeadCount",
+              "queryRef": "Departments.Head Count",
               "active": true
             }
           ]

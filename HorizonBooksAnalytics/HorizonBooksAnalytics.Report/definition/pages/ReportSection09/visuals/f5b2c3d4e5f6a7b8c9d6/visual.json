@@ -21,10 +21,10 @@
                       "Entity": "Recruitment"
                     }
                   },
-                  "Property": "RequisitionID"
+                  "Property": "Requisition ID"
                 }
               },
-              "queryRef": "Recruitment.RequisitionID",
+              "queryRef": "Recruitment.Requisition ID",
               "active": true
             },
             {
@@ -63,10 +63,10 @@
                       "Entity": "Recruitment"
                     }
                   },
-                  "Property": "OpenDate"
+                  "Property": "Open Date"
                 }
               },
-              "queryRef": "Recruitment.OpenDate",
+              "queryRef": "Recruitment.Open Date",
               "active": true
             },
             {
@@ -77,10 +77,10 @@
                       "Entity": "Recruitment"
                     }
                   },
-                  "Property": "ApplicationsReceived"
+                  "Property": "Applications Received"
                 }
               },
-              "queryRef": "Recruitment.ApplicationsReceived",
+              "queryRef": "Recruitment.Applications Received",
               "active": true
             },
             {
@@ -105,10 +105,10 @@
                       "Entity": "Recruitment"
                     }
                   },
-                  "Property": "TimeToFillDays"
+                  "Property": "Time to Fill Days"
                 }
               },
-              "queryRef": "Recruitment.TimeToFillDays",
+              "queryRef": "Recruitment.Time to Fill Days",
               "active": true
             }
           ]

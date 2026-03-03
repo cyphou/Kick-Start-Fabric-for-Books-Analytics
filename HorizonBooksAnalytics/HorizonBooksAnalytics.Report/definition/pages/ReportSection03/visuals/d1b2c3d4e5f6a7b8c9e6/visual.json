@@ -21,10 +21,10 @@
                       "Entity": "Books"
                     }
                   },
-                  "Property": "ImprintName"
+                  "Property": "Imprint Name"
                 }
               },
-              "queryRef": "Books.ImprintName",
+              "queryRef": "Books.Imprint Name",
               "active": true
             }
           ]

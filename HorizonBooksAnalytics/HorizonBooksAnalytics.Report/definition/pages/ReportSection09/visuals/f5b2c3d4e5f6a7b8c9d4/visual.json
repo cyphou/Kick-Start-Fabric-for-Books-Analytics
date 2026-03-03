@@ -39,10 +39,10 @@
                       "Entity": "Recruitment"
                     }
                   },
-                  "Property": "OfferAccepted"
+                  "Property": "Offer Accepted"
                 }
               },
-              "queryRef": "Recruitment.OfferAccepted",
+              "queryRef": "Recruitment.Offer Accepted",
               "active": true
             }
           ]

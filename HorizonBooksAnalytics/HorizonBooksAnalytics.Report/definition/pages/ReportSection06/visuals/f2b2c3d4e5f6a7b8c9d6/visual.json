@@ -39,10 +39,10 @@
                       "Entity": "Inventory"
                     }
                   },
-                  "Property": "TotalInventoryValue"
+                  "Property": "Total Inventory Value"
                 }
               },
-              "queryRef": "Inventory.TotalInventoryValue",
+              "queryRef": "Inventory.Total Inventory Value",
               "active": true
             }
           ]

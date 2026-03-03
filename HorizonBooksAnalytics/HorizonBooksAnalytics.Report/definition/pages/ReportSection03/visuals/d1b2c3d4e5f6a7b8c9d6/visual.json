@@ -35,10 +35,10 @@
                       "Entity": "Authors"
                     }
                   },
-                  "Property": "LastName"
+                  "Property": "Last Name"
                 }
               },
-              "queryRef": "Authors.LastName",
+              "queryRef": "Authors.Last Name",
               "active": true
             },
             {
@@ -63,10 +63,10 @@
                       "Entity": "Books"
                     }
                   },
-                  "Property": "ImprintName"
+                  "Property": "Imprint Name"
                 }
               },
-              "queryRef": "Books.ImprintName",
+              "queryRef": "Books.Imprint Name",
               "active": true
             },
             {

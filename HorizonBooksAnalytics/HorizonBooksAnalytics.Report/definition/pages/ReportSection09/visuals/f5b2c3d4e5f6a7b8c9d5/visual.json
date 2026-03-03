@@ -39,10 +39,10 @@
                       "Entity": "Recruitment"
                     }
                   },
-                  "Property": "SalaryRangeMax"
+                  "Property": "Salary Range Max"
                 }
               },
-              "queryRef": "Recruitment.SalaryRangeMax",
+              "queryRef": "Recruitment.Salary Range Max",
               "active": true
             }
           ]

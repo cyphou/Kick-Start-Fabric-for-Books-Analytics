@@ -39,10 +39,10 @@
                       "Entity": "Inventory"
                     }
                   },
-                  "Property": "DaysOfSupply"
+                  "Property": "Days of Supply"
                 }
               },
-              "queryRef": "Inventory.DaysOfSupply",
+              "queryRef": "Inventory.Days of Supply",
               "active": true
             }
           ]

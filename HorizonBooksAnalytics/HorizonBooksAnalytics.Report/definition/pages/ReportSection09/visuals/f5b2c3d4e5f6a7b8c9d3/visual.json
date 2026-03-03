@@ -39,10 +39,10 @@
                       "Entity": "Recruitment"
                     }
                   },
-                  "Property": "ApplicationsReceived"
+                  "Property": "Applications Received"
                 }
               },
-              "queryRef": "Recruitment.ApplicationsReceived",
+              "queryRef": "Recruitment.Applications Received",
               "active": true
             }
           ]

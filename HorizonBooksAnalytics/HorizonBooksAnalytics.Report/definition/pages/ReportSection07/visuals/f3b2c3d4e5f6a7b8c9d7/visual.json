@@ -21,10 +21,10 @@
                       "Entity": "Employees"
                     }
                   },
-                  "Property": "FirstName"
+                  "Property": "First Name"
                 }
               },
-              "queryRef": "Employees.FirstName",
+              "queryRef": "Employees.First Name",
               "active": true
             },
             {
@@ -35,10 +35,10 @@
                       "Entity": "Employees"
                     }
                   },
-                  "Property": "LastName"
+                  "Property": "Last Name"
                 }
               },
-              "queryRef": "Employees.LastName",
+              "queryRef": "Employees.Last Name",
               "active": true
             },
             {
@@ -91,10 +91,10 @@
                       "Entity": "Employees"
                     }
                   },
-                  "Property": "EmploymentType"
+                  "Property": "Employment Type"
                 }
               },
-              "queryRef": "Employees.EmploymentType",
+              "queryRef": "Employees.Employment Type",
               "active": true
             }
           ]
