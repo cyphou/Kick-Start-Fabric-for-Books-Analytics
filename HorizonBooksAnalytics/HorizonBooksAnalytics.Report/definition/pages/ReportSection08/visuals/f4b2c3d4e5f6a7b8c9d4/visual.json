@@ -3,9 +3,9 @@
   "name": "f4b2c3d4e5f6a7b8c9d4",
   "position": {
     "x": 0,
-    "y": 141,
+    "y": 168,
     "width": 640,
-    "height": 238
+    "height": 211
   },
   "visual": {
     "visualType": "clusteredColumnChart",
