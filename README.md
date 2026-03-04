@@ -48,8 +48,9 @@ Romance) and Non-Fiction (Tech, Lifestyle, Health, Education).
 │  │  ├── HR/         │   │  operations.*      │   │  analytics.*       │      │
 │  │  └── Operations/ │   │  web.*             │   │                    │      │
 │  │                  │   │                    │   │                    │      │
-│  │  dbo.* (raw)     │   │  17 Silver tables  │   │  10 Dims + 9 Facts│      │
-│  │  (via Dataflows) │   │  + 4 Web tables    │   │  + 4 Analytics     │      │
+│  │  dbo.* (raw)     │   │  17 Silver tables  │   │  10 Dims + 8 Facts│      │
+│  │  (via Dataflows) │   │  + 4 Web tables    │   │  + 5 Forecasts     │      │
+│  │                  │   │                    │   │  + 4 Analytics     │      │
 │  └─────────────────┘   └──────────────────┘   └────────┬─────────┘      │
 │         ▲                       ▲                       │                │
 │         │                       │                       │                │
@@ -102,7 +103,11 @@ Romance) and Non-Fiction (Tech, Lifestyle, Health, Education).
 │  │  Upload-SampleData.ps1         → Standalone CSV upload to Bronze │     │
 │  │  Redeploy-Notebooks.ps1        → Re-deploy notebooks only        │     │
 │  │  Deploy-Diagnostic.ps1         → Diagnostic notebook deploy      │     │
+│  │  Verify-GoldTables.ps1         → Post-deploy Gold table check    │     │
+│  │  _create_exploration.ps1       → Exploration workspace helper    │     │
+│  │  _try_exploration.ps1          → Exploration trial helper        │     │
 │  │  HorizonBooks_TaskFlow.json    → Fabric workspace task flow      │     │
+│  │  *_TaskFlow.json (×9)          → Per-script task flow definitions │     │
 │  │                                                                  │     │
 │  │  tests/Deploy-HorizonBooks.Tests.ps1 → Pester test suite         │     │
 │  └─────────────────────────────────────────────────────────────────┘     │
@@ -433,11 +438,23 @@ FullDemoFabricBookUseCase/
 │   ├── Deploy-PowerBI.ps1             ← Semantic Model + 2 Reports (idempotent)
 │   ├── Update-DataflowDestinations.ps1← Re-apply Lakehouse destinations to dataflows
 │   ├── Deploy-DataAgent.ps1           ← Data Agent creation helper
+│   ├── Deploy-Diagnostic.ps1          ← Deploy diagnostic notebook (NB05)
 │   ├── Validate-Deployment.ps1        ← Post-deploy validation checker
 │   ├── Upload-SampleData.ps1          ← Standalone CSV upload to BronzeLH (OneLake DFS)
 │   ├── Redeploy-Notebooks.ps1         ← Re-deploy notebooks without full redeploy
-│   ├── Deploy-Diagnostic.ps1          ← Deploy diagnostic notebook (NB05)
-│   └── HorizonBooks_TaskFlow.json     ← Importable Fabric Task Flow definition
+│   ├── Verify-GoldTables.ps1          ← Post-deploy Gold table verification
+│   ├── _create_exploration.ps1        ← Exploration workspace helper
+│   ├── _try_exploration.ps1           ← Exploration trial helper
+│   ├── HorizonBooks_TaskFlow.json     ← Importable Fabric Task Flow definition
+│   ├── Deploy-Full_TaskFlow.json      ← Task flow for full deployment
+│   ├── Deploy-DataAgent_TaskFlow.json ← Task flow for Data Agent deployment
+│   ├── Deploy-Diagnostic_TaskFlow.json← Task flow for diagnostic deployment
+│   ├── Deploy-Notebooks_TaskFlow.json ← Task flow for notebook deployment
+│   ├── Deploy-Pipeline_TaskFlow.json  ← Task flow for pipeline deployment
+│   ├── Deploy-PowerBI_TaskFlow.json   ← Task flow for Power BI deployment
+│   ├── New-HorizonBooksWorkspace_TaskFlow.json ← Task flow for workspace creation
+│   ├── Upload-SampleData_TaskFlow.json← Task flow for sample data upload
+│   └── Validate-Deployment_TaskFlow.json ← Task flow for deployment validation
 │
 ├── notebooks/                         ← PySpark Transformation Notebooks
 │   ├── 01_BronzeToSilver.py           ← Bronze→Silver (schema, quality, dedup)
@@ -462,28 +479,30 @@ FullDemoFabricBookUseCase/
 │   │       ├── expressions.tmdl       ← Direct Lake shared expression
 │   │       ├── relationships.tmdl     ← 27 relationships (2 inactive for role-playing)
 │   │       └── tables/
-│   │           ├── DimDate.tmdl       ← Date dimension (14 cols)
-│   │           ├── DimAccounts.tmdl   ← Chart of Accounts (6 cols)
-│   │           ├── DimCostCenters.tmdl
-│   │           ├── DimBooks.tmdl      ← Book catalog (13 cols)
-│   │           ├── DimAuthors.tmdl    ← Authors (13 cols)
-│   │           ├── DimGeography.tmdl  ← Geography (13 cols, dataCategory)
-│   │           ├── DimCustomers.tmdl  ← Customers (13 cols, dataCategory)
-│   │           ├── DimEmployees.tmdl  ← Employees (12 cols + 5 measures)
-│   │           ├── DimDepartments.tmdl
-│   │           ├── DimWarehouses.tmdl ← Warehouses (12 cols, dataCategory)
-│   │           ├── FactFinancialTransactions.tmdl  ← (18 measures)
-│   │           ├── FactBudget.tmdl                 ← (5 measures)
-│   │           ├── FactOrders.tmdl                 ← (26 measures)
-│   │           ├── FactInventory.tmdl              ← (5 measures)
-│   │           ├── FactReturns.tmdl                ← (5 measures)
-│   │           ├── FactPayroll.tmdl                ← (7 measures)
-│   │           ├── FactPerformanceReviews.tmdl     ← (3 measures)
-│   │           └── FactRecruitment.tmdl            ← (5 measures)│           ├── ForecastSalesRevenue.tmdl       ← (4 measures)
-│           ├── ForecastGenreDemand.tmdl        ← (3 measures)
-│           ├── ForecastFinancial.tmdl          ← (3 measures)
-│           ├── ForecastInventoryDemand.tmdl    ← (3 measures)
-│           └── ForecastWorkforce.tmdl          ← (4 measures)│   │
+│   │           ├── Date.tmdl                       ← Date dimension (14 cols)
+│   │           ├── Accounts.tmdl                   ← Chart of Accounts (6 cols)
+│   │           ├── Cost Centers.tmdl
+│   │           ├── Books.tmdl                      ← Book catalog (13 cols)
+│   │           ├── Authors.tmdl                    ← Authors (13 cols)
+│   │           ├── Geography.tmdl                  ← Geography (13 cols, dataCategory)
+│   │           ├── Customers.tmdl                  ← Customers (13 cols, dataCategory)
+│   │           ├── Employees.tmdl                  ← Employees (12 cols + 5 measures)
+│   │           ├── Departments.tmdl
+│   │           ├── Warehouses.tmdl                 ← Warehouses (12 cols, dataCategory)
+│   │           ├── Financial Transactions.tmdl     ← (18 measures)
+│   │           ├── Budget.tmdl                     ← (5 measures)
+│   │           ├── Orders.tmdl                     ← (26 measures)
+│   │           ├── Inventory.tmdl                  ← (5 measures)
+│   │           ├── Returns.tmdl                    ← (5 measures)
+│   │           ├── Payroll.tmdl                    ← (7 measures)
+│   │           ├── Performance Reviews.tmdl        ← (3 measures)
+│   │           ├── Recruitment.tmdl                ← (5 measures)
+│   │           ├── Forecast Sales Revenue.tmdl     ← (4 measures)
+│   │           ├── Forecast Genre Demand.tmdl      ← (3 measures)
+│   │           ├── Forecast Financial.tmdl         ← (3 measures)
+│   │           ├── Forecast Inventory Demand.tmdl  ← (3 measures)
+│   │           └── Forecast Workforce.tmdl         ← (4 measures)
+│   │
 │   └── HorizonBooksAnalytics.Report/
 │       ├── .platform                  ← Fabric item metadata
 │       ├── definition.pbir            ← Report config (PBIR v4.0)
@@ -552,14 +571,36 @@ FullDemoFabricBookUseCase/
 │
 ├── Forecasting/                       ← Forecasting Configuration
 │   ├── README.md                      ← Forecast model documentation
-│   └── forecast-config.json           ← Holt-Winters model config (5 models)
+│   ├── forecast-config.json           ← Holt-Winters model config (5 models)
+│   └── ForecastingExploration.ipynb   ← Local Jupyter notebook (Holt-Winters, visualizations)
 │
 ├── definitions/                       ← CI/CD Item Definitions
+│   ├── items-manifest.json            ← Full item catalog (15 items)
+│   ├── README.md                      ← Definitions documentation
+│   ├── dataagent/
+│   │   └── dataagent-definition.json  ← Data Agent config
+│   ├── dataflows/                     ← Dataflow Gen2 definitions
+│   │   ├── queryMetadata.json         ← Query visibility/load settings
+│   │   ├── DF_Finance/                ← Finance dataflow mashup
+│   │   ├── DF_HR/                     ← HR dataflow mashup
+│   │   └── DF_Operations/             ← Operations dataflow mashup
 │   ├── environment/                   ← Spark Environment config
 │   │   ├── environment-definition.json ← Runtime 1.3, adaptive, delta optimization
 │   │   ├── public-libraries.json      ← PyPI dependencies
 │   │   └── requirements.txt           ← pip-compatible format
-│   └── items-manifest.json            ← Full item catalog (15 items)
+│   ├── lakehouses/                    ← Lakehouse definitions
+│   │   ├── BronzeLH.json
+│   │   ├── SilverLH.json
+│   │   └── GoldLH.json
+│   ├── notebooks/                     ← Notebook Lakehouse metadata
+│   │   ├── nb01-lakehouse-metadata.json
+│   │   ├── nb02-lakehouse-metadata.json
+│   │   ├── nb03-lakehouse-metadata.json
+│   │   └── nb04-lakehouse-metadata.json
+│   ├── pipeline/
+│   │   └── pipeline-content.json      ← Orchestration pipeline definition
+│   └── report/
+│       └── report-definition.json     ← Report deployment definition
 │
 ├── .github/workflows/                 ← CI/CD Pipeline
 │   └── ci-tests.yml                   ← GitHub Actions Pester tests (on push/PR to main)
