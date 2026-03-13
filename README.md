@@ -1,784 +1,683 @@
-# ============================================================================
-# 🏢 Horizon Books Publishing & Distribution
-# Microsoft Fabric End-to-End Demo
-# Master Setup Guide
-# ============================================================================
+<p align="center">
+  <img src="assets/workspace-logo.png" alt="Horizon Books" width="120"/>
+</p>
 
-## 📋 Demo Overview
+<p align="center">
+  <img src="https://img.shields.io/badge/Microsoft%20Fabric-117A65?style=for-the-badge&logo=microsoft&logoColor=white" alt="Microsoft Fabric"/>
+  <img src="https://img.shields.io/badge/Power%20BI-F2C811?style=for-the-badge&logo=powerbi&logoColor=black" alt="Power BI"/>
+  <img src="https://img.shields.io/badge/PySpark-E25A1C?style=for-the-badge&logo=apachespark&logoColor=white" alt="PySpark"/>
+  <img src="https://img.shields.io/badge/Direct%20Lake-0078D4?style=for-the-badge&logo=microsoft&logoColor=white" alt="Direct Lake"/>
+</p>
 
-**Company:** Horizon Books Publishing & Distribution  
-**Industry:** Book Publishing, Distribution, and Retail  
-**Data Years:** FY2024–FY2026 (January 2024 – June 2026)  
-**Fabric Components:** 3 Lakehouses (Medallion with schemas), Spark Environment, 4 Spark Notebooks, Semantic Model, Power BI Report, Data Agent
+<h1 align="center">Horizon Books Publishing & Distribution</h1>
 
-### Business Domains Covered
+<p align="center">
+  <strong>Microsoft Fabric end-to-end demo — medallion lakehouse, semantic model, Power BI reports, AI data agent — deployed in one command.</strong>
+</p>
 
-| Domain | Description | Key Data |
-|---|---|---|
-| **Finance** | P&L, Budget vs Actual, GL Transactions | Revenue, COGS, Royalties, Marketing, OpEx |
-| **HR** | Workforce, Compensation, Recruitment | 50 employees, 7 departments, payroll, reviews |
-| **Operations** | Books, Orders, Inventory, Returns, Geography | 45 titles, 30 authors, 50 customers, 548 orders |
+<p align="center">
+  <img src="https://img.shields.io/badge/deploy-~15%20min-brightgreen?style=flat-square" alt="Deploy Time"/>
+  <img src="https://img.shields.io/badge/notebooks-5-blue?style=flat-square" alt="Notebooks"/>
+  <img src="https://img.shields.io/badge/DAX%20measures-96-purple?style=flat-square" alt="DAX Measures"/>
+  <img src="https://img.shields.io/badge/report%20pages-15-orange?style=flat-square" alt="Report Pages"/>
+  <img src="https://img.shields.io/badge/data-FY2024--FY2026-teal?style=flat-square" alt="Data Years"/>
+  <img src="https://img.shields.io/badge/PowerShell-automated-blue?style=flat-square&logo=powershell&logoColor=white" alt="PowerShell"/>
+</p>
 
-### The Story
-Horizon Books is a mid-size publisher with 6 imprints, operating from New York (HQ) 
-and Chicago (warehouse), with international sales operations in London, Tokyo, Frankfurt, 
-and Mexico City. The company serves 50 customers across 20+ countries globally. 
-FY2024’s flagship title "Winter's Promise" by Catherine Harper 
-drove record Q4 sales, and the momentum continued into FY2025-FY2026 with 
-new releases like "Starfall Legacy" and "The Data Detective". The company 
-publishes across Fiction (Literary, Sci-Fi, Fantasy, Mystery, Thriller, 
-Romance) and Non-Fiction (Tech, Lifestyle, Health, Education).
+<p align="center">
+  <a href="#-quick-start">Quick Start</a> •
+  <a href="#-key-features">Features</a> •
+  <a href="#-architecture">Architecture</a> •
+  <a href="#-deployment-options">Deployment</a> •
+  <a href="#-demo-scenarios">Demo Scenarios</a> •
+  <a href="#-documentation">Docs</a>
+</p>
 
 ---
 
-## 🏗️ Architecture Diagram
+## ⚡ Quick Start
 
+```powershell
+# That's it. One command.
+Connect-AzAccount
+.\deploy\Deploy-Full.ps1 -WorkspaceId "<your-workspace-guid>"
 ```
-┌──────────────────────────────────────────────────────────────────────────┐
-│                    Microsoft Fabric Workspace                            │
-│                   "Horizon Books Analytics"                              │
-│                    (logo: workspace-logo.png)                            │
-│                                                                          │
-│  ┌─────────────────┐   ┌──────────────────┐   ┌──────────────────┐      │
-│  │    BronzeLH       │   │     SilverLH      │   │     GoldLH        │      │
-│  │  (schema-enabled)│   │  (schema-enabled) │   │  (schema-enabled) │      │
-│  │                  │   │                    │   │                    │      │
-│  │  Files/          │   │  finance.*         │   │  dim.*             │      │
-│  │  ├── Finance/    │──▶│  hr.*              │──▶│  fact.*            │      │
-│  │  ├── HR/         │   │  operations.*      │   │  analytics.*       │      │
-│  │  └── Operations/ │   │  web.*             │   │                    │      │
-│  │                  │   │                    │   │                    │      │
-│  │  dbo.* (raw)     │   │  17 Silver tables  │   │  10 Dims + 8 Facts│      │
-│  │  (via Dataflows) │   │  + 4 Web tables    │   │  + 5 Forecasts     │      │
-│  │                  │   │                    │   │  + 4 Analytics     │      │
-│  └─────────────────┘   └──────────────────┘   └────────┬─────────┘      │
-│         ▲                       ▲                       │                │
-│         │                       │                       │                │
-│  ┌──────┴──────────────────────┴────────────────────────┘                │
-│  │  PL_HorizonBooks_Orchestration (Data Pipeline)                        │
-│  │                                                                       │
-│  │  Phase 1 (parallel):                                                  │
-│  │  ┌──────────┐┌──────┐┌────────────┐ ┌────────────────────────┐       │
-│  │  │DF_Finance││DF_HR ││DF_Operations│ │ NB01 BronzeToSilver    │       │
-│  │  └──────────┘└──────┘└────────────┘ │ (CSV → SilverLH)       │       │
-│  │  (CSV → BronzeLH Delta tables       └────────────┬───────────┘       │
-│  │   via auto-configured destinations)                                   │
-│  │                                                   │                   │
-│  │  Phase 2:   ┌─────────────────────────────────────▼──────────┐       │
-│  │             │ NB02 WebEnrichment (4 APIs → SilverLH.web.*)   │       │
-│  │             └─────────────────────────────────────┬──────────┘       │
-│  │  Phase 3:   ┌─────────────────────────────────────▼──────────┐       │
-│  │             │ NB03 SilverToGold (SilverLH → GoldLH)          │       │
-│  │             │ dim.*, fact.*, analytics.*                       │       │
-│  │             └────────────────────────────────────────────────┘       │
-│  └──────────────────────────────────────────────────────────────────────┘│
-│                                                                          │
-│         ┌──────────────────┐              ┌───────────────────────┐      │
-│         │  PBIP Project     │              │   Semantic Model       │      │
-│         │  (local / Git)    │─── Deploy ──▶│   (Direct Lake)        │      │
-│         │                  │   via API    │   → GoldLH SQL EP      │      │
-│         │ • TMDL Model     │              │                        │      │
-│         │ • PBIR Report    │              │ 27 Relationships       │      │
-│         └──────────────────┘              │ 96 DAX Measures        │      │
-│                                           │ schemaName: dim|fact   │      │
-│                                           └──┬──────────┬─────────┘      │
-│                                              │          │                 │
-│                                    ┌─────────▼──┐  ┌───▼──────┐         │
-│                                    │  Power BI   │  │  Data    │         │
-│                                    │  Report     │  │  Agent   │         │
-│                                    │  (10 pages) │  │  (AI Q&A)│         │
-│                                    └─────────────┘  └──────────┘         │
-│                                                                          │
-│  ┌─────────────────────────────────────────────────────────────────┐     │
-│  │  deploy/                  PowerShell Automation                  │     │
-│  │  Deploy-Full.ps1               → ONE-COMMAND full deployment     │     │
-│  │  New-HorizonBooksWorkspace.ps1 → Workspace + capacity + logo    │     │
-│  │  HorizonBooks.psm1             → Shared module (tokens/API/log) │     │
-│  │  Deploy-HorizonBooks.ps1       → Legacy step-by-step setup      │     │
-│  │  Deploy-Pipeline.ps1           → Dataflows (with destinations)   │     │
-│  │  Update-DataflowDestinations.ps1→ Re-apply destinations only     │     │
-│  │  Deploy-DataAgent.ps1          → Data Agent creation             │     │
-│  │  Deploy-PowerBI.ps1            → Semantic Model + 2 Reports      │     │
-│  │  Validate-Deployment.ps1       → Post-deploy validation          │     │
-│  │  Upload-SampleData.ps1         → Standalone CSV upload to Bronze │     │
-│  │  Redeploy-Notebooks.ps1        → Re-deploy notebooks only        │     │
-│  │  Deploy-Diagnostic.ps1         → Diagnostic notebook deploy      │     │
-│  │  Verify-GoldTables.ps1         → Post-deploy Gold table check    │     │
-│  │  _create_exploration.ps1       → Exploration workspace helper    │     │
-│  │  _try_exploration.ps1          → Exploration trial helper        │     │
-│  │  HorizonBooks_TaskFlow.json    → Fabric workspace task flow      │     │
-│  │  *_TaskFlow.json (×9)          → Per-script task flow definitions │     │
-│  │                                                                  │     │
-│  │  tests/Deploy-HorizonBooks.Tests.ps1 → Pester test suite         │     │
-│  └─────────────────────────────────────────────────────────────────┘     │
-└──────────────────────────────────────────────────────────────────────────┘
+
+> [!TIP]
+> The script provisions 3 Lakehouses, uploads sample data, runs the full pipeline, deploys the semantic model, 2 Power BI reports, and an AI Data Agent — all in **~15 minutes**.
+
+<details>
+<summary><b>📦 Prerequisites</b></summary>
+
+- Microsoft Fabric Capacity (F64 or Trial)
+- PowerShell 5.1+
+- `Az` module: `Install-Module Az -Scope CurrentUser`
+- Logged in: `Connect-AzAccount`
+
+</details>
+
+---
+
+## 🎯 Key Features
+
+<table>
+<tr>
+<td width="50%">
+
+### 🏗️ Medallion Architecture
+**3 schema-enabled Lakehouses** with clear data layers:
+- **Bronze** — Raw CSV ingestion (17 files)
+- **Silver** — Cleaned, typed, deduplicated (21 tables)
+- **Gold** — Star schema (10 dims + 8 facts + 5 forecasts + 4 analytics)
+
+</td>
+<td width="50%">
+
+### 📊 96 DAX Measures
+Comprehensive semantic model with **Direct Lake** mode:
+Finance (P&L, budget, YoY growth), Operations (orders, inventory, returns, fulfillment), HR (workforce, compensation, recruitment), Geographic, and Forecasting
+
+</td>
+</tr>
+<tr>
+<td>
+
+### 🌐 Web Data Enrichment
+4 live API integrations with **static fallbacks**:
+Exchange rates (frankfurter.app), holidays (date.nager.at), country indicators (restcountries.com), book metadata (openlibrary.org)
+
+</td>
+<td>
+
+### 🔮 Holt-Winters Forecasting
+5 forecast models with **MLflow experiment tracking**:
+Sales revenue by channel, genre demand, financial P&L, inventory demand, workforce planning — 6-month horizon, 95% confidence intervals
+
+</td>
+</tr>
+<tr>
+<td>
+
+### 🤖 AI Data Agent
+Natural language Q&A over the semantic model:
+*"What's our total revenue?"* • *"Any inventory alerts?"* • *"Compare FY2024 vs FY2025"* — self-serve analytics for business users
+
+</td>
+<td>
+
+### 🚀 One-Command Deploy
+Fully automated PowerShell deployment:
+Workspace creation, CSV upload, pipeline orchestration, PBIP deployment, Data Agent provisioning, post-deploy validation — **idempotent** and **resumable**
+
+</td>
+</tr>
+</table>
+
+> [!NOTE]
+> All data is **fictional** — 45 book titles, 30 authors, 50 customers across 20+ countries, 50 employees spanning FY2024–FY2026.
+
+---
+
+## 📋 The Story
+
+Horizon Books is a mid-size publisher with 6 imprints, operating from New York (HQ) and Chicago (warehouse), with international sales operations in London, Tokyo, Frankfurt, and Mexico City. The company serves 50 customers across 20+ countries globally.
+
+FY2024's flagship title *"Winter's Promise"* by Catherine Harper drove record Q4 sales, and the momentum continued into FY2025–FY2026 with new releases like *"Starfall Legacy"* and *"The Data Detective"*. The company publishes across Fiction (Literary, Sci-Fi, Fantasy, Mystery, Thriller, Romance) and Non-Fiction (Tech, Lifestyle, Health, Education).
+
+| Domain | Description | Key Data |
+|--------|-------------|----------|
+| 💰 **Finance** | P&L, Budget vs Actual, GL Transactions | Revenue, COGS, Royalties, Marketing, OpEx |
+| 👥 **HR** | Workforce, Compensation, Recruitment | 50 employees, 7 departments, payroll, reviews |
+| 📦 **Operations** | Books, Orders, Inventory, Returns, Geography | 45 titles, 30 authors, 50 customers, 548 orders |
+
+---
+
+## 🏗️ Architecture
+
+```mermaid
+flowchart LR
+    subgraph Bronze["🥉 BronzeLH"]
+        CSV["17 CSV Files"]
+        RAW["dbo.* raw tables"]
+    end
+
+    subgraph Silver["🥈 SilverLH"]
+        S1["finance.*"]
+        S2["hr.*"]
+        S3["operations.*"]
+        S4["web.*"]
+    end
+
+    subgraph Gold["🥇 GoldLH"]
+        D["dim.* (10)"]
+        F["fact.* (8)"]
+        A["analytics.* (9)"]
+    end
+
+    CSV --> |"Dataflows Gen2"| RAW
+    CSV --> |"NB01"| S1
+    CSV --> |"NB01"| S2
+    CSV --> |"NB01"| S3
+    API["🌐 4 Web APIs"] -.-> |"NB02"| S4
+    S1 --> |"NB03"| D
+    S2 --> |"NB03"| F
+    S3 --> |"NB03"| A
+    S4 --> |"NB03"| D
+
+    Gold --> SM["📐 Semantic Model\n96 DAX Measures\nDirect Lake"]
+    SM --> RPT["📊 Power BI\n15 Report Pages"]
+    SM --> AGT["🤖 Data Agent\nAI Q&A"]
+
+    style Bronze fill:#CD7F32,color:#fff,stroke:#CD7F32
+    style Silver fill:#C0C0C0,color:#000,stroke:#C0C0C0
+    style Gold fill:#FFD700,color:#000,stroke:#FFD700
+    style SM fill:#0078D4,color:#fff,stroke:#0078D4
+    style RPT fill:#F2C811,color:#000,stroke:#F2C811
+    style AGT fill:#6B4C9A,color:#fff,stroke:#6B4C9A
 ```
 
 ### Medallion Lakehouse Layout
 
 | Lakehouse | Layer | Schemas | Contents |
 |-----------|-------|---------|----------|
-| **BronzeLH** | Bronze | `dbo` (default) | 17 CSV files in `Files/`, 17 Delta tables ingested by Dataflow Gen2 (auto-destination) |
-| **SilverLH** | Silver | `finance`, `hr`, `operations`, `web` | Cleaned/typed/deduped Delta tables, web API enrichment data |
-| **GoldLH** | Gold | `dim`, `fact`, `analytics` | Star schema dimensions & facts, advanced analytics tables |
+| **BronzeLH** | 🥉 Bronze | `dbo` (default) | 17 CSV files in `Files/`, 17 Delta tables via Dataflow Gen2 |
+| **SilverLH** | 🥈 Silver | `finance`, `hr`, `operations`, `web` | Cleaned/typed/deduped Delta tables, web API enrichment |
+| **GoldLH** | 🥇 Gold | `dim`, `fact`, `analytics` | Star schema dimensions & facts, advanced analytics tables |
 
-All 3 Lakehouses are created with the **enableSchemas** feature enabled, allowing
-schema-based organization (`lakehouse.schema.table` naming in Spark SQL).
-The Semantic Model uses `schemaName: dim` / `schemaName: fact` in TMDL partition blocks
-to bind Direct Lake to the correct GoldLH schemas.
-└──────────────────────────────────────────────────────────────────────────┘
+All 3 Lakehouses use **schema-enabled** mode (`lakehouse.schema.table` naming). The Semantic Model binds via `schemaName` in TMDL partitions for Direct Lake.
+
+---
+
+## 🔧 Notebook Pipeline
+
+```mermaid
+flowchart TD
+    P1["⚡ Phase 1 — parallel"]
+    DF["📥 3 Dataflows Gen2\nCSV → BronzeLH"]
+    NB1["📓 NB01 BronzeToSilver\nCSV → SilverLH"]
+    NB2["📓 NB02 WebEnrichment\n4 APIs → SilverLH.web"]
+    NB3["📓 NB03 SilverToGold\nSilverLH → GoldLH"]
+    NB4["📓 NB04 Forecasting\nHolt-Winters + MLflow"]
+
+    P1 --> DF
+    P1 --> NB1
+    DF --> NB2
+    NB1 --> NB2
+    NB2 --> NB3
+    NB3 --> NB4
+
+    style P1 fill:#3A8FBF,color:#fff
+    style DF fill:#E8A838,color:#000
+    style NB1 fill:#E8A838,color:#000
+    style NB2 fill:#6B4C9A,color:#fff
+    style NB3 fill:#2ECC71,color:#fff
+    style NB4 fill:#1B3A5C,color:#fff
 ```
+
+| Notebook | Default LH | Source | Target | Key Operations |
+|----------|-----------|--------|--------|----------------|
+| **01_BronzeToSilver** | BronzeLH | 17 CSV files | SilverLH (`finance`/`hr`/`operations`) | Schema enforcement, data quality, dedup, audit columns |
+| **02_WebEnrichment** | SilverLH | 4 public APIs | SilverLH.`web.*` | Exchange rates, holidays, country data, book metadata. **Static fallbacks** for all APIs |
+| **03_SilverToGold** | GoldLH | SilverLH tables | GoldLH (`dim`/`fact`/`analytics`) | DimDate, RFM, cohort, anomaly detection, co-purchasing, EMA forecast. **Safety net** creates empty stubs |
+| **04_Forecasting** | GoldLH | GoldLH fact tables | GoldLH (`analytics`) | Holt-Winters: 5 models, 6-month horizon, 95% CI. **MLflow** parent/child runs |
+| **05_DiagnosticCheck** | GoldLH | All 3 Lakehouses | — (read-only) | Post-deploy validation: verifies all 23 Gold + 17 Silver + Bronze CSV files |
+
+<details>
+<summary><b>🌐 Web APIs used</b> (click to expand)</summary>
+
+| API | Data | Fallback |
+|-----|------|----------|
+| **frankfurter.app** | Monthly exchange rates (16 currencies, FY2024–FY2026) | Static rates |
+| **date.nager.at** | Public holidays for 29 countries (2024–2026) | Empty data |
+| **restcountries.com** | Country indicators (population, area, Gini, languages) | Built-in dataset (28 countries) |
+| **openlibrary.org** | Book metadata by ISBN (subjects, covers, publisher) | Graceful skip |
+
+All APIs are free and require no authentication.
+
+</details>
+
+<details>
+<summary><b>📈 Advanced Analytics tables in Gold</b> (click to expand)</summary>
+
+| Table | Description |
+|-------|-------------|
+| `GoldCohortAnalysis` | Customer retention matrix by first-purchase cohort |
+| `GoldRevenueAnomalies` | Daily revenue anomaly flags (30-day rolling Z-score) |
+| `GoldBookCoPurchase` | Book pair affinities with Support, Confidence, and Lift |
+| `GoldRevenueForecast` | Channel revenue projection using weighted moving averages |
+
+</details>
 
 ---
 
 ## 🚀 Deployment Options
 
-### Option A: One-Command Deployment (Recommended — ~15 min)
-
-Deploy everything with a single command. The script provisions all Fabric items,
-runs the data pipeline, deploys the semantic model, and validates the result.
-
-**Prerequisites:**
-- Microsoft Fabric Capacity (F64 or Trial)
-- Fabric Workspace already created (note the Workspace ID from the URL)
-- PowerShell 5.1 or later
-- `Az` module installed (`Install-Module Az -Scope CurrentUser`)
-- Logged in via `Connect-AzAccount`
-
-**One-liner:**
+### Option A: One-Command Deployment *(Recommended — ~15 min)*
 
 ```powershell
 Connect-AzAccount
 .\deploy\Deploy-Full.ps1 -WorkspaceId "<your-workspace-guid>"
 ```
 
-**What it does (11 automated steps):**
+<details>
+<summary><b>📋 What it does (11 automated steps)</b></summary>
 
 | Step | Action | Time |
 |------|--------|------|
-| 1 | Create 3 Lakehouses (BronzeLH, SilverLH, GoldLH) with schemas + wait for GoldLH SQL endpoint | ~3 min |
+| 1 | Create 3 Lakehouses (BronzeLH, SilverLH, GoldLH) with schemas | ~3 min |
 | 2 | Upload 17 CSV files to BronzeLH via OneLake DFS API | ~1 min |
-| 3 | Deploy Spark Environment + 4 PySpark notebooks (each bound to its default Lakehouse) | ~1 min |
-| 4 | Run NB01 Bronze→Silver (schema, quality, dedup → SilverLH) | ~3 min |
+| 3 | Deploy Spark Environment + 4 PySpark notebooks | ~1 min |
+| 4 | Run NB01 Bronze→Silver | ~3 min |
 | 5 | Deploy 3 Dataflow Gen2 items + orchestration pipeline | ~1 min |
-| 6 | **Run pipeline**: Dataflows + NB01 (parallel) → NB02 WebEnrichment → NB03 SilverToGold → NB04 Forecasting | ~7 min |
-| 7 | Execute Lakehouse SQL scripts (CreateTables.sql + GenerateDateDimension.sql) | ~1 min |
-| 8 | Deploy Semantic Model (Direct Lake on GoldLH, 96 measures, schemaName bindings) | ~1 min |
-| 9 | Deploy 2 Power BI Reports: Analytics (10 pages) + Forecasting (5 pages), both PBIR bound to Semantic Model | <1 min |
+| 6 | **Run pipeline**: DF + NB01 → NB02 → NB03 → NB04 | ~7 min |
+| 7 | Execute SQL scripts (CreateTables + GenerateDateDimension) | ~1 min |
+| 8 | Deploy Semantic Model (Direct Lake, 96 measures) | ~1 min |
+| 9 | Deploy 2 Reports: Analytics (10 pages) + Forecasting (5 pages) | <1 min |
 | 10 | Deploy Data Agent (F64+ only) | <1 min |
 | 11 | Validate all deployed items | <1 min |
 
-**Optional flags:**
+</details>
 
 ```powershell
-# Deploy without auto-running the pipeline (trigger manually later)
-.\deploy\Deploy-Full.ps1 -WorkspaceId "<guid>" -SkipPipelineRun
-
-# Skip Data Agent (e.g., on Trial capacity)
-.\deploy\Deploy-Full.ps1 -WorkspaceId "<guid>" -SkipDataAgent
-
-# Skip post-deploy validation
-.\deploy\Deploy-Full.ps1 -WorkspaceId "<guid>" -SkipValidation
+# Optional flags
+.\deploy\Deploy-Full.ps1 -WorkspaceId "<guid>" -SkipPipelineRun   # Don't run pipeline
+.\deploy\Deploy-Full.ps1 -WorkspaceId "<guid>" -SkipDataAgent      # Skip AI Agent
+.\deploy\Deploy-Full.ps1 -WorkspaceId "<guid>" -SkipValidation     # Skip validation
 ```
 
-**Output:** A timing summary table showing each step's duration and pass/fail status,
-plus deployed resource IDs and a direct link to the Fabric portal.
+### Option B: Step-by-Step Scripts
 
-### Option B: Step-by-Step Automated Deployment (~15 min)
-
-Run each deployment script individually for finer control.
+<details>
+<summary><b>🔧 Individual deployment commands</b></summary>
 
 ```powershell
-# 1. Log in to Azure
 Connect-AzAccount
 
-# 2. (Optional) Create workspace with logo and capacity assignment
+# (Optional) Create workspace with logo
 .\deploy\New-HorizonBooksWorkspace.ps1 -CapacityId "<capacity-guid>"
 
-# 3. Run the full deployment pipeline
-.\deploy\Deploy-Full.ps1 -WorkspaceId "<your-workspace-guid>" -SkipPipelineRun
-
-# 4. (Or deploy individual components)
-.\deploy\Deploy-Pipeline.ps1 -WorkspaceId "<your-workspace-guid>"   # Dataflows + Pipeline
-.\deploy\Deploy-PowerBI.ps1  -WorkspaceId "<your-workspace-guid>"   # Semantic Model + 2 Reports
-.\deploy\Deploy-DataAgent.ps1 -WorkspaceId "<your-workspace-guid>"  # Data Agent
-
-# 5. Upload sample data (if not using Deploy-Full)
+# Deploy components individually
+.\deploy\Deploy-Full.ps1      -WorkspaceId "<guid>" -SkipPipelineRun
+.\deploy\Deploy-Pipeline.ps1  -WorkspaceId "<guid>"   # Dataflows + Pipeline
+.\deploy\Deploy-PowerBI.ps1   -WorkspaceId "<guid>"   # Semantic Model + 2 Reports
+.\deploy\Deploy-DataAgent.ps1 -WorkspaceId "<guid>"   # Data Agent
 .\deploy\Upload-SampleData.ps1 -WorkspaceId "<guid>" -BronzeLakehouseId "<bronze-lh-guid>"
-
-# 6. Validate everything was created
-.\deploy\Validate-Deployment.ps1 -WorkspaceId "<your-workspace-guid>"
-
-# 7. (Optional) Run Pester tests
-Invoke-Pester .\tests\Deploy-HorizonBooks.Tests.ps1 -Tag "Unit"
+.\deploy\Validate-Deployment.ps1 -WorkspaceId "<guid>"
 ```
 
-The individual scripts:
-1. **New-HorizonBooksWorkspace.ps1** — Creates workspace, assigns to Fabric capacity, uploads branded logo
-2. **Deploy-Full.ps1** (with `-SkipPipelineRun`) provisions all items without executing the pipeline
-3. **Deploy-Pipeline.ps1** deploys Dataflow Gen2 items with auto-configured destinations + orchestration pipeline
-4. **Deploy-PowerBI.ps1** deploys the Semantic Model + 2 Reports (Analytics & Forecasting) from PBIP/TMDL definitions. **Idempotent:** re-running updates existing items instead of creating duplicates
-5. **Upload-SampleData.ps1** uploads 17 CSVs to BronzeLH (requires `-WorkspaceId` and `-BronzeLakehouseId`)
-6. **Deploy-DataAgent.ps1** creates the AI Data Agent (F64+ only)
-
-### Notebook Pipeline Details
-
-The 4-notebook pipeline implements a medallion architecture with web data enrichment and forecasting:
-
-| Notebook | Default LH | Source | Target | Key Operations |
-|---|---|---|---|---|
-| **01_BronzeToSilver** | BronzeLH | 17 CSV files (BronzeLH/Files/) | SilverLH (finance/hr/operations schemas) | Schema enforcement, data quality checks, deduplication, audit columns, dimension/fact-specific transforms |
-| **02_WebEnrichment** | SilverLH | 4 public APIs | SilverLH.web.* + enriched Silver tables | Exchange rates (frankfurter.app), holidays (date.nager.at), country indicators (restcountries.com), book metadata (openlibrary.org). **Static fallbacks** for all APIs ensure pipeline completes even when external services are unavailable. |
-| **03_SilverToGold** | GoldLH | SilverLH tables (cross-LH reads) | GoldLH (dim/fact/analytics schemas) | DimDate with holidays, RFM segmentation, customer cohort analysis, revenue anomaly detection (Z-score), book co-purchasing patterns (market basket), revenue forecasting (EMA). **Safety net** ensures all 18 semantic-model-required tables exist in Gold (creates empty stubs if upstream data is unavailable). |
-| **04_Forecasting** | GoldLH | GoldLH fact tables | GoldLH (analytics schema) | Holt-Winters time-series forecasting: sales revenue by channel, genre demand, financial P&L, inventory demand, workforce planning (6-month horizon, 95% confidence). **MLflow experiment tracking** with parent/child runs per forecast table. |
-| **05_DiagnosticCheck** | GoldLH | All 3 Lakehouses | — (read-only) | Post-deployment diagnostic: verifies all 23 semantic-model tables exist in Gold, 17 Silver source tables, and Bronze CSV files. Reports missing/empty tables for troubleshooting. |
-
-**Web APIs used** (all free, no authentication required):
-- **frankfurter.app** — Monthly exchange rates (16 currencies, FY2024–FY2026)
-- **date.nager.at** — Public holidays for 29 countries (2024–2026)
-- **restcountries.com** — Country indicators (population, area, Gini index, languages)
-- **openlibrary.org** — Book metadata by ISBN (subjects, cover URLs, publisher)
-
-**Advanced Analytics tables created in Gold:**
-- `GoldCohortAnalysis` — Customer retention matrix by first-purchase cohort
-- `GoldRevenueAnomalies` — Daily revenue anomaly flags (30-day rolling Z-score)
-- `GoldBookCoPurchase` — Book pair affinities with Support, Confidence, and Lift metrics
-- `GoldRevenueForecast` — Channel revenue projection using weighted moving averages
-
-### Pipeline Resilience & Observability
-
-The pipeline is designed to be resilient to partial failures and observable via built-in tracking:
-
-**API Fallbacks (NB02):**
-- **frankfurter.app** — Falls back to static exchange rates if the API is unavailable or returns no data
-- **restcountries.com** — Falls back to a built-in dataset covering all 28 Horizon Books countries
-- **date.nager.at** — Continues with empty holiday data if unavailable
-- **openlibrary.org** — Skips book enrichment gracefully on API failure
-
-**Gold Layer Safety Net (NB03):**
-- After all Silver→Gold transforms, NB03 verifies that all 18 semantic-model-required tables (10 dim + 8 fact) exist in Gold
-- Any missing table is created as an empty stub with the correct schema, ensuring the Power BI report always loads without `Invalid object name` errors
-- Stub tables are logged with warnings; re-running the full pipeline populates them with real data
-
-**MLflow Experiment Tracking (NB04):**
-- Fabric's automatic `mlflow.autolog()` is disabled to prevent spurious failed experiment runs
-- A dedicated experiment `HorizonBooks_Forecasting` tracks all forecast runs
-- **Parent run** logs global parameters (horizon, confidence level, min history)
-- **Nested child runs** (one per forecast table) log model-specific parameters, metrics (row count, MAPE, elapsed time), and tags
-- Aggregate metrics are logged to the parent run upon completion
-
-**Diagnostic Notebook (NB05):**
-- Quick post-deployment check that verifies all Gold, Silver, and Bronze tables/files exist
-- Run standalone from the Fabric portal to troubleshoot data pipeline issues
-- Deploy with `deploy/Deploy-Diagnostic.ps1`
+</details>
 
 ### Option C: PBIP in Power BI Desktop
 
-Open the PBIP projects locally for editing and development.
+<details>
+<summary><b>📊 Open locally for editing</b></summary>
 
-1. Open `HorizonBooksAnalytics/HorizonBooksAnalytics.pbip` in Power BI Desktop (Analytics report, 10 pages)
+1. Open `HorizonBooksAnalytics/HorizonBooksAnalytics.pbip` in Power BI Desktop (10-page Analytics report)
 2. Open `HorizonBooksForecasting/HorizonBooksForecasting.pbip` for the Forecasting report (5 pages)
-3. The semantic model uses placeholder tokens — search and replace in [expressions.tmdl](HorizonBooksAnalytics/HorizonBooksAnalytics.SemanticModel/definition/expressions.tmdl):
-   - `{{SQL_ENDPOINT}}` → your GoldLH SQL endpoint (e.g. `xxxxx.datawarehouse.fabric.microsoft.com`)
+3. Replace tokens in `expressions.tmdl`:
+   - `{{SQL_ENDPOINT}}` → your GoldLH SQL endpoint
    - `{{LAKEHOUSE_NAME}}` → your Gold Lakehouse name (e.g. `GoldLH`)
 4. Connect and refresh to validate the model
-5. Publish from Desktop to your Fabric workspace
+
+</details>
 
 ### Option D: Manual Setup (~90 min)
 
----
+<details>
+<summary><b>🛠️ Full hands-on walkthrough</b></summary>
 
-### Step 1: Create the Lakehouse (5 min)
+#### Step 1: Create Lakehouses (5 min)
+Create `BronzeLH`, `SilverLH`, `GoldLH` with **schema-enabled** mode.
 
-1. Go to your Fabric Workspace
-2. Click **+ New** → **Lakehouse**
-3. Name: `HorizonBooks_Lakehouse`
-4. Click **Create**
-
-### Step 2: Upload Sample Data (5 min)
-
-1. In the Lakehouse, click **Get Data** → **Upload files**
-2. Upload all 17 CSVs directly into **Files/** (flat, no subfolders):
-   ```
-   Files/
-   ├── DimAccounts.csv
-   ├── DimAuthors.csv
-   ├── DimBooks.csv
-   ├── DimCostCenters.csv
-   ├── DimCustomers.csv
-   ├── DimDepartments.csv
-   ├── DimEmployees.csv
-   ├── DimGeography.csv
-   ├── DimWarehouses.csv
-   ├── FactBudget.csv
-   ├── FactFinancialTransactions.csv
-   ├── FactInventory.csv
-   ├── FactOrders.csv
-   ├── FactPayroll.csv
-   ├── FactPerformanceReviews.csv
-   ├── FactRecruitment.csv
-   └── FactReturns.csv
-   ```
-3. Upload all CSV files from the `SampleData/` folder in this repo (the deploy scripts flatten the subfolder structure automatically)
-
-### Step 3: Create Dataflows Gen2 (15 min)
-
-Follow the detailed guide in `Dataflows/DataflowConfiguration.md`
-
-**Quick version:**
-1. **+ New** → **Dataflow Gen2** → Name: `DF_Finance`
-2. **Get Data** → **Lakehouse** → select `BronzeLH` → Files/
-3. Add each CSV as a query, apply type transformations
-4. Set **Data Destination** → Lakehouse `BronzeLH` → target table
-5. **Publish** and wait for refresh to complete
-6. Repeat for `DF_HR` and `DF_Operations`
-
-> **Note:** When using the automated deployment (`Deploy-Pipeline.ps1`), Lakehouse destinations are **auto-configured** via `_DataDestination` queries embedded in the mashup.pq — no manual portal step is needed.
-
-### Step 4: Run SQL Scripts (5 min)
-
-1. Open the Lakehouse **SQL Endpoint**
-2. Run `Lakehouse/GenerateDateDimension.sql` to create the DimDate table
-3. Run `Lakehouse/CreateTables.sql` to create additional tables
-4. Run `Lakehouse/CreateViews.sql` to create 8 analytics views:
-   - `vw_BookSalesPerformance` — Book-level sales metrics
-   - `vw_MonthlyFinancialSummary` — P&L by account/period
-   - `vw_EmployeeCostAnalysis` — Payroll cost by employee/department
-   - `vw_InventoryHealth` — Inventory status with supply alerts
-   - `vw_CustomerOrderSummary` — Customer purchase summary
-   - `vw_ReturnAnalysis` — Return rate by book/customer
-   - `vw_GeographicSalesAnalysis` — Sales by geography
-   - `vw_InternationalSalesByRegion` — Regional international sales
-5. Verify all tables have data:
-   ```sql
-   SELECT 'DimAccounts' AS TableName, COUNT(*) AS RowCount FROM DimAccounts
-   UNION ALL
-   SELECT 'DimBooks', COUNT(*) FROM DimBooks
-   UNION ALL
-   SELECT 'DimEmployees', COUNT(*) FROM DimEmployees
-   UNION ALL
-   SELECT 'FactOrders', COUNT(*) FROM FactOrders
-   UNION ALL
-   SELECT 'FactFinancialTransactions', COUNT(*) FROM FactFinancialTransactions
-   UNION ALL
-   SELECT 'FactPayroll', COUNT(*) FROM FactPayroll;
-   ```
-
-### Step 5: Create the Semantic Model (20 min)
-
-1. In the Lakehouse SQL Endpoint, click **New Semantic Model**
-5. Name: `HorizonBooksModel`
-3. Select ALL tables (Dim* and Fact*)
-4. Open the model in the **Web Modeling** view or **Power BI Desktop**
-5. **Create Relationships** as defined in `SemanticModel/SemanticModelDefinition.md`
-6. **Create all DAX Measures** organized in display folders
-7. Save and publish
-
-### Step 6: Build the Power BI Reports (40 min)
-
-**Analytics Report (10 pages):**
-1. From the Semantic Model, click **Create Report**
-2. Follow the layout in `Reports/ReportSpecification.md`
-3. Build 10 report pages:
-   - Page 1: Executive Dashboard
-   - Page 2: Finance - P&L Analysis
-   - Page 3: Finance - Budget vs Actual
-   - Page 4: Operations - Book Performance
-   - Page 5: Operations - Customer & Distribution
-   - Page 6: Geographic Analysis (Map visuals)
-   - Page 7: Operations - Inventory & Supply Chain
-   - Page 8: HR - Workforce Overview
-   - Page 9: HR - Compensation & Performance
-   - Page 10: HR - Recruitment Pipeline
-4. Add navigation, bookmarks, and tooltips
-5. Save the report: `Horizon Books Analytics`
-
-**Forecasting Report (5 pages):**
-1. Create a second report from the same Semantic Model
-2. Build 5 forecast pages (Holt-Winters projections with confidence bands):
-   - Page 1: Sales Revenue Forecast (by channel)
-   - Page 2: Genre Demand Forecast
-   - Page 3: Financial P&L Forecast
-   - Page 4: Inventory Demand Forecast
-   - Page 5: Workforce Planning Forecast
-3. Save the report: `Horizon Books Forecasting`
-
-### Step 7: Create the Data Agent (10 min)
-
-1. **+ New** → **Data Agent (Preview)**
-2. Name: `Horizon Books Analytics Agent`
-3. Connect to `HorizonBooksModel`
-4. Add custom instructions from `DataAgent/DataAgentConfiguration.md`
-5. Test with sample queries:
-   - "What is our total revenue for 2024?"
-   - "Which book is our bestseller?"
-   - "Are there any inventory alerts?"
-   - "How many open positions?"
-6. Share the agent with your team
-
----
-
-## 📁 Project File Structure
+#### Step 2: Upload Sample Data (5 min)
+Upload all 17 CSVs from `SampleData/` into `BronzeLH/Files/` (flat structure):
 
 ```
-FullDemoFabricBookUseCase/
-│
-├── README.md                          ← This file (Master Guide)
-│
-├── assets/                            ← Branding & Assets
-│   ├── workspace-logo.svg             ← Workspace logo (SVG source)
-│   └── workspace-logo.png             ← Workspace logo (PNG, uploaded to Fabric)
-│
-├── deploy/                            ← PowerShell Deployment Scripts
-│   ├── HorizonBooks.psm1              ← Shared helper module (tokens, API, logging)
-│   ├── Deploy-Full.ps1                ← ONE-COMMAND full deployment (recommended)
-│   ├── New-HorizonBooksWorkspace.ps1  ← Workspace creation + capacity + logo
-│   ├── Deploy-HorizonBooks.ps1        ← Legacy step-by-step setup
-│   ├── Deploy-Pipeline.ps1            ← Dataflows Gen2 (with destinations) + Pipeline
-│   ├── Deploy-PowerBI.ps1             ← Semantic Model + 2 Reports (idempotent)
-│   ├── Update-DataflowDestinations.ps1← Re-apply Lakehouse destinations to dataflows
-│   ├── Deploy-DataAgent.ps1           ← Data Agent creation helper
-│   ├── Deploy-Diagnostic.ps1          ← Deploy diagnostic notebook (NB05)
-│   ├── Validate-Deployment.ps1        ← Post-deploy validation checker
-│   ├── Upload-SampleData.ps1          ← Standalone CSV upload to BronzeLH (OneLake DFS)
-│   ├── Redeploy-Notebooks.ps1         ← Re-deploy notebooks without full redeploy
-│   ├── Verify-GoldTables.ps1          ← Post-deploy Gold table verification
-│   ├── _create_exploration.ps1        ← Exploration workspace helper
-│   ├── _try_exploration.ps1           ← Exploration trial helper
-│   ├── HorizonBooks_TaskFlow.json     ← Importable Fabric Task Flow definition
-│   ├── Deploy-Full_TaskFlow.json      ← Task flow for full deployment
-│   ├── Deploy-DataAgent_TaskFlow.json ← Task flow for Data Agent deployment
-│   ├── Deploy-Diagnostic_TaskFlow.json← Task flow for diagnostic deployment
-│   ├── Deploy-Notebooks_TaskFlow.json ← Task flow for notebook deployment
-│   ├── Deploy-Pipeline_TaskFlow.json  ← Task flow for pipeline deployment
-│   ├── Deploy-PowerBI_TaskFlow.json   ← Task flow for Power BI deployment
-│   ├── New-HorizonBooksWorkspace_TaskFlow.json ← Task flow for workspace creation
-│   ├── Upload-SampleData_TaskFlow.json← Task flow for sample data upload
-│   └── Validate-Deployment_TaskFlow.json ← Task flow for deployment validation
-│
-├── notebooks/                         ← PySpark Transformation Notebooks
-│   ├── 01_BronzeToSilver.py           ← Bronze→Silver (schema, quality, dedup)
-│   ├── 02_WebEnrichment.py            ← Web data from 4 public APIs (with static fallbacks)
-│   ├── 03_SilverToGold.py             ← Silver→Gold (RFM, cohort, anomaly, forecast + safety net)
-│   ├── 04_Forecasting.py              ← Holt-Winters forecasting + MLflow experiment tracking
-│   └── 05_DiagnosticCheck.py          ← Post-deploy diagnostic (Gold/Silver/Bronze validation)
-│
-├── tests/                             ← Pester Test Suite
-│   ├── Deploy-HorizonBooks.Tests.ps1  ← Unit + Integration tests
-│   └── Run-Tests.ps1                  ← Test runner script
-│
-├── HorizonBooksAnalytics/             ← Power BI Project (PBIP)
-│   ├── HorizonBooksAnalytics.pbip     ← Project entry point
-│   │
-│   ├── HorizonBooksAnalytics.SemanticModel/
-│   │   ├── .platform                  ← Fabric item metadata
-│   │   ├── definition.pbism           ← Semantic model config (v4.2)
-│   │   └── definition/
-│   │       ├── database.tmdl          ← Compatibility level 1604
-│   │       ├── model.tmdl             ← Table/expression refs, culture
-│   │       ├── expressions.tmdl       ← Direct Lake shared expression
-│   │       ├── relationships.tmdl     ← 27 relationships (2 inactive for role-playing)
-│   │       └── tables/
-│   │           ├── Date.tmdl                       ← Date dimension (14 cols)
-│   │           ├── Accounts.tmdl                   ← Chart of Accounts (6 cols)
-│   │           ├── Cost Centers.tmdl
-│   │           ├── Books.tmdl                      ← Book catalog (13 cols)
-│   │           ├── Authors.tmdl                    ← Authors (13 cols)
-│   │           ├── Geography.tmdl                  ← Geography (13 cols, dataCategory)
-│   │           ├── Customers.tmdl                  ← Customers (13 cols, dataCategory)
-│   │           ├── Employees.tmdl                  ← Employees (12 cols + 5 measures)
-│   │           ├── Departments.tmdl
-│   │           ├── Warehouses.tmdl                 ← Warehouses (12 cols, dataCategory)
-│   │           ├── Financial Transactions.tmdl     ← (18 measures)
-│   │           ├── Budget.tmdl                     ← (5 measures)
-│   │           ├── Orders.tmdl                     ← (26 measures)
-│   │           ├── Inventory.tmdl                  ← (5 measures)
-│   │           ├── Returns.tmdl                    ← (5 measures)
-│   │           ├── Payroll.tmdl                    ← (7 measures)
-│   │           ├── Performance Reviews.tmdl        ← (3 measures)
-│   │           ├── Recruitment.tmdl                ← (5 measures)
-│   │           ├── Forecast Sales Revenue.tmdl     ← (4 measures)
-│   │           ├── Forecast Genre Demand.tmdl      ← (3 measures)
-│   │           ├── Forecast Financial.tmdl         ← (3 measures)
-│   │           ├── Forecast Inventory Demand.tmdl  ← (3 measures)
-│   │           └── Forecast Workforce.tmdl         ← (4 measures)
-│   │
-│   └── HorizonBooksAnalytics.Report/
-│       ├── .platform                  ← Fabric item metadata
-│       ├── definition.pbir            ← Report config (PBIR v4.0)
-│       └── definition/
-│           ├── version.json
-│           ├── report.json            ← Report settings & theme ref
-│           ├── pages/
-│           │   ├── pages.json         ← 10-page ordering
-│           │   ├── ReportSection/     ← Executive Dashboard (10 visuals)
-│           │   ├── ReportSection01/   ← Finance P&L (10 visuals)
-│           │   ├── ReportSection02/   ← Budget vs Actual (6 visuals)
-│           │   ├── ReportSection03/   ← Book Performance (9 visuals)
-│           │   ├── ReportSection04/   ← Customers & Distribution (8 visuals)
-│           │   ├── ReportSection05/   ← Geographic Analysis (11 visuals)
-│           │   ├── ReportSection06/   ← Inventory & Supply Chain (9 visuals)
-│           │   ├── ReportSection07/   ← Workforce Overview (8 visuals)
-│           │   ├── ReportSection08/   ← Compensation & Performance (9 visuals)
-│           │   └── ReportSection09/   ← Recruitment Pipeline (7 visuals)
-│           └── RegisteredResources/
-│               └── HorizonBooksTheme.json  ← Custom color theme
-│├── HorizonBooksForecasting/               ← Forecasting Report (PBIP)
-│   ├── HorizonBooksForecasting.pbip       ← Project entry point
-│   └── HorizonBooksForecasting.Report/
-│       ├── definition.pbir                ← Report config (PBIR v4.0)
-│       └── definition/
-│           ├── report.json                ← Report settings & theme ref
-│           └── pages/
-│               ├── pages.json             ← 5-page ordering
-│               ├── ForecastPage01/        ← Sales Revenue Forecast
-│               ├── ForecastPage02/        ← Genre Demand Forecast
-│               ├── ForecastPage03/        ← Financial P&L Forecast
-│               ├── ForecastPage04/        ← Inventory Demand Forecast
-│               └── ForecastPage05/        ← Workforce Forecast
-│├── SampleData/
-│   ├── Finance/
-│   │   ├── DimAccounts.csv            ← Chart of Accounts (28 rows)
-│   │   ├── DimCostCenters.csv         ← Cost Centers (7 rows)
-│   │   ├── FactFinancialTransactions.csv  ← GL Transactions (952 rows, FY2024–FY2026)
-│   │   └── FactBudget.csv             ← Budget vs Actual (330 rows, monthly)
-│   ├── HR/
-│   │   ├── DimEmployees.csv           ← Employees (50 rows, incl. international)
-│   │   ├── DimDepartments.csv         ← Departments (7 rows)
-│   │   ├── FactPayroll.csv            ← Payroll Records (611 rows)
-│   │   ├── FactPerformanceReviews.csv ← Reviews (123 rows, mid-year + year-end)
-│   │   └── FactRecruitment.csv        ← Recruitment (40 rows)
-│   └── Operations/
-│       ├── DimBooks.csv               ← Book Catalog (45 rows)
-│       ├── DimAuthors.csv             ← Authors (30 rows, international)
-│       ├── DimCustomers.csv           ← Customers (50 rows, global)
-│       ├── DimGeography.csv           ← Geography (70 rows, 29 countries)
-│       ├── DimWarehouses.csv          ← Warehouses (3 rows)
-│       ├── FactOrders.csv             ← Sales Orders (548 rows)
-│       ├── FactInventory.csv          ← Inventory Snapshots (280 rows)
-│       └── FactReturns.csv            ← Returns (70 rows)
-│
-├── Lakehouse/
-│   ├── CreateTables.sql               ← DDL for tables
-│   ├── CreateViews.sql                ← 8 analytics views (sales, finance, inventory, etc.)
-│   └── GenerateDateDimension.sql      ← Date Dimension Generator
-│
-├── SemanticModel/
-│   └── SemanticModelDefinition.md     ← Model, Relationships, DAX Measures
-│
-├── Reports/
-│   └── ReportSpecification.md         ← 10-Page Report Layout & Specs
-│
-├── Forecasting/                       ← Forecasting Configuration
-│   ├── README.md                      ← Forecast model documentation
-│   ├── forecast-config.json           ← Holt-Winters model config (5 models)
-│   └── ForecastingExploration.ipynb   ← Local Jupyter notebook (Holt-Winters, visualizations)
-│
-├── definitions/                       ← CI/CD Item Definitions
-│   ├── items-manifest.json            ← Full item catalog (15 items)
-│   ├── README.md                      ← Definitions documentation
-│   ├── dataagent/
-│   │   └── dataagent-definition.json  ← Data Agent config
-│   ├── dataflows/                     ← Dataflow Gen2 definitions
-│   │   ├── queryMetadata.json         ← Query visibility/load settings
-│   │   ├── DF_Finance/                ← Finance dataflow mashup
-│   │   ├── DF_HR/                     ← HR dataflow mashup
-│   │   └── DF_Operations/             ← Operations dataflow mashup
-│   ├── environment/                   ← Spark Environment config
-│   │   ├── environment-definition.json ← Runtime 1.3, adaptive, delta optimization
-│   │   ├── public-libraries.json      ← PyPI dependencies
-│   │   └── requirements.txt           ← pip-compatible format
-│   ├── lakehouses/                    ← Lakehouse definitions
-│   │   ├── BronzeLH.json
-│   │   ├── SilverLH.json
-│   │   └── GoldLH.json
-│   ├── notebooks/                     ← Notebook Lakehouse metadata
-│   │   ├── nb01-lakehouse-metadata.json
-│   │   ├── nb02-lakehouse-metadata.json
-│   │   ├── nb03-lakehouse-metadata.json
-│   │   └── nb04-lakehouse-metadata.json
-│   ├── pipeline/
-│   │   └── pipeline-content.json      ← Orchestration pipeline definition
-│   └── report/
-│       └── report-definition.json     ← Report deployment definition
-│
-├── .github/workflows/                 ← CI/CD Pipeline
-│   └── ci-tests.yml                   ← GitHub Actions Pester tests (on push/PR to main)
-│
-└── DataAgent/
-    └── DataAgentConfiguration.md      ← AI Agent Instructions & Config
+Files/DimAccounts.csv, DimAuthors.csv, DimBooks.csv, DimCostCenters.csv,
+DimCustomers.csv, DimDepartments.csv, DimEmployees.csv, DimGeography.csv,
+DimWarehouses.csv, FactBudget.csv, FactFinancialTransactions.csv,
+FactInventory.csv, FactOrders.csv, FactPayroll.csv, FactPerformanceReviews.csv,
+FactRecruitment.csv, FactReturns.csv
 ```
 
----
+#### Step 3: Create Dataflows Gen2 (15 min)
+Follow [Dataflows/DataflowConfiguration.md](Dataflows/DataflowConfiguration.md).
 
-## 📊 Key Demo Talking Points
+#### Step 4: Run SQL Scripts (5 min)
+Execute `Lakehouse/GenerateDateDimension.sql`, `Lakehouse/CreateTables.sql`, `Lakehouse/CreateViews.sql`.
 
-### Finance Story
-- **Total Revenue (FY2024–FY2026):** ~$3M+ across all channels (growing ~8–10% YoY)
-- **Holiday Impact:** Q4 revenue is 2–3x higher than Q1 due to "Winter’s Promise" and seasonal demand
-- **Budget Overperformance:** Revenue exceeded budget by ~40–80% in Q4 FY2024
-- **Cost Control:** COGS stayed under budget; marketing spend increased for bestsellers
-- **Rights Revenue:** Growing foreign rights deals ($90K+ in FY2024) diversify revenue
-- **Multi-Year Trends:** FY2025 shows sustained growth with new title launches; FY2026 H1 data available
+#### Step 5: Create Semantic Model (20 min)
+Follow [SemanticModel/SemanticModelDefinition.md](SemanticModel/SemanticModelDefinition.md) — 27 relationships, 96 DAX measures.
 
-### Operations Story
-- **Bestseller:** "Winter's Promise" dominated Q4 FY2024 with 50,000+ print run
-- **New Releases:** FY2025 launches include "Starfall Legacy" (Fantasy) and "The Data Detective" (Tech)
-- **Channel Mix:** Amazon/online is the largest channel (~40%), growing digital share
-- **Order Volume:** 548 orders across FY2024–FY2026 (growing ~8% YoY)
-- **Returns:** Industry-typical ~5–8% return rate, mainly overstock (not quality issues)
-- **Fulfillment:** 93%+ on-time delivery rate, avg 3–4 day fulfillment
-- **International:** 30+ international customers across Europe, Asia-Pacific, LATAM, and Africa
-- **Geographic Reach:** Customers in 20+ countries, growing EMEA and APAC presence
+#### Step 6: Build Reports (40 min)
+Follow [Reports/ReportSpecification.md](Reports/ReportSpecification.md) — Analytics (10 pages) + Forecasting (5 pages).
 
-### HR Story
-- **Growing Team:** 50 employees across 7 departments, including international staff
-- **Global Presence:** Staff in London, Tokyo, Frankfurt, Mexico City, and remote
-- **Growth Mode:** Active recruitment pipeline (40 requisitions, 8 filled in FY2025)
-- **Strong Performance:** 60%+ employees rated “Exceeds” or “Outstanding”
-- **Competitive Pay:** Average tenure 4+ years suggests good retention
-- **Multi-Year Payroll:** 611 payroll records spanning FY2024–FY2026
+#### Step 7: Create Data Agent (10 min)
+Follow [DataAgent/DataAgentConfiguration.md](DataAgent/DataAgentConfiguration.md).
+
+</details>
+
+### ⏱️ Time Comparison
+
+| Approach | Time | What You Get |
+|----------|------|--------------|
+| **One-Command (A)** | **~15 min** | Everything: provision + pipeline + model + validate |
+| Step-by-Step (B) | ~15 min | Individual scripts for finer control |
+| PBIP Desktop (C) | ~10 min | Local model editing + publish |
+| Manual (D) | ~90 min | Full hands-on walkthrough |
 
 ---
 
 ## 🎯 Demo Scenarios
 
-### Scenario 1: Executive Briefing (5 min)
-Start on Executive Dashboard → highlight Q4 surge → drill into Winter's Promise → 
-show budget overperformance → mention headcount growth → compare FY2024 vs FY2025 trends
+<table>
+<tr>
+<td width="50%">
 
-### Scenario 2: Finance Deep Dive (10 min)
-P&L waterfall → Budget vs Actual by quarter → Cost analysis by category → 
-Revenue by channel trend → Royalties impact
+### 📊 Scenario 1: Executive Briefing (5 min)
+Executive Dashboard → Q4 surge → Winter's Promise deep dive → budget overperformance → headcount growth → FY2024 vs FY2025 trends
 
-### Scenario 3: Operations Review (10 min)
-Book performance ranking → Customer segmentation → Channel analysis → 
-Inventory health check → Returns analysis → Fulfillment metrics
+### 💰 Scenario 2: Finance Deep Dive (10 min)
+P&L waterfall → Budget vs Actual → Cost analysis → Revenue by channel → Royalties impact
 
-### Scenario 4: HR Analytics (10 min)
-Workforce overview → Department distribution → Compensation analysis → 
-Performance dashboard → Recruitment pipeline → Revenue per employee
+### 📦 Scenario 3: Operations Review (10 min)
+Book ranking → Customer segmentation → Channel analysis → Inventory health → Returns → Fulfillment
 
-### Scenario 5: AI-Powered Insights (5 min)
-Open Data Agent → Ask "What's our total revenue across FY2024–FY2026?" → Ask "Any inventory alerts?" → 
-Ask "Compare FY2024 vs FY2025" → Show how business users can self-serve analytics
+</td>
+<td width="50%">
 
----
+### 👥 Scenario 4: HR Analytics (10 min)
+Workforce overview → Department distribution → Compensation analysis → Performance → Recruitment pipeline → Revenue per employee
 
-## ⏱️ Setup Time Comparison
+### 🤖 Scenario 5: AI-Powered Insights (5 min)
+Open Data Agent → *"Total revenue FY2024–FY2026?"* → *"Inventory alerts?"* → *"Compare FY2024 vs FY2025"* → self-serve analytics
 
-| Approach | Time | What You Get |
-|---|---|---|
-| **One-Command (Option A)** | **~15 min** | Everything: provision + run pipeline + model + validate |
-| Step-by-Step (Option B) | ~15 min | Individual scripts for finer control |
-| PBIP Desktop (Option C) | ~10 min | Local model editing + publish |
-| Manual (Option D) | ~90 min | Full hands-on walkthrough |
+### 🔮 Scenario 6: Forecasting (5 min)
+Sales revenue forecast → Genre demand → Financial P&L projections → Inventory planning → Workforce planning
 
-### Automated Deployment Steps
-
-| Step | Time | Component |
-|---|---|---|
-| Create Workspace + Logo | 1 min | Workspace, capacity, branding |
-| Create 3 Lakehouses (schemas) | 3 min | BronzeLH, SilverLH, GoldLH + SQL endpoints |
-| Upload 17 CSV files | 1 min | OneLake DFS API → BronzeLH |
-| Notebook 1: Bronze→Silver | 3 min | CSV → SilverLH schemas (finance, hr, operations) |
-| Dataflows + Pipeline | 1 min | 3 Dataflow Gen2 + orchestration pipeline |
-| Pipeline run: DataFlows | 2 min | DF_Finance, DF_HR, DF_Operations (parallel) |
-| Pipeline run: Web Enrichment | 2 min | 4 public APIs → SilverLH.web.* |
-| Pipeline run: Silver→Gold | 3 min | SilverLH → GoldLH (dim, fact, analytics) |
-| Deploy Semantic Model | 1 min | Direct Lake on GoldLH (96 measures, schemaName) |
-| Deploy 2 Reports | <1 min | Analytics (10 pages) + Forecasting (5 pages) |
-| Deploy Data Agent | <1 min | AI Q&A |
-| **Total** | **~17 min** | |
+</td>
+</tr>
+</table>
 
 ---
 
-## �️ Workspace Organization
+## 📊 Key Demo Talking Points
 
-Once deployed, the workspace is organized into **folders** and a **visual task flow** for clear navigation:
+<details>
+<summary><b>💰 Finance Story</b></summary>
 
-### Workspace Folders
+- **Total Revenue (FY2024–FY2026):** ~$3M+ across all channels (growing ~8–10% YoY)
+- **Holiday Impact:** Q4 revenue is 2–3x higher than Q1 due to "Winter's Promise" and seasonal demand
+- **Budget Overperformance:** Revenue exceeded budget by ~40–80% in Q4 FY2024
+- **Cost Control:** COGS stayed under budget; marketing spend increased for bestsellers
+- **Rights Revenue:** Growing foreign rights deals ($90K+ in FY2024) diversify revenue
+- **Multi-Year Trends:** FY2025 shows sustained growth; FY2026 H1 data available
+
+</details>
+
+<details>
+<summary><b>📦 Operations Story</b></summary>
+
+- **Bestseller:** "Winter's Promise" dominated Q4 FY2024 with 50,000+ print run
+- **New Releases:** FY2025 launches include "Starfall Legacy" (Fantasy) and "The Data Detective" (Tech)
+- **Channel Mix:** Amazon/online is the largest channel (~40%), growing digital share
+- **Order Volume:** 548 orders across FY2024–FY2026 (growing ~8% YoY)
+- **Returns:** Industry-typical ~5–8% return rate, mainly overstock (not quality issues)
+- **Fulfillment:** 93%+ on-time delivery, avg 3–4 day fulfillment
+- **Geographic Reach:** 30+ international customers, 20+ countries (growing EMEA and APAC)
+
+</details>
+
+<details>
+<summary><b>👥 HR Story</b></summary>
+
+- **Growing Team:** 50 employees across 7 departments, including international staff
+- **Global Presence:** Staff in London, Tokyo, Frankfurt, Mexico City, and remote
+- **Growth Mode:** Active recruitment pipeline (40 requisitions, 8 filled in FY2025)
+- **Strong Performance:** 60%+ employees rated "Exceeds" or "Outstanding"
+- **Competitive Pay:** Average tenure 4+ years suggests good retention
+- **Multi-Year Payroll:** 611 payroll records spanning FY2024–FY2026
+
+</details>
+
+---
+
+## 🛡️ Resilience & Observability
+
+<table>
+<tr>
+<td width="33%">
+
+### 🌐 API Fallbacks (NB02)
+Every web API has a static fallback — the pipeline completes even when external services are unavailable.
+
+</td>
+<td width="33%">
+
+### 🛡️ Gold Safety Net (NB03)
+All 18 semantic-model-required tables are verified after transforms. Missing tables get empty stubs with correct schemas.
+
+</td>
+<td width="33%">
+
+### 📈 MLflow Tracking (NB04)
+Dedicated `HorizonBooks_Forecasting` experiment with parent/child runs, parameters, metrics (MAPE), and tags per forecast table.
+
+</td>
+</tr>
+</table>
+
+---
+
+## 🗂️ Workspace Organization
+
+Once deployed, the workspace is organized into **folders** and a **visual task flow**:
 
 | Folder | Contents |
 |--------|----------|
-| **01 - Data Storage** | BronzeLH, SilverLH, GoldLH (+ SQL Endpoints), StagingLH, StagingWH |
-| **02 - Data Ingestion** | (Reserved for future connectors) |
-| **03 - Data Transformation** | NB01_BronzeToSilver, NB02_WebEnrichment, NB03_SilverToGold, NB04_Forecasting, NB05_DiagnosticCheck, HorizonBooks_SparkEnv |
+| **01 - Data Storage** | BronzeLH, SilverLH, GoldLH (+ SQL Endpoints) |
+| **02 - Data Ingestion** | *(Reserved for future connectors)* |
+| **03 - Data Transformation** | NB01–NB05, HorizonBooks_SparkEnv |
 | **04 - Orchestration** | HorizonBooks Data Pipeline |
-| **05 - Analytics** | HorizonBooksModel (Semantic Model), HorizonBooksAnalytics (Report, 10 pages), HorizonBooksForecasting (Report, 5 pages) |
-| **Root** | 3 Dataflow Gen2 items (cannot be placed in folders — Fabric limitation) |
-
-### Task Flow
-
-A visual task flow at the top of the workspace list view shows the end-to-end pipeline:
+| **05 - Analytics** | HorizonBooksModel, Analytics Report (10 pages), Forecasting Report (5 pages) |
 
 ```
 [Orchestrate] → [Ingest CSV Data] → [Stage Raw Data] → [Bronze→Silver]
                                                             ↓
-                [Visualize & Analyze] ← [Store Gold] ← [Silver→Gold] ← [Enrich Web Data]
+ [Visualize & Analyze] ← [Store Gold] ← [Silver→Gold] ← [Enrich Web Data]
 ```
 
-**To set up the task flow:**
-1. In the Fabric workspace, look for the task flow area at the top of the item list
-2. Click **Import a task flow** and select `deploy/HorizonBooks_TaskFlow.json`
-3. After import, assign workspace items to each task (item associations are not preserved in JSON exports)
-4. Alternatively, select a predesigned task flow and customize it with the 8 tasks above
-
-See details in [`deploy/HorizonBooks_TaskFlow.json`](deploy/HorizonBooks_TaskFlow.json).
+Import `deploy/HorizonBooks_TaskFlow.json` into the Fabric workspace task flow area.
 
 ---
 
-## �📝 Notes
+## 🏗️ Project Structure
 
-- All data is **fictional** and created for demo purposes
-- Data spans **FY2024 (full year), FY2025 (full year), and FY2026 (H1 through June)**
-- Financial figures are representative of a mid-size publisher
-- Author names and book titles are entirely fictional
-- Customer names reference real retailers for realism but all data is synthetic
-- The demo is designed to run on a **Fabric Trial** capacity
-- For larger demos, multiply the data using the patterns established here
+<details>
+<summary><b>📁 Full project tree</b> (click to expand)</summary>
 
-### Data Type Notes
+```
+FullDemoFabricBookUseCase/
+│
+├── README.md                          ← This file
+├── assets/
+│   ├── workspace-logo.svg             ← Workspace logo (SVG source)
+│   └── workspace-logo.png             ← Workspace logo (PNG, uploaded to Fabric)
+│
+├── deploy/                            ← PowerShell Deployment Scripts
+│   ├── HorizonBooks.psm1              ← Shared helper module
+│   ├── Deploy-Full.ps1                ← ONE-COMMAND deployment
+│   ├── New-HorizonBooksWorkspace.ps1  ← Workspace + capacity + logo
+│   ├── Deploy-Pipeline.ps1            ← Dataflows + Pipeline
+│   ├── Deploy-PowerBI.ps1             ← Semantic Model + 2 Reports (idempotent)
+│   ├── Deploy-DataAgent.ps1           ← Data Agent creation
+│   ├── Deploy-Diagnostic.ps1          ← Diagnostic notebook
+│   ├── Validate-Deployment.ps1        ← Post-deploy validation
+│   ├── Upload-SampleData.ps1          ← CSV upload to BronzeLH
+│   ├── Redeploy-Notebooks.ps1         ← Re-deploy notebooks only
+│   ├── Verify-GoldTables.ps1          ← Gold table verification
+│   └── *_TaskFlow.json (×9)           ← Fabric task flow definitions
+│
+├── notebooks/                         ← PySpark Transformation Notebooks
+│   ├── 01_BronzeToSilver.py
+│   ├── 02_WebEnrichment.py
+│   ├── 03_SilverToGold.py
+│   ├── 04_Forecasting.py
+│   └── 05_DiagnosticCheck.py
+│
+├── HorizonBooksAnalytics/             ← Power BI Project (PBIP)
+│   ├── HorizonBooksAnalytics.pbip
+│   ├── HorizonBooksAnalytics.SemanticModel/
+│   │   └── definition/
+│   │       ├── model.tmdl             ← Tables, relationships, culture
+│   │       ├── expressions.tmdl       ← Direct Lake shared expression
+│   │       ├── relationships.tmdl     ← 27 relationships
+│   │       └── tables/ (23 .tmdl)     ← Per-table definitions + measures
+│   └── HorizonBooksAnalytics.Report/
+│       └── definition/
+│           ├── report.json            ← Report config + theme
+│           └── pages/ (10 sections)   ← Visual definitions
+│
+├── HorizonBooksForecasting/           ← Forecasting Report (PBIP)
+│   └── HorizonBooksForecasting.Report/
+│       └── definition/pages/ (5 pages)
+│
+├── SampleData/                        ← 17 CSV files
+│   ├── Finance/ (4 files)             ← DimAccounts, DimCostCenters, FactFinancialTransactions, FactBudget
+│   ├── HR/ (5 files)                  ← DimEmployees, DimDepartments, FactPayroll, FactPerformanceReviews, FactRecruitment
+│   └── Operations/ (8 files)          ← DimBooks, DimAuthors, DimCustomers, DimGeography, DimWarehouses, FactOrders, FactInventory, FactReturns
+│
+├── Lakehouse/                         ← SQL Scripts
+│   ├── CreateTables.sql
+│   ├── CreateViews.sql                ← 8 analytics views
+│   └── GenerateDateDimension.sql
+│
+├── Forecasting/                       ← Forecast model docs
+│   ├── README.md
+│   ├── forecast-config.json
+│   └── ForecastingExploration.ipynb   ← Local Jupyter notebook
+│
+├── definitions/                       ← CI/CD Item Definitions
+│   ├── items-manifest.json            ← 15 Fabric items
+│   ├── dataflows/ (3 domains)         ← Mashup.pq + destinations
+│   ├── environment/                   ← Spark runtime config
+│   ├── lakehouses/ (3 configs)
+│   ├── notebooks/ (4 metadata)
+│   ├── pipeline/                      ← Orchestration definition
+│   └── report/                        ← Report deployment config
+│
+├── tests/                             ← Pester Test Suite
+│   ├── Deploy-HorizonBooks.Tests.ps1
+│   └── Run-Tests.ps1
+│
+├── SemanticModel/
+│   └── SemanticModelDefinition.md     ← 27 relationships, 96 DAX measures, display folders
+├── Reports/
+│   └── ReportSpecification.md         ← 10-page layout & visual specs
+├── DataAgent/
+│   └── DataAgentConfiguration.md      ← AI agent instructions & config
+└── Dataflows/
+    └── DataflowConfiguration.md       ← Per-column transformation details
+```
 
-Some CSV columns have non-obvious formats that affect type casting in Dataflows:
+</details>
 
-| Column | File(s) | Format | M Type | Notes |
-|--------|---------|--------|--------|-------|
-| `FiscalYear` | FactFinancialTransactions, FactBudget | `FY2024`–`FY2026` | `type text` | Has "FY" prefix — not a pure integer |
-| `FiscalMonth` | FactFinancialTransactions, FactBudget | numeric | `Int64.Type` | Integer month number (1–12) |
-| `PerformanceRating` | FactPerformanceReviews | `Exceeds Expectations` | `type text` | Categorical label, not numeric |
-| `GoalsMet` | FactPerformanceReviews | text | `type text` | Text descriptor |
-| `TimeToFillDays` | FactRecruitment | integer or blank | `Int64.Type` | Nullable for open requisitions |
-| `AccountID` | DimAccounts, FactFinancialTransactions, FactBudget | integer | `Int64.Type` | Numeric ID, not text |
-| `ParentAccountID` | DimAccounts | integer or blank | `Int64.Type` | Nullable for root accounts |
+---
 
-### Dataflow Target Architecture
+## 🧰 Deploy Scripts Reference
 
-Dataflow Gen2 destinations are configured programmatically via the Fabric REST API.
-Each `mashup.pq` file uses **global target parameters** for centralised connection management:
+| Script | Description |
+|--------|-------------|
+| `Deploy-Full.ps1` | One-command full deployment (recommended) |
+| `New-HorizonBooksWorkspace.ps1` | Workspace creation + capacity + logo |
+| `HorizonBooks.psm1` | Shared module (tokens, API helpers, logging) |
+| `Deploy-Pipeline.ps1` | Dataflows Gen2 (with destinations) + Pipeline |
+| `Deploy-PowerBI.ps1` | Semantic Model + 2 Reports (idempotent) |
+| `Deploy-DataAgent.ps1` | Data Agent creation (F64+ only) |
+| `Deploy-Diagnostic.ps1` | Diagnostic notebook deployment |
+| `Validate-Deployment.ps1` | Post-deploy validation checker |
+| `Upload-SampleData.ps1` | Standalone CSV upload to BronzeLH |
+| `Redeploy-Notebooks.ps1` | Re-deploy notebooks without full redeploy |
+| `Verify-GoldTables.ps1` | Post-deploy Gold table verification |
+| `Update-DataflowDestinations.ps1` | Re-apply Lakehouse destinations |
 
-1. Two shared parameters (`TargetWorkspaceId`, `TargetLakehouseId`) are declared at the top of each mashup file with `meta [IsParameterQuery=true]`. Deploy scripts substitute `{{WORKSPACE_ID}}` / `{{BRONZE_LH_ID}}` placeholders with actual GUIDs.
-2. Each table gets a `_Target` navigation query using `Lakehouse.Contents([CreateNavigationProperties = false, EnableFolding = false])` pointing to the BronzeLH table. These reference the global parameters instead of inline IDs.
-3. Each source query gets a `[DataDestinations = {...}]` attribute record linking it to the corresponding `_Target` query.
-4. The `queryMetadata.json` marks `_Target` and parameter queries as `isHidden = true` and `loadEnabled = false`.
+---
 
-### Dataflow Data Quality Transformations
+## 🧪 Testing
 
-Beyond type enforcement, each dataflow applies domain-specific data quality rules:
+```powershell
+# Run Pester tests
+Invoke-Pester .\tests\Deploy-HorizonBooks.Tests.ps1 -Tag "Unit"
 
-- **Text standardisation**: `Text.Trim` + `Text.Proper` for names, locations, categories
-- **Email normalisation**: `Text.Lower` for email addresses
-- **Currency normalisation**: `Text.Upper` for currency codes, default `"USD"` for nulls
-- **Numeric validation**: Non-negative clamping for monetary amounts, counts, and quantities
-- **Range normalisation**: RoyaltyRate/Discount/CurrentUtilization to 0–1 (values > 1 ÷ 100)
-- **Score clamping**: OverallScore clamped to 0–100
-- **Coordinate validation**: Latitude [-90, 90], Longitude [-180, 180]
-- **Null handling**: Defaults for missing budget amounts, empty descriptions, uncategorized items
-- **Refund correction**: `Number.Abs` for RefundAmount to ensure positive values
+# Full test runner
+.\tests\Run-Tests.ps1
+```
 
-See [`Dataflows/DataflowConfiguration.md`](Dataflows/DataflowConfiguration.md) for per-column transformation details.
+---
 
-To re-apply destinations after modifying dataflows in the portal:
+## 📚 Documentation
+
+| Document | Description |
+|----------|-------------|
+| 📐 [Semantic Model Definition](SemanticModel/SemanticModelDefinition.md) | 27 relationships, 96 DAX measures, display folders, RLS |
+| 📊 [Report Specification](Reports/ReportSpecification.md) | 10-page layout, visuals, slicers, bookmarks, tooltips |
+| 🤖 [Data Agent Configuration](DataAgent/DataAgentConfiguration.md) | AI agent instructions, sample conversations, testing checklist |
+| 📥 [Dataflow Configuration](Dataflows/DataflowConfiguration.md) | Per-column type & quality transformations for 3 dataflows |
+| 🔮 [Forecasting Module](Forecasting/README.md) | Holt-Winters config, MLflow tracking, output schemas |
+| 🔧 [CI/CD Definitions](definitions/README.md) | Token placeholders, item manifest, deployment patterns |
+
+---
+
+## 📝 Data Notes
+
+<details>
+<summary><b>📊 Data type & format notes</b> (click to expand)</summary>
+
+| Column | File(s) | Format | Notes |
+|--------|---------|--------|-------|
+| `FiscalYear` | FactFinancialTransactions, FactBudget | `FY2024`–`FY2026` | "FY" prefix — `type text`, not integer |
+| `FiscalMonth` | FactFinancialTransactions, FactBudget | numeric | `Int64.Type` (1–12) |
+| `PerformanceRating` | FactPerformanceReviews | `Exceeds Expectations` | Categorical text label |
+| `TimeToFillDays` | FactRecruitment | integer or blank | Nullable for open requisitions |
+| `AccountID` | DimAccounts, FactFinancialTransactions | integer | `Int64.Type`, not text |
+| `ParentAccountID` | DimAccounts | integer or blank | Nullable for root accounts |
+
+</details>
+
+<details>
+<summary><b>🔄 Dataflow destination architecture</b> (click to expand)</summary>
+
+Dataflow Gen2 destinations are configured programmatically via the Fabric REST API:
+
+1. **Global parameters** (`TargetWorkspaceId`, `TargetLakehouseId`) with `{{WORKSPACE_ID}}`/`{{BRONZE_LH_ID}}` placeholders
+2. **`_Target` navigation queries** using `Lakehouse.Contents()` pointing to BronzeLH tables
+3. **`[DataDestinations]` attributes** linking source queries to `_Target` queries
+4. **`queryMetadata.json`** marks `_Target` and parameter queries as `isHidden = true`
+
+To re-apply destinations after portal edits:
 ```powershell
 .\deploy\Update-DataflowDestinations.ps1 -WorkspaceId "<your-workspace-guid>"
 ```
+
+</details>
+
+<details>
+<summary><b>🧹 Data quality transformations</b> (click to expand)</summary>
+
+- **Text:** `Text.Trim` + `Text.Proper` for names, `Text.Lower` for emails, `Text.Upper` for currencies
+- **Numeric:** Non-negative clamping, null → 0 defaults, `Number.Abs` for refunds
+- **Range:** RoyaltyRate/Discount/Utilization normalized to 0–1 (values > 1 ÷ 100)
+- **Score:** OverallScore clamped to 0–100
+- **Geo:** Latitude [-90, 90], Longitude [-180, 180] validation
+- **Defaults:** Missing budget amounts → 0, empty descriptions → `""`, uncategorized → `"Uncategorized"`
+
+See [Dataflows/DataflowConfiguration.md](Dataflows/DataflowConfiguration.md) for per-column details.
+
+</details>
+
+---
+
+<p align="center">
+  <sub>Built with ❤️ for the Microsoft Fabric community</sub><br/>
+  <sub>All data is fictional and created for demo purposes</sub>
+</p>

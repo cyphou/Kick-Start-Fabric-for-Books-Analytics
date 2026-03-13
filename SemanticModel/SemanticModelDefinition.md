@@ -1,55 +1,72 @@
-# ============================================================================
-# Horizon Books - Semantic Model Definition
-# Power BI Dataset (Semantic Model) for Fabric
-# ============================================================================
+<p align="center">
+  <img src="../assets/workspace-logo.png" alt="Horizon Books" width="80"/>
+</p>
 
-## Model Name: HorizonBooks_SemanticModel
+<h1 align="center">Semantic Model Definition</h1>
 
-## Star Schema Relationships
+<p align="center">
+  <strong>Power BI Direct Lake Semantic Model — 27 relationships, 96 DAX measures, 23 tables</strong>
+</p>
 
-### Relationship Definitions
+<p align="center">
+  <img src="https://img.shields.io/badge/model-Direct%20Lake-0078D4?style=flat-square&logo=microsoft&logoColor=white" alt="Direct Lake"/>
+  <img src="https://img.shields.io/badge/relationships-27-blue?style=flat-square" alt="Relationships"/>
+  <img src="https://img.shields.io/badge/DAX%20measures-96-purple?style=flat-square" alt="Measures"/>
+  <img src="https://img.shields.io/badge/tables-23-orange?style=flat-square" alt="Tables"/>
+</p>
 
-| From Table | From Column | To Table | To Column | Cardinality | Cross-filter |
-|---|---|---|---|---|---|
-| FactFinancialTransactions | TransactionDate | DimDate | FullDate | Many-to-One | Single |
-| FactFinancialTransactions | AccountID | DimAccounts | AccountID | Many-to-One | Single |
-| FactFinancialTransactions | CostCenterID | DimCostCenters | CostCenterID | Many-to-One | Single |
-| FactFinancialTransactions | BookID | DimBooks | BookID | Many-to-One | Single |
-| FactBudget | AccountID | DimAccounts | AccountID | Many-to-One | Single |
-| FactOrders | OrderDate | DimDate | FullDate | Many-to-One | Single |
-| FactOrders | BookID | DimBooks | BookID | Many-to-One | Single |
-| FactOrders | CustomerID | DimCustomers | CustomerID | Many-to-One | Single |
-| FactOrders | SalesRepID | DimEmployees | EmployeeID | Many-to-One | Single |
-| FactOrders | WarehouseID | DimWarehouses | WarehouseID | Many-to-One | Single |
-| FactInventory | BookID | DimBooks | BookID | Many-to-One | Single |
-| FactInventory | WarehouseID | DimWarehouses | WarehouseID | Many-to-One | Single |
-| FactInventory | SnapshotDate | DimDate | FullDate | Many-to-One | Single |
-| FactReturns | BookID | DimBooks | BookID | Many-to-One | Single |
-| FactReturns | CustomerID | DimCustomers | CustomerID | Many-to-One | Single |
-| FactReturns | ReturnDate | DimDate | FullDate | Many-to-One | Single |
-| FactPayroll | EmployeeID | DimEmployees | EmployeeID | Many-to-One | Single |
-| FactPayroll | PayDate | DimDate | FullDate | Many-to-One | Single |
-| FactPerformanceReviews | EmployeeID | DimEmployees | EmployeeID | Many-to-One | Single |
-| FactRecruitment | DepartmentID | DimDepartments | DepartmentID | Many-to-One | Single |
-| DimEmployees | DepartmentID | DimDepartments | DepartmentID | Many-to-One | Single |
-| DimBooks | AuthorID | DimAuthors | AuthorID | Many-to-One | Single |
-| DimCustomers | GeoID | DimGeography | GeoID | Many-to-One | Single |
-| DimEmployees | GeoID | DimGeography | GeoID | Many-to-One | Single (inactive) |
-| FactBudget | CostCenterID | DimCostCenters | CostCenterID | Many-to-One | Single |
-| FactPerformanceReviews | ReviewDate | DimDate | FullDate | Many-to-One | Single |
-| FactRecruitment | OpenDate | DimDate | FullDate | Many-to-One | Single |
+<p align="center">
+  <a href="#-star-schema-relationships">Relationships</a> •
+  <a href="#-dax-measures">DAX Measures</a> •
+  <a href="#-display-folders">Folders</a> •
+  <a href="#-forecast-tables">Forecasts</a> •
+  <a href="#-row-level-security">RLS</a>
+</p>
 
 ---
 
-## DAX Measures
+## ⭐ Star Schema Relationships
 
-### ═══════════════════════════════════════
-### FINANCE MEASURES
-### ═══════════════════════════════════════
+| # | From Table | From Column | To Table | To Column | Cardinality | Notes |
+|---|-----------|-------------|----------|-----------|-------------|-------|
+| 1 | FactFinancialTransactions | TransactionDate | DimDate | FullDate | Many→One | |
+| 2 | FactFinancialTransactions | AccountID | DimAccounts | AccountID | Many→One | |
+| 3 | FactFinancialTransactions | CostCenterID | DimCostCenters | CostCenterID | Many→One | |
+| 4 | FactFinancialTransactions | BookID | DimBooks | BookID | Many→One | |
+| 5 | FactBudget | AccountID | DimAccounts | AccountID | Many→One | |
+| 6 | FactBudget | CostCenterID | DimCostCenters | CostCenterID | Many→One | |
+| 7 | FactOrders | OrderDate | DimDate | FullDate | Many→One | |
+| 8 | FactOrders | BookID | DimBooks | BookID | Many→One | |
+| 9 | FactOrders | CustomerID | DimCustomers | CustomerID | Many→One | |
+| 10 | FactOrders | SalesRepID | DimEmployees | EmployeeID | Many→One | |
+| 11 | FactOrders | WarehouseID | DimWarehouses | WarehouseID | Many→One | |
+| 12 | FactInventory | BookID | DimBooks | BookID | Many→One | |
+| 13 | FactInventory | WarehouseID | DimWarehouses | WarehouseID | Many→One | |
+| 14 | FactInventory | SnapshotDate | DimDate | FullDate | Many→One | |
+| 15 | FactReturns | BookID | DimBooks | BookID | Many→One | |
+| 16 | FactReturns | CustomerID | DimCustomers | CustomerID | Many→One | |
+| 17 | FactReturns | ReturnDate | DimDate | FullDate | Many→One | |
+| 18 | FactPayroll | EmployeeID | DimEmployees | EmployeeID | Many→One | |
+| 19 | FactPayroll | PayDate | DimDate | FullDate | Many→One | |
+| 20 | FactPerformanceReviews | EmployeeID | DimEmployees | EmployeeID | Many→One | |
+| 21 | FactPerformanceReviews | ReviewDate | DimDate | FullDate | Many→One | |
+| 22 | FactRecruitment | DepartmentID | DimDepartments | DepartmentID | Many→One | |
+| 23 | FactRecruitment | OpenDate | DimDate | FullDate | Many→One | |
+| 24 | DimEmployees | DepartmentID | DimDepartments | DepartmentID | Many→One | |
+| 25 | DimBooks | AuthorID | DimAuthors | AuthorID | Many→One | |
+| 26 | DimCustomers | GeoID | DimGeography | GeoID | Many→One | |
+| 27 | DimEmployees | GeoID | DimGeography | GeoID | Many→One | **Inactive** (role-playing) |
+
+---
+
+## 📊 DAX Measures
+
+### 💰 Finance Measures
+
+<details>
+<summary><b>Revenue Measures</b> (click to expand)</summary>
 
 ```dax
-// --- Revenue Measures ---
-
 Total Revenue = 
 CALCULATE(
     SUM(FactFinancialTransactions[Amount]),
@@ -57,114 +74,79 @@ CALCULATE(
 )
 
 Book Sales Revenue = 
-CALCULATE(
-    SUM(FactFinancialTransactions[Amount]),
-    DimAccounts[AccountID] = 1001
-)
+CALCULATE(SUM(FactFinancialTransactions[Amount]), DimAccounts[AccountID] = 1001)
 
 E-Book Sales Revenue = 
-CALCULATE(
-    SUM(FactFinancialTransactions[Amount]),
-    DimAccounts[AccountID] = 1002
-)
+CALCULATE(SUM(FactFinancialTransactions[Amount]), DimAccounts[AccountID] = 1002)
 
 Audiobook Revenue = 
-CALCULATE(
-    SUM(FactFinancialTransactions[Amount]),
-    DimAccounts[AccountID] = 1003
-)
+CALCULATE(SUM(FactFinancialTransactions[Amount]), DimAccounts[AccountID] = 1003)
 
 Rights & Licensing Revenue = 
-CALCULATE(
-    SUM(FactFinancialTransactions[Amount]),
-    DimAccounts[AccountCategory] = "Licensing"
-)
+CALCULATE(SUM(FactFinancialTransactions[Amount]), DimAccounts[AccountCategory] = "Licensing")
 
 Digital Revenue Share = 
-DIVIDE(
-    [E-Book Sales Revenue] + [Audiobook Revenue],
-    [Total Revenue],
-    0
-)
+DIVIDE([E-Book Sales Revenue] + [Audiobook Revenue], [Total Revenue], 0)
+```
 
-// --- Cost Measures ---
+</details>
 
+<details>
+<summary><b>Cost Measures</b></summary>
+
+```dax
 Total COGS = 
-CALCULATE(
-    ABS(SUM(FactFinancialTransactions[Amount])),
-    DimAccounts[AccountCategory] = "Cost of Goods Sold"
-)
+CALCULATE(ABS(SUM(FactFinancialTransactions[Amount])), DimAccounts[AccountCategory] = "Cost of Goods Sold")
 
 Total Royalties = 
-CALCULATE(
-    ABS(SUM(FactFinancialTransactions[Amount])),
-    DimAccounts[AccountCategory] = "Royalties"
-)
+CALCULATE(ABS(SUM(FactFinancialTransactions[Amount])), DimAccounts[AccountCategory] = "Royalties")
 
 Total Marketing Spend = 
-CALCULATE(
-    ABS(SUM(FactFinancialTransactions[Amount])),
-    DimAccounts[AccountCategory] = "Marketing"
-)
+CALCULATE(ABS(SUM(FactFinancialTransactions[Amount])), DimAccounts[AccountCategory] = "Marketing")
 
 Total Distribution Cost = 
-CALCULATE(
-    ABS(SUM(FactFinancialTransactions[Amount])),
-    DimAccounts[AccountCategory] = "Distribution"
-)
+CALCULATE(ABS(SUM(FactFinancialTransactions[Amount])), DimAccounts[AccountCategory] = "Distribution")
 
 Total Operating Expenses = 
-CALCULATE(
-    ABS(SUM(FactFinancialTransactions[Amount])),
-    DimAccounts[AccountType] = "Expense"
-)
+CALCULATE(ABS(SUM(FactFinancialTransactions[Amount])), DimAccounts[AccountType] = "Expense")
+```
 
-// --- Profitability Measures ---
+</details>
 
+<details>
+<summary><b>Profitability Measures</b></summary>
+
+```dax
 Gross Profit = [Total Revenue] - [Total COGS]
-
 Gross Margin % = DIVIDE([Gross Profit], [Total Revenue], 0)
-
 Operating Profit = [Total Revenue] - [Total Operating Expenses]
-
 Operating Margin % = DIVIDE([Operating Profit], [Total Revenue], 0)
+```
 
-// --- Budget Measures ---
+</details>
 
+<details>
+<summary><b>Budget Measures</b></summary>
+
+```dax
 Budget Amount = SUM(FactBudget[BudgetAmount])
-
 Actual Amount = SUM(FactBudget[ActualAmount])
-
 Budget Variance = SUM(FactBudget[Variance])
+Budget Variance % = DIVIDE([Budget Variance], ABS([Budget Amount]), 0)
+Budget Attainment = DIVIDE([Actual Amount], [Budget Amount], 0)
+```
 
-Budget Variance % = 
-DIVIDE(
-    [Budget Variance],
-    ABS([Budget Amount]),
-    0
-)
+</details>
 
-Budget Attainment = 
-DIVIDE(
-    [Actual Amount],
-    [Budget Amount],
-    0
-)
+<details>
+<summary><b>Growth Measures (YoY / QoQ)</b></summary>
 
-// --- YoY / Growth Measures ---
-
+```dax
 Revenue PY = 
-CALCULATE(
-    [Total Revenue],
-    DATEADD(DimDate[FullDate], -1, YEAR)
-)
+CALCULATE([Total Revenue], DATEADD(DimDate[FullDate], -1, YEAR))
 
 Revenue YoY Growth = 
-DIVIDE(
-    [Total Revenue] - [Revenue PY],
-    ABS([Revenue PY]),
-    0
-)
+DIVIDE([Total Revenue] - [Revenue PY], ABS([Revenue PY]), 0)
 
 Revenue QoQ = 
 VAR CurrentQ = [Total Revenue]
@@ -172,341 +154,216 @@ VAR PriorQ = CALCULATE([Total Revenue], DATEADD(DimDate[FullDate], -1, QUARTER))
 RETURN DIVIDE(CurrentQ - PriorQ, ABS(PriorQ), 0)
 ```
 
-### ═══════════════════════════════════════
-### OPERATIONS / SALES MEASURES
-### ═══════════════════════════════════════
+</details>
+
+---
+
+### 📦 Operations / Sales Measures
+
+<details>
+<summary><b>Order Measures</b></summary>
 
 ```dax
-// --- Order Measures ---
-
 Total Orders = DISTINCTCOUNT(FactOrders[OrderID])
-
 Total Units Sold = SUM(FactOrders[Quantity])
-
 Order Revenue = SUM(FactOrders[TotalAmount])
-
 Average Order Value = DIVIDE([Order Revenue], [Total Orders], 0)
-
 Average Discount = AVERAGE(FactOrders[Discount])
-
 Average Selling Price = DIVIDE([Order Revenue], [Total Units Sold], 0)
+```
 
-// --- Channel Measures ---
+</details>
 
-Online Revenue = 
-CALCULATE([Order Revenue], FactOrders[Channel] = "Online")
+<details>
+<summary><b>Channel Measures</b></summary>
 
-Retail Revenue = 
-CALCULATE([Order Revenue], FactOrders[Channel] = "Retail")
-
-Digital Revenue = 
-CALCULATE([Order Revenue], FactOrders[Channel] = "Digital")
-
-International Revenue = 
-CALCULATE([Order Revenue], FactOrders[Channel] = "International")
-
+```dax
+Online Revenue = CALCULATE([Order Revenue], FactOrders[Channel] = "Online")
+Retail Revenue = CALCULATE([Order Revenue], FactOrders[Channel] = "Retail")
+Digital Revenue = CALCULATE([Order Revenue], FactOrders[Channel] = "Digital")
+International Revenue = CALCULATE([Order Revenue], FactOrders[Channel] = "International")
 Online Revenue Share = DIVIDE([Online Revenue], [Order Revenue], 0)
+```
 
-// --- Customer Measures ---
+</details>
 
+<details>
+<summary><b>Customer Measures</b></summary>
+
+```dax
 Active Customers = DISTINCTCOUNT(FactOrders[CustomerID])
 
 New Customers = 
 CALCULATE(
     DISTINCTCOUNT(FactOrders[CustomerID]),
-    FILTER(
-        VALUES(FactOrders[CustomerID]),
-        CALCULATE(MIN(FactOrders[OrderDate])) >= MIN(DimDate[FullDate])
-    )
+    FILTER(VALUES(FactOrders[CustomerID]),
+        CALCULATE(MIN(FactOrders[OrderDate])) >= MIN(DimDate[FullDate]))
 )
 
 Revenue per Customer = DIVIDE([Order Revenue], [Active Customers], 0)
+```
 
-// --- Inventory Measures ---
+</details>
 
+<details>
+<summary><b>Inventory Measures</b></summary>
+
+```dax
 Current Inventory Value = 
-CALCULATE(
-    SUM(FactInventory[TotalInventoryValue]),
-    LASTDATE(FactInventory[SnapshotDate])
-)
+CALCULATE(SUM(FactInventory[TotalInventoryValue]), LASTDATE(FactInventory[SnapshotDate]))
 
 Current Units on Hand = 
-CALCULATE(
-    SUM(FactInventory[QuantityOnHand]),
-    LASTDATE(FactInventory[SnapshotDate])
-)
+CALCULATE(SUM(FactInventory[QuantityOnHand]), LASTDATE(FactInventory[SnapshotDate]))
 
 Avg Days of Supply = 
-CALCULATE(
-    AVERAGE(FactInventory[DaysOfSupply]),
-    LASTDATE(FactInventory[SnapshotDate])
-)
+CALCULATE(AVERAGE(FactInventory[DaysOfSupply]), LASTDATE(FactInventory[SnapshotDate]))
 
 Low Stock Items = 
-CALCULATE(
-    DISTINCTCOUNT(FactInventory[BookID]),
+CALCULATE(DISTINCTCOUNT(FactInventory[BookID]),
     FactInventory[Status] IN {"Low Stock", "Critical"},
-    LASTDATE(FactInventory[SnapshotDate])
-)
+    LASTDATE(FactInventory[SnapshotDate]))
 
-Inventory Turnover = 
-DIVIDE(
-    [Total COGS],
-    [Current Inventory Value],
-    0
-)
+Inventory Turnover = DIVIDE([Total COGS], [Current Inventory Value], 0)
+```
 
-// --- Returns Measures ---
+</details>
 
+<details>
+<summary><b>Returns & Fulfillment Measures</b></summary>
+
+```dax
 Total Returns = SUM(FactReturns[Quantity])
-
 Total Refunds = SUM(FactReturns[RefundAmount])
-
 Return Rate = DIVIDE([Total Returns], [Total Units Sold], 0)
-
-Damaged Returns = 
-CALCULATE(
-    SUM(FactReturns[Quantity]),
-    FactReturns[Condition] = "Damaged"
-)
-
+Damaged Returns = CALCULATE(SUM(FactReturns[Quantity]), FactReturns[Condition] = "Damaged")
 Damage Rate = DIVIDE([Damaged Returns], [Total Returns], 0)
 
-// --- Fulfillment Measures ---
-
-Avg Ship Days = 
-AVERAGE(
-    DATEDIFF(FactOrders[OrderDate], FactOrders[ShipDate], DAY)
-)
-
-Avg Delivery Days = 
-AVERAGE(
-    DATEDIFF(FactOrders[OrderDate], FactOrders[DeliveryDate], DAY)
-)
-
+Avg Ship Days = AVERAGE(DATEDIFF(FactOrders[OrderDate], FactOrders[ShipDate], DAY))
+Avg Delivery Days = AVERAGE(DATEDIFF(FactOrders[OrderDate], FactOrders[DeliveryDate], DAY))
 On Time Delivery Rate = 
 DIVIDE(
-    CALCULATE(
-        COUNTROWS(FactOrders),
-        DATEDIFF(FactOrders[OrderDate], FactOrders[DeliveryDate], DAY) <= 7
-    ),
-    COUNTROWS(FactOrders),
-    0
-)
+    CALCULATE(COUNTROWS(FactOrders), DATEDIFF(FactOrders[OrderDate], FactOrders[DeliveryDate], DAY) <= 7),
+    COUNTROWS(FactOrders), 0)
 ```
 
-### ═══════════════════════════════════════
-### HR MEASURES
-### ═══════════════════════════════════════
+</details>
+
+---
+
+### 👥 HR Measures
+
+<details>
+<summary><b>Workforce & Compensation</b></summary>
 
 ```dax
-// --- Headcount and Workforce ---
-
-Total Headcount = 
-CALCULATE(
-    COUNTROWS(DimEmployees),
-    DimEmployees[IsActive] = TRUE()
-)
-
-Full Time Employees = 
-CALCULATE(
-    COUNTROWS(DimEmployees),
-    DimEmployees[IsActive] = TRUE(),
-    DimEmployees[EmploymentType] = "Full-Time"
-)
-
-Part Time & Contract = 
-CALCULATE(
-    COUNTROWS(DimEmployees),
-    DimEmployees[IsActive] = TRUE(),
-    DimEmployees[EmploymentType] IN {"Part-Time", "Contract"}
-)
-
-Avg Tenure Years = 
-AVERAGEX(
-    FILTER(DimEmployees, DimEmployees[IsActive] = TRUE()),
-    DATEDIFF(DimEmployees[HireDate], TODAY(), YEAR)
-)
-
-// --- Compensation Measures ---
+Total Headcount = CALCULATE(COUNTROWS(DimEmployees), DimEmployees[IsActive] = TRUE())
+Full Time Employees = CALCULATE(COUNTROWS(DimEmployees), DimEmployees[IsActive] = TRUE(), DimEmployees[EmploymentType] = "Full-Time")
+Part Time & Contract = CALCULATE(COUNTROWS(DimEmployees), DimEmployees[IsActive] = TRUE(), DimEmployees[EmploymentType] IN {"Part-Time", "Contract"})
+Avg Tenure Years = AVERAGEX(FILTER(DimEmployees, DimEmployees[IsActive] = TRUE()), DATEDIFF(DimEmployees[HireDate], TODAY(), YEAR))
 
 Total Payroll Cost = SUM(FactPayroll[NetPay])
-
 Total Base Salary = SUM(FactPayroll[BaseSalary])
-
 Total Bonus Paid = SUM(FactPayroll[Bonus])
-
 Total Overtime = SUM(FactPayroll[Overtime])
-
-Avg Salary per Employee = 
-DIVIDE(
-    [Total Base Salary],
-    DISTINCTCOUNT(FactPayroll[EmployeeID]),
-    0
-)
-
-Bonus as % of Base = 
-DIVIDE([Total Bonus Paid], [Total Base Salary], 0)
-
-Payroll Cost per Revenue Dollar = 
-DIVIDE(
-    [Total Payroll Cost],
-    [Total Revenue],
-    0
-)
-
-// --- Performance Measures ---
-
-Avg Performance Score = AVERAGE(FactPerformanceReviews[OverallScore])
-
-Top Performers = 
-CALCULATE(
-    COUNTROWS(FactPerformanceReviews),
-    FactPerformanceReviews[PerformanceRating] IN {"Exceeds Expectations", "Outstanding"}
-)
-
-Top Performer Rate = 
-DIVIDE(
-    [Top Performers],
-    COUNTROWS(FactPerformanceReviews),
-    0
-)
-
-// --- Recruitment Measures ---
-
-Open Positions = 
-CALCULATE(
-    COUNTROWS(FactRecruitment),
-    FactRecruitment[Status] = "Open"
-)
-
-Avg Time to Fill = 
-CALCULATE(
-    AVERAGE(FactRecruitment[TimeToFillDays]),
-    FactRecruitment[Status] = "Filled"
-)
-
-Offer Acceptance Rate = 
-DIVIDE(
-    SUM(FactRecruitment[OfferAccepted]),
-    SUM(FactRecruitment[OffersExtended]),
-    0
-)
-
-Application to Interview Rate = 
-DIVIDE(
-    SUM(FactRecruitment[Interviewed]),
-    SUM(FactRecruitment[ApplicationsReceived]),
-    0
-)
-
-Cost per Hire = 
-DIVIDE(
-    CALCULATE(ABS(SUM(FactFinancialTransactions[Amount])), DimAccounts[AccountID] = 1050),
-    CALCULATE(COUNTROWS(FactRecruitment), FactRecruitment[Status] = "Filled"),
-    0
-)
-
-Revenue per Employee = 
-DIVIDE([Total Revenue], [Total Headcount], 0)
+Avg Salary per Employee = DIVIDE([Total Base Salary], DISTINCTCOUNT(FactPayroll[EmployeeID]), 0)
+Bonus as % of Base = DIVIDE([Total Bonus Paid], [Total Base Salary], 0)
+Payroll Cost per Revenue Dollar = DIVIDE([Total Payroll Cost], [Total Revenue], 0)
 ```
 
-### ═══════════════════════════════════════
-### GEOGRAPHIC MEASURES
-### ═══════════════════════════════════════
+</details>
+
+<details>
+<summary><b>Performance & Recruitment</b></summary>
 
 ```dax
-// --- Geographic Sales ---
+Avg Performance Score = AVERAGE(FactPerformanceReviews[OverallScore])
+Top Performers = CALCULATE(COUNTROWS(FactPerformanceReviews), FactPerformanceReviews[PerformanceRating] IN {"Exceeds Expectations", "Outstanding"})
+Top Performer Rate = DIVIDE([Top Performers], COUNTROWS(FactPerformanceReviews), 0)
 
-Revenue by Country = 
-SUMMARIZE(
-    FactOrders,
-    DimGeography[Country],
-    "Revenue", SUM(FactOrders[TotalAmount])
-)
-
-International Customer Count = 
-CALCULATE(
-    DISTINCTCOUNT(DimCustomers[CustomerID]),
-    DimGeography[Country] <> "United States"
-)
-
-Domestic Customer Count = 
-CALCULATE(
-    DISTINCTCOUNT(DimCustomers[CustomerID]),
-    DimGeography[Country] = "United States"
-)
-
-International Revenue = 
-CALCULATE(
-    SUM(FactOrders[TotalAmount]),
-    DimGeography[Country] <> "United States"
-)
-
-Domestic Revenue = 
-CALCULATE(
-    SUM(FactOrders[TotalAmount]),
-    DimGeography[Country] = "United States"
-)
-
-International Revenue % = 
-DIVIDE([International Revenue], [Order Revenue], 0)
-
-Countries Served = 
-DISTINCTCOUNT(DimGeography[Country])
-
-Continents Served = 
-DISTINCTCOUNT(DimGeography[Continent])
-
-Revenue per Country = 
-DIVIDE(
-    [Order Revenue],
-    [Countries Served],
-    0
-)
-
-Employee Locations = 
-CALCULATE(
-    DISTINCTCOUNT(DimGeography[City]),
-    RELATEDTABLE(DimEmployees)
-)
+Open Positions = CALCULATE(COUNTROWS(FactRecruitment), FactRecruitment[Status] = "Open")
+Avg Time to Fill = CALCULATE(AVERAGE(FactRecruitment[TimeToFillDays]), FactRecruitment[Status] = "Filled")
+Offer Acceptance Rate = DIVIDE(SUM(FactRecruitment[OfferAccepted]), SUM(FactRecruitment[OffersExtended]), 0)
+Application to Interview Rate = DIVIDE(SUM(FactRecruitment[Interviewed]), SUM(FactRecruitment[ApplicationsReceived]), 0)
+Cost per Hire = DIVIDE(CALCULATE(ABS(SUM(FactFinancialTransactions[Amount])), DimAccounts[AccountID] = 1050), CALCULATE(COUNTROWS(FactRecruitment), FactRecruitment[Status] = "Filled"), 0)
+Revenue per Employee = DIVIDE([Total Revenue], [Total Headcount], 0)
 ```
 
+</details>
+
 ---
 
-## Display Folders (Organize in Semantic Model)
+### 🌍 Geographic Measures
+
+<details>
+<summary><b>Geographic Sales</b></summary>
+
+```dax
+International Customer Count = CALCULATE(DISTINCTCOUNT(DimCustomers[CustomerID]), DimGeography[Country] <> "United States")
+Domestic Customer Count = CALCULATE(DISTINCTCOUNT(DimCustomers[CustomerID]), DimGeography[Country] = "United States")
+International Revenue = CALCULATE(SUM(FactOrders[TotalAmount]), DimGeography[Country] <> "United States")
+Domestic Revenue = CALCULATE(SUM(FactOrders[TotalAmount]), DimGeography[Country] = "United States")
+International Revenue % = DIVIDE([International Revenue], [Order Revenue], 0)
+Countries Served = DISTINCTCOUNT(DimGeography[Country])
+Continents Served = DISTINCTCOUNT(DimGeography[Continent])
+Revenue per Country = DIVIDE([Order Revenue], [Countries Served], 0)
+Employee Locations = CALCULATE(DISTINCTCOUNT(DimGeography[City]), RELATEDTABLE(DimEmployees))
+```
+
+</details>
+
+---
+
+## 📁 Display Folders
 
 | Folder | Measures |
-|---|---|
-| Finance \ Revenue | Total Revenue, Book Sales Revenue, E-Book Sales Revenue, Audiobook Revenue, Rights & Licensing Revenue, Digital Revenue Share |
-| Finance \ Costs | Total COGS, Total Royalties, Total Marketing Spend, Total Distribution Cost, Total Operating Expenses |
-| Finance \ Profitability | Gross Profit, Gross Margin %, Operating Profit, Operating Margin % |
-| Finance \ Budget | Budget Amount, Actual Amount, Budget Variance, Budget Variance %, Budget Attainment |
-| Finance \ Growth | Revenue PY, Revenue YoY Growth, Revenue QoQ |
-| Operations \ Orders | Total Orders, Total Units Sold, Order Revenue, Average Order Value, Average Discount, Average Selling Price |
-| Operations \ Channels | Online Revenue, Retail Revenue, Digital Revenue, International Revenue, Online Revenue Share |
-| Operations \ Customers | Active Customers, New Customers, Revenue per Customer |
-| Operations \ Inventory | Current Inventory Value, Current Units on Hand, Avg Days of Supply, Low Stock Items, Inventory Turnover |
-| Operations \ Returns | Total Returns, Total Refunds, Return Rate, Damaged Returns, Damage Rate |
-| Operations \ Fulfillment | Avg Ship Days, Avg Delivery Days, On Time Delivery Rate |
-| HR \ Workforce | Total Headcount, Full Time Employees, Part Time & Contract, Avg Tenure Years |
-| HR \ Compensation | Total Payroll Cost, Total Base Salary, Total Bonus Paid, Total Overtime, Avg Salary per Employee, Bonus as % of Base, Payroll Cost per Revenue Dollar |
-| HR \ Performance | Avg Performance Score, Top Performers, Top Performer Rate |
-| HR \ Recruitment | Open Positions, Avg Time to Fill, Offer Acceptance Rate, Application to Interview Rate, Cost per Hire, Revenue per Employee |
-| Geographic | International Customer Count, Domestic Customer Count, International Revenue, Domestic Revenue, International Revenue %, Countries Served, Continents Served, Revenue per Country, Employee Locations |
-| Forecasting \ Sales | Forecast Revenue, Revenue Lower Bound, Revenue Upper Bound, Forecast vs Actual Revenue |
-| Forecasting \ Genre | Forecast Unit Demand, Forecast Genre Revenue, Demand Confidence Range |
-| Forecasting \ Financial | Forecast P&L Amount, Forecast P&L Lower, Forecast P&L Upper |
-| Forecasting \ Inventory | Forecast Demand Units, Stock Coverage Months, Cumulative Forecast Demand |
-| Forecasting \ Workforce | Forecast Workforce Value, Forecast Payroll, Forecast Headcount, Forecast Openings |
+|--------|----------|
+| **Finance \ Revenue** | Total Revenue, Book Sales Revenue, E-Book Sales Revenue, Audiobook Revenue, Rights & Licensing Revenue, Digital Revenue Share |
+| **Finance \ Costs** | Total COGS, Total Royalties, Total Marketing Spend, Total Distribution Cost, Total Operating Expenses |
+| **Finance \ Profitability** | Gross Profit, Gross Margin %, Operating Profit, Operating Margin % |
+| **Finance \ Budget** | Budget Amount, Actual Amount, Budget Variance, Budget Variance %, Budget Attainment |
+| **Finance \ Growth** | Revenue PY, Revenue YoY Growth, Revenue QoQ |
+| **Operations \ Orders** | Total Orders, Total Units Sold, Order Revenue, Average Order Value, Average Discount, Average Selling Price |
+| **Operations \ Channels** | Online Revenue, Retail Revenue, Digital Revenue, International Revenue, Online Revenue Share |
+| **Operations \ Customers** | Active Customers, New Customers, Revenue per Customer |
+| **Operations \ Inventory** | Current Inventory Value, Current Units on Hand, Avg Days of Supply, Low Stock Items, Inventory Turnover |
+| **Operations \ Returns** | Total Returns, Total Refunds, Return Rate, Damaged Returns, Damage Rate |
+| **Operations \ Fulfillment** | Avg Ship Days, Avg Delivery Days, On Time Delivery Rate |
+| **HR \ Workforce** | Total Headcount, Full Time Employees, Part Time & Contract, Avg Tenure Years |
+| **HR \ Compensation** | Total Payroll Cost, Total Base Salary, Total Bonus Paid, Total Overtime, Avg Salary per Employee, Bonus as % of Base, Payroll Cost per Revenue Dollar |
+| **HR \ Performance** | Avg Performance Score, Top Performers, Top Performer Rate |
+| **HR \ Recruitment** | Open Positions, Avg Time to Fill, Offer Acceptance Rate, Application to Interview Rate, Cost per Hire, Revenue per Employee |
+| **Geographic** | International/Domestic Customer Count, International/Domestic Revenue, International Revenue %, Countries/Continents Served, Revenue per Country, Employee Locations |
+| **Forecasting \ Sales** | Forecast Revenue, Revenue Lower/Upper Bound, Forecast vs Actual Revenue |
+| **Forecasting \ Genre** | Forecast Unit Demand, Forecast Genre Revenue, Demand Confidence Range |
+| **Forecasting \ Financial** | Forecast P&L Amount, Forecast P&L Lower, Forecast P&L Upper |
+| **Forecasting \ Inventory** | Forecast Demand Units, Stock Coverage Months, Cumulative Forecast Demand |
+| **Forecasting \ Workforce** | Forecast Workforce Value, Forecast Payroll, Forecast Headcount, Forecast Openings |
 
 ---
 
-## Row-Level Security (Optional)
+## 🔮 Forecast Tables
+
+Generated by `04_Forecasting.py` (Holt-Winters, 6-month horizon, 95% confidence intervals):
+
+| Table | Key Columns | Measures |
+|-------|-------------|----------|
+| **ForecastSalesRevenue** | Channel, Revenue, Orders, Customers | Forecast Revenue, Revenue Bounds, Forecast vs Actual |
+| **ForecastGenreDemand** | Genre, UnitDemand, Revenue | Forecast Unit Demand, Genre Revenue, Confidence Range |
+| **ForecastFinancial** | PLCategory, Amount, TransactionCount | Forecast P&L Amount, P&L Bounds |
+| **ForecastInventoryDemand** | WarehouseID, UnitsDemanded, StockCoverMonths | Forecast Demand Units, Stock Coverage |
+| **ForecastWorkforce** | Metric, Value (Headcount/Payroll/Openings) | Forecast Payroll, Headcount, Openings |
+
+All tables include: `ForecastMonth`, `LowerBound`, `UpperBound`, `ForecastHorizon`, `RecordType`, `ForecastModel`, `_generated_at`
+
+---
+
+## 🔒 Row-Level Security
+
+<details>
+<summary><b>Optional RLS roles</b></summary>
 
 ### Role: Department Managers
 ```dax
-// Filter DimEmployees to show only their department
 [DepartmentID] = LOOKUPVALUE(
     DimEmployees[DepartmentID],
     DimEmployees[Email],
@@ -516,87 +373,13 @@ CALCULATE(
 
 ### Role: Regional Sales
 ```dax
-// Filter customers by region
-[Region] = "Northeast"  // or dynamic based on user mapping
+[Region] = "Northeast"  // Or dynamic based on user mapping
 ```
+
+</details>
 
 ---
 
-## Forecast Tables (Generated by NB04_Forecasting)
-
-These 5 tables are written to the `analytics` schema in GoldLH by the Holt-Winters
-time-series forecasting notebook (04_Forecasting.py). Each provides a 6-month forward
-forecast with 95% confidence intervals.
-
-### ForecastSalesRevenue
-| Column | Type | Description |
-|---|---|---|
-| ForecastMonth | DateTime | Forecast period |
-| Channel | String | Sales channel (Online, Retail, etc.) |
-| Revenue | Double | Forecasted/actual revenue |
-| Orders | Int64 | Forecasted/actual order count |
-| Customers | Int64 | Forecasted/actual customer count |
-| LowerBound | Double | 95% CI lower bound |
-| UpperBound | Double | 95% CI upper bound |
-| ForecastHorizon | Int64 | Months ahead (0=actual) |
-| RecordType | String | "Actual" or "Forecast" |
-| ConfidenceLevel | Double | Confidence level (0.95) |
-
-**Measures:** Forecast Revenue, Revenue Lower Bound, Revenue Upper Bound, Forecast vs Actual Revenue
-
-### ForecastGenreDemand
-| Column | Type | Description |
-|---|---|---|
-| ForecastMonth | DateTime | Forecast period |
-| Genre | String | Book genre |
-| UnitDemand | Double | Forecasted/actual unit demand |
-| Revenue | Double | Forecasted/actual revenue |
-| LowerBound | Double | 95% CI lower bound |
-| UpperBound | Double | 95% CI upper bound |
-| ForecastHorizon | Int64 | Months ahead |
-| RecordType | String | "Actual" or "Forecast" |
-
-**Measures:** Forecast Unit Demand, Forecast Genre Revenue, Demand Confidence Range
-
-### ForecastFinancial
-| Column | Type | Description |
-|---|---|---|
-| ForecastMonth | DateTime | Forecast period |
-| PLCategory | String | P&L category (Revenue, COGS, etc.) |
-| Amount | Double | Forecasted/actual amount |
-| TransactionCount | Int64 | Forecasted/actual transaction count |
-| LowerBound | Double | 95% CI lower bound |
-| UpperBound | Double | 95% CI upper bound |
-| ForecastHorizon | Int64 | Months ahead |
-| RecordType | String | "Actual" or "Forecast" |
-
-**Measures:** Forecast P&L Amount, Forecast P&L Lower, Forecast P&L Upper
-
-### ForecastInventoryDemand
-| Column | Type | Description |
-|---|---|---|
-| ForecastMonth | DateTime | Forecast period |
-| WarehouseID | Int64 | Warehouse identifier |
-| UnitsDemanded | Double | Forecasted/actual units demanded |
-| Revenue | Double | Associated revenue |
-| CumulativeDemand | Double | Running cumulative demand |
-| StockCoverMonths | Double | Months of stock coverage |
-| LowerBound | Double | 95% CI lower bound |
-| UpperBound | Double | 95% CI upper bound |
-| ForecastHorizon | Int64 | Months ahead |
-| RecordType | String | "Actual" or "Forecast" |
-
-**Measures:** Forecast Demand Units, Stock Coverage Months, Cumulative Forecast Demand
-
-### ForecastWorkforce
-| Column | Type | Description |
-|---|---|---|
-| ForecastMonth | DateTime | Forecast period |
-| Metric | String | HR metric (Headcount, TotalPayroll, Openings) |
-| Value | Double | Forecasted/actual value |
-| LowerBound | Double | 95% CI lower bound |
-| UpperBound | Double | 95% CI upper bound |
-| ForecastHorizon | Int64 | Months ahead |
-| RecordType | String | "Actual" or "Forecast" |
-
-**Measures:** Forecast Workforce Value, Forecast Payroll, Forecast Headcount, Forecast Openings
+<p align="center">
+  <sub>Model Name: <code>HorizonBooksModel</code> — Compatibility Level 1604 — Direct Lake on GoldLH</sub>
+</p>

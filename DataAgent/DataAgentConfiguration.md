@@ -1,38 +1,50 @@
-# ============================================================================
-# Horizon Books - Fabric Data Agent Configuration
-# AI-powered Q&A Agent over the Semantic Model
-# ============================================================================
+<p align="center">
+  <img src="../assets/workspace-logo.png" alt="Horizon Books" width="80"/>
+</p>
 
-## Agent Name: Horizon Books Analytics Agent
+<h1 align="center">Data Agent Configuration</h1>
 
-## Description
-An AI-powered data agent that enables natural language Q&A over the Horizon Books 
-Publishing & Distribution semantic model. Users can ask questions about book sales, 
-financial performance, HR metrics, inventory status, and operational KPIs.
+<p align="center">
+  <strong>AI-powered natural language Q&A over the Horizon Books Semantic Model</strong>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Fabric-Data%20Agent-6B4C9A?style=flat-square&logo=microsoft&logoColor=white" alt="Data Agent"/>
+  <img src="https://img.shields.io/badge/tables-23-blue?style=flat-square" alt="Tables"/>
+  <img src="https://img.shields.io/badge/measures-96-purple?style=flat-square" alt="Measures"/>
+  <img src="https://img.shields.io/badge/capacity-F64%2B-orange?style=flat-square" alt="F64+"/>
+</p>
+
+<p align="center">
+  <a href="#-setup-instructions">Setup</a> •
+  <a href="#-system-instructions">Instructions</a> •
+  <a href="#-example-conversations">Examples</a> •
+  <a href="#-testing-checklist">Testing</a>
+</p>
 
 ---
 
-## Setup Instructions
+## 🔧 Setup Instructions
 
 ### Step 1: Create the Data Agent
-1. Go to your **Fabric Workspace**
-2. Click **+ New** → **Data Agent (Preview)**
-3. Name: `Horizon Books Analytics Agent`
-4. Description: *"AI assistant for Horizon Books Publishing data. Ask about sales, finance, 
-   HR, inventory, and operations."*
+1. In your **Fabric Workspace** → **+ New** → **Data Agent (Preview)**
+2. Name: `Horizon Books Analytics Agent`
+3. Description: *"AI assistant for Horizon Books Publishing data. Ask about sales, finance, HR, inventory, and operations."*
 
 ### Step 2: Connect Semantic Model
-1. In the Data Agent configuration, click **Add data source**
-2. Select **Semantic Model** → `HorizonBooksModel`
-3. Enable all tables and measures
-4. Save the configuration
+1. Click **Add data source** → **Semantic Model** → `HorizonBooksModel`
+2. Enable all tables and measures
+3. Save
 
-### Step 3: Configure Agent Instructions
-Paste the following system instructions into the Agent's custom instructions field:
+### Step 3: Add System Instructions
+Paste the instructions from the [System Instructions](#-system-instructions) section below.
 
 ---
 
-## Agent System Instructions
+## 📝 System Instructions
+
+<details>
+<summary><b>Full agent system prompt</b> (click to expand)</summary>
 
 ```
 You are the Horizon Books Analytics Agent, an AI assistant specialized in the book 
@@ -53,7 +65,7 @@ DATA DOMAINS:
 1. FINANCE: Revenue, costs, P&L, budget vs actual, royalties, marketing spend
 2. OPERATIONS: Book catalog, orders, inventory, returns, customers, distribution
 3. HR: Employees, departments, payroll, performance reviews, recruitment
-4. GEOGRAPHIC: Customer and employee locations worldwide, regional analysis, international markets
+4. GEOGRAPHIC: Customer and employee locations worldwide, regional analysis
 
 KEY BUSINESS RULES:
 - Book revenue comes from three channels: Physical (Hardcover/Paperback), E-Book, Audiobook
@@ -62,7 +74,6 @@ KEY BUSINESS RULES:
 - Returns are common in book publishing (industry avg ~25-30%)
 - "Winter's Promise" (BK-017) is our FY2024 flagship bestseller
 - "Starfall Legacy" (BK-021) and "The Data Detective" (BK-022) are key FY2025 releases
-- "The Phoenix Protocol" (BK-013) is our summer blockbuster
 - Holiday Q4 is our peak sales season
 
 RESPONSE GUIDELINES:
@@ -71,131 +82,115 @@ RESPONSE GUIDELINES:
 - For financial questions, specify the time period (quarter/year)
 - Proactively highlight notable trends or anomalies
 - When discussing inventory, flag any low stock or critical items
-- For HR questions, respect privacy - don't share individual salary details unless specifically an HR user
+- For HR questions, respect privacy
 - Compare metrics to industry benchmarks when relevant
 - If the user asks a vague question, provide an executive summary with key highlights
-
-SAMPLE QUESTIONS THE AGENT SHOULD HANDLE WELL:
-- "What is our total revenue for FY2024–FY2026?"
-- "How does FY2025 compare to FY2024?"
-- "Which book sold the most copies this year?"
-- "How are we tracking against budget?"
-- "What's our gross margin by quarter?"
-- "Show me the top 5 customers by revenue"
-- "Are there any inventory items running low?"
-- "What's the return rate for Winter's Promise?"
-- "How many open positions do we have?"
-- "What's our average time to fill a position?"
-- "What is our digital revenue share trend?"
-- "Compare Q3 vs Q4 sales performance"
-- "How much did we spend on marketing for The Phoenix Protocol?"
-- "What's the employee turnover rate?"
-- "Show me payroll costs by department"
-- "Which genre generates the most revenue?"
-- "What's our international revenue breakdown by continent?"
-- "Which countries are our biggest markets outside the US?"
-- "How many countries do we sell to?"
-- "Show me employee distribution across locations"
 ```
 
----
-
-## Agent Example Conversations
-
-### Example 1: Revenue Overview
-**User:** What's our total revenue across all years?  
-**Agent:** Horizon Books generated approximately **$X.XM in total revenue** for FY2024–FY2026:
-- 📚 Physical Book Sales: $X.XM (XX%)
-- 📱 E-Book Sales: $X.XM (XX%)
-- 🎧 Audiobook Sales: $X.XM (XX%)
-- 📜 Rights & Licensing: $XXK (XX%)
-
-Q4 was our strongest quarter, driven primarily by *Winter's Promise* holiday sales. Revenue grew XX% QoQ from Q3 to Q4.
-
-### Example 2: Inventory Alert
-**User:** Any inventory issues I should know about?  
-**Agent:** ⚠️ Yes, there are **X items in Low Stock or Critical status**:
-
-| Book | Status | Days of Supply | Action Needed |
-|---|---|---|---|
-| Winter's Promise | Critical | 15 days | Immediate reorder |
-| The Last Algorithm | Low Stock | 55 days | Monitor closely |
-
-I recommend initiating a print run for Winter's Promise given continued holiday demand.
-
-### Example 3: HR Question
-**User:** How's our recruitment going?  
-**Agent:** We have **X open positions** across the company:
-- 📌 Digital Sales Specialist (Sales)
-- 📌 Acquisitions Editor (Editorial)
-- 📌 Training Coordinator (HR)
-- 📌 Logistics Manager (Operations)
-- 📌 Cybersecurity Analyst (IT)
-
-For filled positions this year:
-- Average time to fill: **XX days**
-- Offer acceptance rate: **XX%**
-- Application to interview rate: **XX%**
-
-The Data Engineer role took the longest to fill (91 days), suggesting we may need to adjust compensation for technical roles.
+</details>
 
 ---
 
-## Semantic Model Mapping for Agent
+## 💬 Example Conversations
 
-### Tables Available:
+### 📊 Revenue Overview
+> **User:** What's our total revenue across all years?
+>
+> **Agent:** Horizon Books generated approximately **$X.XM in total revenue** for FY2024–FY2026:
+> - 📚 Physical Book Sales: $X.XM (XX%)
+> - 📱 E-Book Sales: $X.XM (XX%)
+> - 🎧 Audiobook Sales: $X.XM (XX%)
+> - 📜 Rights & Licensing: $XXK (XX%)
+>
+> Q4 was our strongest quarter, driven by *Winter's Promise* holiday sales.
+
+### ⚠️ Inventory Alert
+> **User:** Any inventory issues I should know about?
+>
+> **Agent:** Yes, there are **X items in Low Stock or Critical status**:
+>
+> | Book | Status | Days of Supply | Action |
+> |------|--------|---------------|--------|
+> | Winter's Promise | Critical | 15 days | Immediate reorder |
+> | The Last Algorithm | Low Stock | 55 days | Monitor closely |
+
+### 👥 Recruitment
+> **User:** How's our recruitment going?
+>
+> **Agent:** We have **X open positions** — Digital Sales Specialist, Acquisitions Editor, Training Coordinator, Logistics Manager, Cybersecurity Analyst.
+> Average time to fill: **XX days** | Offer acceptance rate: **XX%**
+
+---
+
+## 🗂️ Semantic Model Mapping
+
+<details>
+<summary><b>📋 Tables available to the agent</b> (click to expand)</summary>
+
 | Table | Description | Key Columns |
-|---|---|---|
+|-------|-------------|-------------|
 | DimDate | Calendar dimension | FullDate, Year, Quarter, Month |
-| DimBooks | Book catalog | BookID, Title, Genre, ListPrice, ImprintName |
-| DimAuthors | Author information | AuthorID, Name, RoyaltyRate, Genre |
-| DimCustomers | Retailers & channels | CustomerID, Name, Type, Region |
-| DimEmployees | Employee master | EmployeeID, Name, Department, JobTitle |
-| DimDepartments | Department info | DepartmentID, Name, HeadCount, Budget |
+| DimBooks | Book catalog (45) | BookID, Title, Genre, ListPrice, ImprintName |
+| DimAuthors | Authors (30) | AuthorID, Name, RoyaltyRate, Genre |
+| DimCustomers | Retailers & channels (50) | CustomerID, Name, Type, Region |
+| DimEmployees | Employees (50) | EmployeeID, Name, Department, JobTitle |
+| DimDepartments | Departments (7) | DepartmentID, Name, HeadCount, Budget |
 | DimAccounts | Chart of accounts | AccountID, Name, Type, Category |
 | DimCostCenters | Cost centers | CostCenterID, Name, Department |
-| DimWarehouses | Warehouse locations | WarehouseID, Name, Capacity |
-| DimGeography | Geographic dimension | GeoID, City, Country, Continent, Lat/Long |
-| FactFinancialTransactions | GL entries | Date, Account, Amount, BookID |
-| FactBudget | Budget vs actual | Quarter, Account, Budget, Actual, Variance |
-| FactOrders | Sales orders | Date, Customer, Book, Qty, Amount, Channel |
-| FactInventory | Inventory snapshots | Book, Warehouse, QtyOnHand, DaysOfSupply |
-| FactReturns | Book returns | Book, Customer, Qty, Reason, Refund |
-| FactPayroll | Payroll records | Employee, Period, Salary, Bonus, NetPay |
-| FactPerformanceReviews | Performance data | Employee, Rating, Score |
-| FactRecruitment | Hiring pipeline | Department, Title, Status, TimeToFill |
-| ForecastSalesRevenue | Sales revenue forecast | ForecastMonth, Channel, Revenue, Orders, LowerBound, UpperBound, RecordType |
-| ForecastGenreDemand | Genre demand forecast | ForecastMonth, Genre, UnitDemand, Revenue, LowerBound, UpperBound |
-| ForecastFinancial | Financial P&L forecast | ForecastMonth, PLCategory, Amount, LowerBound, UpperBound |
-| ForecastInventoryDemand | Inventory demand forecast | ForecastMonth, WarehouseID, UnitsDemanded, StockCoverMonths |
-| ForecastWorkforce | Workforce planning forecast | ForecastMonth, Metric, Value, LowerBound, UpperBound |
+| DimWarehouses | Warehouses (3) | WarehouseID, Name, Capacity |
+| DimGeography | Geography (70) | GeoID, City, Country, Continent, Lat/Long |
+| FactFinancialTransactions | GL entries (952) | Date, Account, Amount, BookID |
+| FactBudget | Budget vs actual (330) | Quarter, Account, Budget, Actual, Variance |
+| FactOrders | Sales orders (548) | Date, Customer, Book, Qty, Amount, Channel |
+| FactInventory | Inventory (280) | Book, Warehouse, QtyOnHand, DaysOfSupply |
+| FactReturns | Returns (70) | Book, Customer, Qty, Reason, Refund |
+| FactPayroll | Payroll (611) | Employee, Period, Salary, Bonus, NetPay |
+| FactPerformanceReviews | Reviews (123) | Employee, Rating, Score |
+| FactRecruitment | Hiring (40) | Department, Title, Status, TimeToFill |
+| ForecastSalesRevenue | Sales forecast | Channel, Revenue, Orders |
+| ForecastGenreDemand | Genre forecast | Genre, UnitDemand, Revenue |
+| ForecastFinancial | P&L forecast | PLCategory, Amount |
+| ForecastInventoryDemand | Inventory forecast | WarehouseID, UnitsDemanded |
+| ForecastWorkforce | Workforce forecast | Metric, Value |
 
-### Key Measures the Agent Can Reference:
-- Revenue: Total Revenue, Book/E-Book/Audiobook Revenue, Digital Revenue Share
-- Profitability: Gross Profit, Gross Margin %, Operating Margin %
-- Budget: Budget Variance, Budget Attainment
-- Orders: Total Orders, Avg Order Value, Units Sold
-- Inventory: Inventory Value, Days of Supply, Low Stock Items
-- Returns: Return Rate, Total Refunds
-- HR: Headcount, Avg Salary, Avg Performance Score, Open Positions, Time to Fill
-- Geographic: International Revenue, International Revenue %, Countries Served, Revenue per Country, Employee Locations
-- Forecasting: Forecast Revenue, Revenue Lower/Upper Bound, Forecast vs Actual Revenue, Forecast Unit Demand, Forecast Genre Revenue, Demand Confidence Range, Forecast P&L Amount, Forecast Demand Units, Stock Coverage Months, Forecast Payroll, Forecast Headcount, Forecast Openings
+</details>
+
+<details>
+<summary><b>📏 Key measures the agent can reference</b> (click to expand)</summary>
+
+- **Revenue:** Total Revenue, Book/E-Book/Audiobook Revenue, Digital Revenue Share
+- **Profitability:** Gross Profit, Gross Margin %, Operating Margin %
+- **Budget:** Budget Variance, Budget Attainment
+- **Orders:** Total Orders, Avg Order Value, Units Sold
+- **Inventory:** Inventory Value, Days of Supply, Low Stock Items
+- **Returns:** Return Rate, Total Refunds
+- **HR:** Headcount, Avg Salary, Avg Performance Score, Open Positions, Time to Fill
+- **Geographic:** International Revenue %, Countries Served, Revenue per Country
+- **Forecasting:** Forecast Revenue, Bounds, Unit Demand, P&L Forecast, Workforce
+
+</details>
 
 ---
 
-## Testing Checklist
+## ✅ Testing Checklist
 
-Run these queries to validate the agent:
+| # | Query | Expected Result |
+|---|-------|-----------------|
+| 1 | "What is total revenue?" | ~$1M+ for FY2024 |
+| 2 | "Top selling book?" | Winter's Promise (BK-017) |
+| 3 | "Budget variance by quarter?" | Q4 overperformance |
+| 4 | "How many employees?" | ~48-50 active |
+| 5 | "Inventory alerts?" | Winter's Promise, Phoenix Protocol as low/critical |
+| 6 | "Return rate by book?" | Reasonable rates |
+| 7 | "Revenue by channel?" | Online/Retail/Digital breakdown |
+| 8 | "Department headcount?" | 7 departments |
+| 9 | "Author royalties paid?" | Specific amounts |
+| 10 | "Recruitment pipeline status?" | 7 open positions |
+| 11 | "International sales breakdown?" | Revenue by continent/country |
+| 12 | "How many countries?" | 20+ countries |
 
-- [ ] "What is total revenue?" → Should return ~$1M+ for FY2024
-- [ ] "Top selling book?" → Should identify Winter's Promise (BK-017)
-- [ ] "Budget variance by quarter?" → Should show Q4 overperformance
-- [ ] "How many employees?" → Should return ~48-50 active
-- [ ] "Inventory alerts?" → Should flag Winter's Promise and Phoenix Protocol Endgame as low/critical
-- [ ] "Return rate by book?" → Should show reasonable rates
-- [ ] "Revenue by channel?" → Should break down Online/Retail/Digital/etc.
-- [ ] "Department headcount?" → Should list 7 departments
-- [ ] "Author royalties paid?" → Should reference specific amounts
-- [ ] "Recruitment pipeline status?" → Should show 7 open positions
-- [ ] "International sales breakdown?" → Should show revenue by continent/country
-- [ ] "How many countries do we operate in?" → Should return 20+ countries
+---
+
+<p align="center">
+  <sub>Agent Name: <code>Horizon Books Analytics Agent</code> — Requires F64+ capacity</sub>
+</p>
