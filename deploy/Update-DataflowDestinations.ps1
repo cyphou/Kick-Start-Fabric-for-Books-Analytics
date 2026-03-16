@@ -320,7 +320,7 @@ function Update-DataflowWithDestinations {
         [string[]]$Tables
     )
 
-    $fabricToken = (Get-AzAccessToken -ResourceUrl "https://api.fabric.microsoft.com").Token
+    $fabricToken = (Resolve-AccessToken (Get-AzAccessToken -ResourceUrl "https://api.fabric.microsoft.com"))
     $mashupBase64 = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($Mashup))
 
     $queriesMetadata = @{}

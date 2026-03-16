@@ -79,6 +79,21 @@ function Measure-Step {
 # TOKEN HELPERS
 # ============================================================================
 
+function Resolve-AccessToken {
+    <#
+    .SYNOPSIS
+        Extracts a plain-text bearer token from a Get-AzAccessToken result.
+        Handles both Az.Accounts 2.x (String) and 3.x+ (SecureString) formats.
+    #>
+    param([Parameter(Mandatory)]$TokenResponse)
+    $raw = $TokenResponse.Token
+    if ($raw -is [System.Security.SecureString]) {
+        return [System.Runtime.InteropServices.Marshal]::PtrToStringAuto(
+            [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($raw))
+    }
+    return [string]$raw
+}
+
 function Get-FabricToken {
     <#
     .SYNOPSIS
@@ -86,7 +101,7 @@ function Get-FabricToken {
     #>
     try {
         $token = Get-AzAccessToken -ResourceUrl "https://api.fabric.microsoft.com"
-        return $token.Token
+        return (Resolve-AccessToken $token)
     }
     catch {
         Write-Error "Failed to get Fabric API token. Run 'Connect-AzAccount' first."
@@ -101,7 +116,7 @@ function Get-StorageToken {
     #>
     try {
         $token = Get-AzAccessToken -ResourceTypeName Storage
-        return $token.Token
+        return (Resolve-AccessToken $token)
     }
     catch {
         Write-Error "Failed to get Storage token. Run 'Connect-AzAccount' first."
@@ -575,7 +590,7 @@ Export-ModuleMember -Function @(
     'Write-Banner', 'Write-Step', 'Write-Info', 'Write-Success',
     'Write-Warn', 'Write-Err', 'Measure-Step',
     # Tokens
-    'Get-FabricToken', 'Get-StorageToken',
+    'Resolve-AccessToken', 'Get-FabricToken', 'Get-StorageToken',
     # Fabric API
     'Invoke-FabricApi', 'Wait-FabricOperation', 'New-OrGetFabricItem',
     # OneLake

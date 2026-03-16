@@ -1326,7 +1326,13 @@ Describe "Fabric Workspace Integration" -Tag "Integration" -Skip:(-not $Workspac
     BeforeAll {
         if (-not $WorkspaceId) { return }
         try {
-            $token = (Get-AzAccessToken -ResourceUrl "https://api.fabric.microsoft.com").Token
+            $tokenResp = Get-AzAccessToken -ResourceUrl "https://api.fabric.microsoft.com"
+            if ($tokenResp.Token -is [System.Security.SecureString]) {
+                $token = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto(
+                    [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($tokenResp.Token))
+            } else {
+                $token = $tokenResp.Token
+            }
             $script:intHeaders = @{ Authorization = "Bearer $token"; "Content-Type" = "application/json" }
             $script:allItems = (Invoke-RestMethod -Uri "$FabricApiBase/workspaces/$WorkspaceId/items" -Headers $script:intHeaders).value
         }

@@ -1,4 +1,10 @@
-$token = (Get-AzAccessToken -ResourceUrl "https://api.fabric.microsoft.com").Token
+$tokenResp = Get-AzAccessToken -ResourceUrl "https://api.fabric.microsoft.com"
+if ($tokenResp.Token -is [System.Security.SecureString]) {
+    $token = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto(
+        [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($tokenResp.Token))
+} else {
+    $token = $tokenResp.Token
+}
 $ws = "91b2dca3-5729-4e7d-a473-bfeb85c16aa1"
 $smId = "b712621e-924f-4b8a-8de5-b6144646e464"
 $folderId = "3ca9bfaf-63a2-44dd-b218-88b541aab37e"

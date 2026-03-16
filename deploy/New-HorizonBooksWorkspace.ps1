@@ -78,7 +78,7 @@ $PowerBIApiBase = "https://api.powerbi.com/v1.0/myorg"
 function Get-PowerBIToken {
     try {
         $token = Get-AzAccessToken -ResourceUrl "https://analysis.windows.net/powerbi/api"
-        return $token.Token
+        return (Resolve-AccessToken $token)
     }
     catch {
         Write-Error "Failed to get Power BI token. Run 'Connect-AzAccount' first."
