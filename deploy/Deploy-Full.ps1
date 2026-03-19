@@ -19,19 +19,20 @@
               DF_Finance + DF_HR + DF_Operations (parallel) then NB01 BronzeToSilver
               then NB02 WebEnrichment then NB03 SilverToGold then NB04 Forecasting
       Step 7: Execute Lakehouse SQL scripts (CreateTables.sql + GenerateDateDimension.sql)
+      Step 8: Deploy Planning tables & scenario data (Planning in Fabric IQ)
 
     Phase 3 - Model, Report and AI:
-      Step 8: Deploy Semantic Model (Direct Lake on GoldLH, 27 relationships, 96 measures)
-      Step 9: Deploy Power BI Report (PBIR, 10 pages bound to Semantic Model)
-      Step 10: Deploy Data Agent (requires F64+ capacity, skipped on trial)
+      Step 9: Deploy Semantic Model (Direct Lake on GoldLH, 27 relationships, 96 measures)
+      Step 10: Deploy Power BI Report (PBIR, 10 pages bound to Semantic Model)
+      Step 11: Deploy Data Agent (requires F64+ capacity, skipped on trial)
 
     Phase 4 - Validate:
-      Step 11: Run deployment validation checks
+      Step 12: Run deployment validation checks
 
     Medallion Lakehouse layout:
       BronzeLH - Raw CSV files in Files/ (ingested by Dataflows Gen2)
       SilverLH - Schemas: finance, hr, operations, web (cleaned Delta tables)
-      GoldLH   - Schemas: dim, fact, analytics (star schema + analytics)
+      GoldLH   - Schemas: dim, fact, analytics, planning (star schema + analytics + planning)
 
     The script is fully idempotent - re-running it will reuse existing items.
 
@@ -802,10 +803,31 @@ print(f"\nSQL execution complete: {total_executed} succeeded, {total_skipped} sk
 }
 
 # ------------------------------------------------------------------
-# Step 8: Deploy Semantic Model (TMDL)
+# Step 8: Deploy Planning Tables & Scenario Data
 # ------------------------------------------------------------------
-Measure-Step "8. Deploy Semantic Model" {
-    Write-Step "8/12" "Deploying Semantic Model '$SemanticModelName' (TMDL Direct Lake)"
+Measure-Step "8. Deploy Planning" {
+    Write-Step "8/13" "Deploying Planning Tables & Scenario Data"
+
+    $planningScript = Join-Path $scriptDir "Deploy-Planning.ps1"
+    if (-not (Test-Path $planningScript)) {
+        Write-Warn "Deploy-Planning.ps1 not found - skipping planning deployment"
+        return
+    }
+
+    try {
+        & $planningScript -WorkspaceId $WorkspaceId -GoldLakehouseName $GoldLakehouseName
+        Write-Success "Planning tables and scenario data deployed"
+    }
+    catch {
+        Write-Warn "Planning deployment issue: $_"
+    }
+}
+
+# ------------------------------------------------------------------
+# Step 9: Deploy Semantic Model (TMDL)
+# ------------------------------------------------------------------
+Measure-Step "9. Deploy Semantic Model" {
+    Write-Step "9/13" "Deploying Semantic Model '$SemanticModelName' (TMDL Direct Lake)"
 
     $tmdlRoot      = Join-Path $projectRoot "HorizonBooksAnalytics\HorizonBooksAnalytics.SemanticModel"
     $tmdlDefDir    = Join-Path $tmdlRoot "definition"
@@ -1096,10 +1118,10 @@ Measure-Step "9. Deploy Report" {
 }
 
 # ------------------------------------------------------------------
-# Step 10: Organize Workspace Folders
+# Step 11: Organize Workspace Folders
 # ------------------------------------------------------------------
-Measure-Step "10. Workspace Folders" {
-    Write-Step "10/12" "Organizing Items into Workspace Folders"
+Measure-Step "11. Workspace Folders" {
+    Write-Step "11/13" "Organizing Items into Workspace Folders"
 
     # Helper: create or get a workspace folder
     function New-OrGetWorkspaceFolder {
@@ -1278,10 +1300,10 @@ Measure-Step "10. Workspace Folders" {
 }
 
 # ------------------------------------------------------------------
-# Step 11: Deploy Data Agent
+# Step 12: Deploy Data Agent
 # ------------------------------------------------------------------
-Measure-Step "11. Deploy Data Agent" {
-    Write-Step "11/12" "Deploying Data Agent"
+Measure-Step "12. Deploy Data Agent" {
+    Write-Step "12/13" "Deploying Data Agent"
 
     if ($SkipDataAgent) {
         Write-Info "Data Agent deployment skipped (-SkipDataAgent)"
@@ -1305,10 +1327,10 @@ Measure-Step "11. Deploy Data Agent" {
 }
 
 # ------------------------------------------------------------------
-# Step 12: Validate Deployment
+# Step 13: Validate Deployment
 # ------------------------------------------------------------------
-Measure-Step "12. Validate" {
-    Write-Step "12/12" "Validating Deployment"
+Measure-Step "13. Validate" {
+    Write-Step "13/13" "Validating Deployment"
 
     if ($SkipValidation) {
         Write-Info "Validation skipped (-SkipValidation)"

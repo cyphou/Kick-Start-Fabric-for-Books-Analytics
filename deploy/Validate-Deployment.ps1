@@ -139,7 +139,10 @@ if ($goldLH) {
             "GoldCohortAnalysis", "GoldRevenueAnomalies", "GoldBookCoPurchase", "GoldRevenueForecast",
             # Forecasts
             "ForecastSalesRevenue", "ForecastGenreDemand", "ForecastFinancial",
-            "ForecastInventoryDemand", "ForecastWorkforce"
+            "ForecastInventoryDemand", "ForecastWorkforce",
+            # Planning
+            "PlanRevenueTargets", "PlanFinancialTargets", "PlanWorkforceTargets",
+            "PlanVarianceAnalysis", "PlanScenarioSummary"
         )
         $existingTableNames = $lhDetail.data | ForEach-Object { $_.name }
 

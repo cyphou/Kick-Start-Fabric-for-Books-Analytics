@@ -98,6 +98,13 @@ Sales revenue by channel, genre demand, financial P&L, inventory demand, workfor
 <tr>
 <td>
 
+### 📋 Planning in Fabric IQ
+5 planning models with **scenario modeling** and **writeback**:
+Revenue targets, financial plan, workforce plan, plan-vs-actual variance, executive scenario comparison — 12-month horizon, 3 scenarios (Base/Optimistic/Conservative)
+
+</td>
+<td>
+
 ### 🤖 AI Data Agent
 Natural language Q&A over the semantic model:
 *"What's our total revenue?"* • *"Any inventory alerts?"* • *"Compare FY2024 vs FY2025"* — self-serve analytics for business users
@@ -152,6 +159,7 @@ flowchart LR
         D["dim.* (10)"]
         F["fact.* (8)"]
         A["analytics.* (9)"]
+        PL["planning.* (5)"]
     end
 
     CSV --> |"Dataflows Gen2"| RAW
@@ -182,7 +190,7 @@ flowchart LR
 |-----------|-------|---------|----------|
 | **BronzeLH** | 🥉 Bronze | `dbo` (default) | 17 CSV files in `Files/`, 17 Delta tables via Dataflow Gen2 |
 | **SilverLH** | 🥈 Silver | `finance`, `hr`, `operations`, `web` | Cleaned/typed/deduped Delta tables, web API enrichment |
-| **GoldLH** | 🥇 Gold | `dim`, `fact`, `analytics` | Star schema dimensions & facts, advanced analytics tables |
+| **GoldLH** | 🥇 Gold | `dim`, `fact`, `analytics`, `planning` | Star schema dimensions & facts, advanced analytics tables, planning targets |
 
 All 3 Lakehouses use **schema-enabled** mode (`lakehouse.schema.table` naming). The Semantic Model binds via `schemaName` in TMDL partitions for Direct Lake.
 
@@ -395,6 +403,9 @@ Open Data Agent → *"Total revenue FY2024–FY2026?"* → *"Inventory alerts?"*
 ### 🔮 Scenario 6: Forecasting (5 min)
 Sales revenue forecast → Genre demand → Financial P&L projections → Inventory planning → Workforce planning
 
+### 📋 Scenario 7: Planning in Fabric IQ (10 min)
+Revenue targets by channel → Scenario comparison (Base/Optimistic/Conservative) → Financial plan vs budget alignment → Workforce headcount targets → Plan vs actual variance dashboard → Executive scenario summary
+
 </td>
 </tr>
 </table>
@@ -465,6 +476,14 @@ Dedicated `HorizonBooks_Forecasting` experiment with parent/child runs, paramete
 
 </td>
 </tr>
+<tr>
+<td colspan="3">
+
+### 📋 Planning in Fabric IQ
+Extends forecasting with scenario-based planning (Budget targets, Revenue/Financial/Workforce plans, 3 scenarios, plan-vs-actual variance). Writeback-ready tables in `GoldLH.planning.*` connect to Fabric IQ for collaborative budgeting and approval workflows. [Learn more →](Planning/README.md)
+
+</td>
+</tr>
 </table>
 
 ---
@@ -512,6 +531,7 @@ FullDemoFabricBookUseCase/
 │   ├── Deploy-PowerBI.ps1             ← Semantic Model + 2 Reports (idempotent)
 │   ├── Deploy-DataAgent.ps1           ← Data Agent creation
 │   ├── Deploy-Diagnostic.ps1          ← Diagnostic notebook
+│   ├── Deploy-Planning.ps1            ← Planning tables & scenario data
 │   ├── Validate-Deployment.ps1        ← Post-deploy validation
 │   ├── Upload-SampleData.ps1          ← CSV upload to BronzeLH
 │   ├── Redeploy-Notebooks.ps1         ← Re-deploy notebooks only
@@ -550,12 +570,18 @@ FullDemoFabricBookUseCase/
 ├── Lakehouse/                         ← SQL Scripts
 │   ├── CreateTables.sql
 │   ├── CreateViews.sql                ← 8 analytics views
+│   ├── CreatePlanningTables.sql       ← Planning schema + 5 tables + 3 views
 │   └── GenerateDateDimension.sql
 │
 ├── Forecasting/                       ← Forecast model docs
 │   ├── README.md
 │   ├── forecast-config.json
 │   └── ForecastingExploration.ipynb   ← Local Jupyter notebook
+│
+├── Planning/                          ← Planning in Fabric IQ extension
+│   ├── README.md
+│   ├── planning-config.json
+│   └── PlanningExploration.ipynb      ← Local Jupyter notebook (scenarios, variance)
 │
 ├── definitions/                       ← CI/CD Item Definitions
 │   ├── items-manifest.json            ← 15 Fabric items
@@ -595,6 +621,7 @@ FullDemoFabricBookUseCase/
 | `Deploy-PowerBI.ps1` | Semantic Model + 2 Reports (idempotent) |
 | `Deploy-DataAgent.ps1` | Data Agent creation (F64+ only) |
 | `Deploy-Diagnostic.ps1` | Diagnostic notebook deployment |
+| `Deploy-Planning.ps1` | Planning tables & scenario data (Fabric IQ) |
 | `Validate-Deployment.ps1` | Post-deploy validation checker |
 | `Upload-SampleData.ps1` | Standalone CSV upload to BronzeLH |
 | `Redeploy-Notebooks.ps1` | Re-deploy notebooks without full redeploy |
@@ -624,7 +651,8 @@ Invoke-Pester .\tests\Deploy-HorizonBooks.Tests.ps1 -Tag "Unit"
 | 🤖 [Data Agent Configuration](DataAgent/DataAgentConfiguration.md) | AI agent instructions, sample conversations, testing checklist |
 | 📥 [Dataflow Configuration](Dataflows/DataflowConfiguration.md) | Per-column type & quality transformations for 3 dataflows |
 | 🔮 [Forecasting Module](Forecasting/README.md) | Holt-Winters config, MLflow tracking, output schemas |
-| 🔧 [CI/CD Definitions](definitions/README.md) | Token placeholders, item manifest, deployment patterns |
+| � [Planning Module](Planning/README.md) | Planning in Fabric IQ — scenarios, variance, writeback tables |
+| �🔧 [CI/CD Definitions](definitions/README.md) | Token placeholders, item manifest, deployment patterns |
 
 ---
 

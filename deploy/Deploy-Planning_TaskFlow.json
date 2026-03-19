@@ -1,0 +1,101 @@
+{
+  "name": "Planning in Fabric IQ Deployment",
+  "description": "Deploy Planning in Fabric IQ extension: planning schema, 5 writeback-ready tables, 3 analytics views, and populate with scenario-modeled targets (Revenue, Finance, Workforce) plus plan-vs-actual variance analysis.",
+  "tasks": [
+    {
+      "id": "task-01",
+      "name": "Resolve GoldLH",
+      "description": "Look up GoldLH Lakehouse ID from workspace items. Requires Deploy-Full.ps1 to have been run first.",
+      "taskType": "General"
+    },
+    {
+      "id": "task-02",
+      "name": "Execute Planning SQL",
+      "description": "Create planning schema, 5 Delta tables (PlanRevenueTargets, PlanFinancialTargets, PlanWorkforceTargets, PlanVarianceAnalysis, PlanScenarioSummary), and 3 views via a temporary Spark notebook executing CreatePlanningTables.sql.",
+      "taskType": "Prepare data"
+    },
+    {
+      "id": "task-03",
+      "name": "Populate Revenue Targets",
+      "description": "Generate channel-level revenue targets with Base (+8%), Optimistic (+15%), and Conservative (+3%) growth scenarios using last 6 months of FactOrders as baseline.",
+      "taskType": "Develop"
+    },
+    {
+      "id": "task-04",
+      "name": "Populate Financial Targets",
+      "description": "Generate P&L account targets by account type using FactBudget baseline with 3 scenario growth projections.",
+      "taskType": "Develop"
+    },
+    {
+      "id": "task-05",
+      "name": "Populate Workforce Targets",
+      "description": "Generate headcount and payroll targets by department using FactPayroll baseline with differentiated growth rates for headcount vs payroll.",
+      "taskType": "Develop"
+    },
+    {
+      "id": "task-06",
+      "name": "Populate Variance Analysis",
+      "description": "Build consolidated plan-vs-actual variance from FactBudget with status flags (Favorable, On Track, Unfavorable, Critical) and inverted logic for expense accounts.",
+      "taskType": "Develop"
+    },
+    {
+      "id": "task-07",
+      "name": "Populate Scenario Summary",
+      "description": "Aggregate all domain targets into a cross-domain executive comparison table by scenario and fiscal quarter.",
+      "taskType": "Develop"
+    },
+    {
+      "id": "task-08",
+      "name": "Organize Notebooks",
+      "description": "Move planning notebooks into the '03 - Data Transformation' workspace folder alongside existing HorizonBooks notebooks.",
+      "taskType": "General"
+    }
+  ],
+  "connectors": [
+    {
+      "id": "conn-01",
+      "startTaskId": "task-01",
+      "endTaskId": "task-02"
+    },
+    {
+      "id": "conn-02",
+      "startTaskId": "task-02",
+      "endTaskId": "task-03"
+    },
+    {
+      "id": "conn-03",
+      "startTaskId": "task-02",
+      "endTaskId": "task-04"
+    },
+    {
+      "id": "conn-04",
+      "startTaskId": "task-02",
+      "endTaskId": "task-05"
+    },
+    {
+      "id": "conn-05",
+      "startTaskId": "task-02",
+      "endTaskId": "task-06"
+    },
+    {
+      "id": "conn-06",
+      "startTaskId": "task-03",
+      "endTaskId": "task-07"
+    },
+    {
+      "id": "conn-07",
+      "startTaskId": "task-04",
+      "endTaskId": "task-07"
+    },
+    {
+      "id": "conn-08",
+      "startTaskId": "task-05",
+      "endTaskId": "task-07"
+    },
+    {
+      "id": "conn-09",
+      "startTaskId": "task-07",
+      "endTaskId": "task-08"
+    }
+  ]
+}

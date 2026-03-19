@@ -1,0 +1,84 @@
+{
+  "planningConfig": {
+    "description": "Configuration for Horizon Books Planning in Fabric IQ models — budget targets, scenario modeling, plan-vs-actual variance, and writeback-ready planning tables.",
+    "reference": "https://blog.fabric.microsoft.com/en-us/blog/introducing-planning-in-microsoft-fabric-iq-from-historical-data-to-forecasting-the-future",
+    "parameters": {
+      "planningHorizon": 12,
+      "baseFiscalYear": "FY2026",
+      "scenarioTypes": ["Base", "Optimistic", "Conservative"],
+      "growthAssumptions": {
+        "base": 0.08,
+        "optimistic": 0.15,
+        "conservative": 0.03
+      },
+      "varianceThresholds": {
+        "favorable": 0.05,
+        "unfavorable": -0.05,
+        "critical": -0.15
+      }
+    },
+    "models": [
+      {
+        "name": "RevenueTargets",
+        "outputTable": "PlanRevenueTargets",
+        "outputSchema": "planning",
+        "description": "Channel-level revenue targets for FY2026–FY2027 with base/optimistic/conservative scenarios. Grounded on forecast data from ForecastSalesRevenue.",
+        "grainColumns": ["Channel", "Scenario"],
+        "valueColumn": "TargetRevenue",
+        "dateColumn": "PlanMonth",
+        "sourceTable": "ForecastSalesRevenue",
+        "writeback": true
+      },
+      {
+        "name": "FinancialPlan",
+        "outputTable": "PlanFinancialTargets",
+        "outputSchema": "planning",
+        "description": "P&L account-level financial plan with budget allocations, forecast alignment, and scenario modeling. Bridges FactBudget and ForecastFinancial.",
+        "grainColumns": ["AccountType", "CostCenterID", "Scenario"],
+        "valueColumn": "PlannedAmount",
+        "dateColumn": "PlanMonth",
+        "sourceTable": "ForecastFinancial",
+        "writeback": true
+      },
+      {
+        "name": "WorkforcePlan",
+        "outputTable": "PlanWorkforceTargets",
+        "outputSchema": "planning",
+        "description": "Headcount and payroll targets by department with hiring scenario modeling. Bridges FactPayroll actuals and ForecastWorkforce projections.",
+        "grainColumns": ["Department", "Metric", "Scenario"],
+        "valueColumn": "PlannedValue",
+        "dateColumn": "PlanMonth",
+        "sourceTable": "ForecastWorkforce",
+        "writeback": true
+      },
+      {
+        "name": "PlanVsActual",
+        "outputTable": "PlanVarianceAnalysis",
+        "outputSchema": "planning",
+        "description": "Consolidated plan-vs-actual variance analysis across Finance, Revenue, and Workforce domains with status flags and drill-down dimensions.",
+        "grainColumns": ["Domain", "Category", "PlanMonth"],
+        "valueColumn": "Variance",
+        "dateColumn": "PlanMonth",
+        "sourceTable": null,
+        "writeback": false
+      },
+      {
+        "name": "ScenarioComparison",
+        "outputTable": "PlanScenarioSummary",
+        "outputSchema": "planning",
+        "description": "Side-by-side scenario comparison table for executive dashboards — aggregates all domain targets by scenario, quarter, and fiscal year.",
+        "grainColumns": ["Domain", "Scenario", "FiscalQuarter"],
+        "valueColumn": "PlannedTotal",
+        "dateColumn": "PlanMonth",
+        "sourceTable": null,
+        "writeback": false
+      }
+    ],
+    "outputSettings": {
+      "writeMode": "overwrite",
+      "format": "delta",
+      "overwriteSchema": true,
+      "writebackTarget": "Fabric SQL Endpoint"
+    }
+  }
+}
